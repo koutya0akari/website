@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+set -e
+
+if ! command -v bin/rails >/dev/null; then
+  echo "bin/rails not found. Did you run bundle install?"
+  exit 1
+fi
+
+bin/rails server

@@ -1,0 +1,51 @@
+<% content_for :title, 'ホーム' %>
+<section class="hero section">
+  <div>
+    <h1>山田 太郎</h1>
+    <p>数論と表現論を専門とする数学者。保型形式とモチーフの相互作用を通じて、数の世界に潜む対称性を探究しています。</p>
+    <p>
+      <%= link_to '研究活動を見る', research_path, class: 'button primary' %>
+      <%= link_to '最新の講演情報', talks_path, class: 'button secondary' %>
+    </p>
+    <p data-controller="hello"></p>
+  </div>
+  <div>
+    <%= image_tag 'profile.jpg', alt: '数学者のポートレート' %>
+  </div>
+</section>
+
+<section class="section">
+  <h2>研究トピック</h2>
+  <div class="card-grid">
+    <article class="card">
+      <h3>Langlands プログラム</h3>
+      <p>保型表現の局所・大域対応と L-関数の解析的性質に関する研究。</p>
+    </article>
+    <article class="card">
+      <h3>p-進数解析</h3>
+      <p>ガロア表現の変形理論と幾何学的 p-進 Hodge 理論の応用。</p>
+    </article>
+    <article class="card">
+      <h3>算術幾何</h3>
+      <p>モジュライ空間のコンパクト化と特異点解消を通じた算術的対称性の理解。</p>
+    </article>
+  </div>
+</section>
+
+<section class="section">
+  <h2>最近の成果</h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <h3>2024 年 10 月</h3>
+      <p>保型 L-関数の特殊値に関する共同研究が <em>Journal of Number Theory</em> に採択。</p>
+    </div>
+    <div class="timeline-item">
+      <h3>2024 年 6 月</h3>
+      <p>国際会議「Automorphic Forms and Beyond」で招待講演を実施。</p>
+    </div>
+    <div class="timeline-item">
+      <h3>2023 年 12 月</h3>
+      <p>JSPS 研究費（基盤 B）「保型形式の算術的側面の研究」採択。</p>
+    </div>
+  </div>
+</section>
