@@ -1,26 +1,43 @@
-<% content_for :title, '出版' %>
+<% content_for :title, 'アウトプット' %>
 <section class="section">
-  <h1>論文・出版物</h1>
-  <p>査読付き論文、プレプリント、著書などの主要な成果を掲載しています。詳細な bibliographic 情報は MathSciNet や arXiv からも確認できます。</p>
+  <h1>アウトプット</h1>
+  <p class="section-subtitle">
+    GitHub Pages で公開している記事、スライド、動画などのアウトプットをまとめています。数学の楽しさと学習のプロセスを可視化することを意識しています。
+  </p>
+  <div class="card-grid">
+    <article class="card">
+      <h3>Proof Sketch シリーズ</h3>
+      <p>ゼータ関数の歴史、保型形式との関わり、最新研究のトピックを解説するブログ連載。</p>
+      <p><%= link_to 'ブログで読む', 'https://github.com', target: '_blank', rel: 'noopener' %></p>
+    </article>
+    <article class="card">
+      <h3>ゼータ関数可視化スライド</h3>
+      <p>Student Number Theory Day で発表したスライド。インタラクティブデモとコード解説付き。</p>
+      <p><%= link_to 'Speaker Deck', 'https://speakerdeck.com', target: '_blank', rel: 'noopener' %></p>
+    </article>
+    <article class="card">
+      <h3>Math Modeling Podcast</h3>
+      <p>サークルメンバーと毎月収録している勉強会のポッドキャスト。モデル化の裏側を語っています。</p>
+      <p><%= link_to '最新エピソード', '#', class: 'button secondary' %></p>
+    </article>
+  </div>
 </section>
 
 <section class="section">
-  <h2>代表的な論文</h2>
-  <div class="card-grid">
-    <article class="card">
-      <h3>Arithmetic aspects of eigenvarieties</h3>
-      <p><em>Annals of Mathematics</em>, 2024.</p>
-      <p>固有値多様体のローカル構造とガロア表現の変形空間を結びつける新しい剛性定理を提示。</p>
-    </article>
-    <article class="card">
-      <h3>Special values of automorphic L-functions</h3>
-      <p><em>Journal of Number Theory</em>, 2023.</p>
-      <p>ランク 2 の保型表現に対する L-関数特殊値の代数的性質を解明し、Beilinson 予想の一部を検証。</p>
-    </article>
-    <article class="card">
-      <h3>Geometric approaches to p-adic Hodge theory</h3>
-      <p><em>Inventiones Mathematicae</em>, 2022.</p>
-      <p>p-進 Hodge 理論における新たなフィルトレーション構造を提案し、算術幾何への応用を示した。</p>
-    </article>
-  </div>
+  <h2>書いたもの</h2>
+  <p class="section-subtitle">論考やレポート、エッセイの抜粋です。PDF は GitHub Pages からダウンロードできます。</p>
+  <ul class="highlight-list">
+    <li>
+      <strong>ハーディの Z 関数に関するノート</strong>
+      <p>複素平面上の零点分布を追跡するための解析手法をまとめました。</p>
+    </li>
+    <li>
+      <strong>整数計画におけるカット生成の実装</strong>
+      <p>外部インターンでの実装経験を振り返り、改善したヒューリスティクスを紹介。</p>
+    </li>
+    <li>
+      <strong>数学コミュニティ運営の手引き</strong>
+      <p>オンラインでの輪講やイベント企画のノウハウをまとめたガイド。</p>
+    </li>
+  </ul>
 </section>

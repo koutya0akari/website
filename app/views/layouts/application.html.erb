@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><%= page_title(content_for?(:title) ? yield(:title) : nil) %></title>
-    <meta name="description" content="数学者としての研究・教育・講演・出版活動を紹介するポートフォリオサイト">
+    <meta name="description" content="大学で数学を学ぶ学生ユウのポートフォリオ。研究プロジェクト、学習ノート、イベント登壇、アウトプットをまとめた GitHub Pages 向けウェブサイト。">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -33,9 +33,9 @@
     <footer class="footer">
       <p>&copy; <%= Time.current.year %> <%= t('math_website.title') %></p>
       <p>
-        <%= link_to 'ORCID', 'https://orcid.org', target: '_blank', rel: 'noopener' %>
-        <%= link_to 'MathSciNet', 'https://mathscinet.ams.org', target: '_blank', rel: 'noopener' %>
-        <%= link_to 'arXiv', 'https://arxiv.org', target: '_blank', rel: 'noopener' %>
+        <%= link_to 'GitHub', 'https://github.com', target: '_blank', rel: 'noopener' %>
+        <%= link_to 'Zenn', 'https://zenn.dev', target: '_blank', rel: 'noopener' %>
+        <%= link_to 'Speaker Deck', 'https://speakerdeck.com', target: '_blank', rel: 'noopener' %>
       </p>
     </footer>
   </body>
