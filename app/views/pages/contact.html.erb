@@ -1,0 +1,31 @@
+<% content_for :title, '連絡先' %>
+<section class="section">
+  <h1>連絡先</h1>
+  <p>共同研究・講演依頼・学生の指導に関するご相談は、以下の連絡先よりお気軽にお問い合わせください。</p>
+</section>
+
+<section class="section">
+  <div class="card-grid">
+    <article class="card">
+      <h2>所属</h2>
+      <p>東京数学大学 理学研究科 数学専攻<br>准教授</p>
+    </article>
+    <article class="card">
+      <h2>メール</h2>
+      <p><%= mail_to 'yamada@example.jp' %></p>
+    </article>
+    <article class="card">
+      <h2>研究室</h2>
+      <p>東京都千代田区学術町 1-2-3<br>理学部棟 5F 512 号室</p>
+    </article>
+  </div>
+</section>
+
+<section class="section">
+  <h2>オンラインアカウント</h2>
+  <ul>
+    <li><%= link_to 'GitHub', 'https://github.com', target: '_blank', rel: 'noopener' %></li>
+    <li><%= link_to 'Google Scholar', 'https://scholar.google.com', target: '_blank', rel: 'noopener' %></li>
+    <li><%= link_to 'ResearchGate', 'https://www.researchgate.net', target: '_blank', rel: 'noopener' %></li>
+  </ul>
+</section>

@@ -1,0 +1,9 @@
+local:
+  service: Disk
+  root: <%= Rails.root.join("storage") %>
+
+public:
+  service: Disk
+  root: <%= Rails.root.join("storage") %>
+  public: true
+  public_host: <%= ENV['RAILS_PUBLIC_HOST'] %>

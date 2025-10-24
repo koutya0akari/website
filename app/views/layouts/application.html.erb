@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= page_title(content_for?(:title) ? yield(:title) : nil) %></title>
+    <meta name="description" content="数学者としての研究・教育・講演・出版活動を紹介するポートフォリオサイト">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag 'application', 'data-turbo-track': 'reload', media: 'all' %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="container">
+        <%= link_to t('math_website.title'), root_path, class: 'brand' %>
+        <div class="nav-links">
+          <%= nav_link(:home, root_path) %>
+          <%= nav_link(:research, research_path) %>
+          <%= nav_link(:teaching, teaching_path) %>
+          <%= nav_link(:talks, talks_path) %>
+          <%= nav_link(:publications, publications_path) %>
+          <%= nav_link(:contact, contact_path) %>
+        </div>
+      </div>
+    </nav>
+
+    <main>
+      <%= yield %>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; <%= Time.current.year %> <%= t('math_website.title') %></p>
+      <p>
+        <%= link_to 'ORCID', 'https://orcid.org', target: '_blank', rel: 'noopener' %>
+        <%= link_to 'MathSciNet', 'https://mathscinet.ams.org', target: '_blank', rel: 'noopener' %>
+        <%= link_to 'arXiv', 'https://arxiv.org', target: '_blank', rel: 'noopener' %>
+      </p>
+    </footer>
+  </body>
+</html>

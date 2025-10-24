@@ -1,0 +1,11 @@
+en:
+  hello: "Hello world"
+  math_website:
+    title: "Mathematician Portfolio"
+    navigation:
+      home: "Home"
+      research: "Research"
+      teaching: "Teaching"
+      talks: "Talks"
+      publications: "Publications"
+      contact: "Contact"
