@@ -1,39 +1,38 @@
-<% content_for :title, '講演' %>
+<% content_for :title, 'イベント' %>
 <section class="section">
-  <h1>講演・セミナー</h1>
-  <p>国内外の研究集会での招待講演や、大学・研究所でのセミナー登壇情報です。講演資料は可能な限り公開しています。</p>
-</section>
-
-<section class="section">
-  <h2>今後の予定</h2>
+  <h1>イベント・登壇</h1>
+  <p class="section-subtitle">
+    学会や学生コミュニティでの発表、ワークショップ運営の記録です。資料は GitHub Pages に掲載し、再利用できるように整備しています。
+  </p>
   <div class="card-grid">
     <article class="card">
-      <h3>2025 年 3 月</h3>
-      <p>Kyoto Workshop on Automorphic Forms にて「Eigenvarieties の解析」について講演予定。</p>
-      <p><%= link_to '概要を読む', '#', class: 'button secondary' %></p>
+      <h3>2025 年 3 月 — Student Number Theory Day</h3>
+      <p>共形写像とゼータ関数の関係をテーマに招待講演。ゼータ関数の可視化デモをライブで実施しました。</p>
+      <p><%= link_to 'スライド', 'https://speakerdeck.com', target: '_blank', rel: 'noopener' %></p>
     </article>
     <article class="card">
-      <h3>2025 年 5 月</h3>
-      <p>東京大学数物セミナーにて「保型 L-関数の特殊値と局所対応」講演予定。</p>
-      <p><%= link_to '概要を読む', '#', class: 'button secondary' %></p>
+      <h3>2024 年 12 月 — GitHub Pages Workshop</h3>
+      <p>数学ノートを Rails と GitHub Actions で自動公開する方法を解説するハンズオンセッションを開催。</p>
+      <p><%= link_to '資料とソース', 'https://github.com', target: '_blank', rel: 'noopener' %></p>
     </article>
   </div>
 </section>
 
 <section class="section">
-  <h2>過去の講演</h2>
+  <h2>参加したプログラム</h2>
+  <p class="section-subtitle">挑戦したイベントを振り返り、得られた学びをまとめています。</p>
   <div class="timeline">
     <div class="timeline-item">
-      <h3>2024 年 10 月</h3>
-      <p>東京工業大学 表現論セミナー「モジュラー性を持つガロア表現の変形」。</p>
+      <h3>2025 年 1 月</h3>
+      <p>大学横断の数学コミュニティでハッカソン。ゼータ関数の可視化アイデアが最優秀賞を受賞。</p>
     </div>
     <div class="timeline-item">
-      <h3>2024 年 2 月</h3>
-      <p>数論若手の会「p-進変形空間と固有値多様体の解析」。</p>
+      <h3>2024 年 9 月</h3>
+      <p>研究インターン成果発表会で線形計画を用いた需要予測モデルを発表。</p>
     </div>
     <div class="timeline-item">
-      <h3>2023 年 9 月</h3>
-      <p>ICM Satellite Conference on Arithmetic Geometry「Shimura 多様体の境界挙動」。</p>
+      <h3>2024 年 5 月</h3>
+      <p>IMC 直前合宿のチューターを担当し、解析セクションの問題解法講座を実施。</p>
     </div>
   </div>
 </section>

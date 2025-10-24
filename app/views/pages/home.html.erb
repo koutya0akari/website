@@ -1,51 +1,103 @@
 <% content_for :title, 'ホーム' %>
-<section class="hero section">
-  <div>
-    <h1>山田 太郎</h1>
-    <p>数論と表現論を専門とする数学者。保型形式とモチーフの相互作用を通じて、数の世界に潜む対称性を探究しています。</p>
+<section class="hero section student-hero">
+  <div class="hero-content">
+    <span class="hero-eyebrow">Number Theory ・ Data Science ・ Visualization</span>
+    <h1>ユウ / Math Student</h1>
     <p>
-      <%= link_to '研究活動を見る', research_path, class: 'button primary' %>
-      <%= link_to '最新の講演情報', talks_path, class: 'button secondary' %>
+      東京の大学で数学を学ぶ 3 年生です。数論の美しさに魅了されながら、データサイエンスや可視化の技術を組み合わせて、
+      抽象的なアイデアを誰もが手に取れる形で表現することに挑戦しています。GitHub Pages で公開するために最適化された、
+      私の活動と学びをまとめたポートフォリオです。
     </p>
+    <div class="hero-actions">
+      <%= link_to 'GitHub を見る', 'https://github.com', class: 'button primary', target: '_blank', rel: 'noopener' %>
+      <%= link_to '学習ノート', teaching_path, class: 'button secondary' %>
+      <%= link_to '最新アウトプット', publications_path, class: 'button ghost' %>
+    </div>
+    <ul class="pill-list">
+      <li class="pill">💡 解析数論とゼータ関数</li>
+      <li class="pill">🧮 数学オリンピックでの経験</li>
+      <li class="pill">💻 Python ・ Julia ・ Ruby</li>
+    </ul>
     <p data-controller="hello"></p>
   </div>
-  <div>
-    <%= image_tag 'profile.jpg', alt: '数学者のポートレート' %>
+  <div class="hero-card">
+    <h2>今取り組んでいること</h2>
+    <ul class="highlight-list">
+      <li>
+        <strong>ゼータ関数の可視化研究</strong>
+        <p>複素平面上の振る舞いを WebGL と GLSL でインタラクティブに表示する個人プロジェクトを開発中。</p>
+      </li>
+      <li>
+        <strong>数理モデリングサークル</strong>
+        <p>週 1 回の勉強会で実社会の課題を数理最適化問題として定式化し、Python で検証。</p>
+      </li>
+      <li>
+        <strong>GitHub Pages チュートリアル</strong>
+        <p>数学を学ぶ高校生向けに、微分方程式入門記事を公開予定。LaTeX で書いたノートを Rails で整形。</p>
+      </li>
+    </ul>
   </div>
 </section>
 
 <section class="section">
-  <h2>研究トピック</h2>
+  <h2>学習テーマ</h2>
+  <p class="section-subtitle">授業・自主研究・コンテストを通じて磨いている数学の領域です。</p>
   <div class="card-grid">
     <article class="card">
-      <h3>Langlands プログラム</h3>
-      <p>保型表現の局所・大域対応と L-関数の解析的性質に関する研究。</p>
+      <h3>保型形式と L-関数</h3>
+      <p>モジュラー形式のフーリエ係数と L-関数の零点の分布を、計算実験と文献輪講で調査しています。</p>
+      <span class="badge">使用ツール: SageMath / Pari</span>
     </article>
     <article class="card">
-      <h3>p-進数解析</h3>
-      <p>ガロア表現の変形理論と幾何学的 p-進 Hodge 理論の応用。</p>
+      <h3>離散最適化</h3>
+      <p>競技プログラミングと数理計画法の双方から、整数計画問題の解法やカット生成を実装。</p>
+      <span class="badge">研究会: 数理モデリング部</span>
     </article>
     <article class="card">
-      <h3>算術幾何</h3>
-      <p>モジュライ空間のコンパクト化と特異点解消を通じた算術的対称性の理解。</p>
+      <h3>可視化とフロントエンド</h3>
+      <p>Three.js と D3.js を用いた実験的なグラフやフラクタル表示の UI/UX を設計しています。</p>
+      <span class="badge">実装言語: TypeScript</span>
     </article>
   </div>
 </section>
 
 <section class="section">
-  <h2>最近の成果</h2>
+  <h2>制作したプロジェクト</h2>
+  <p class="section-subtitle">GitHub で公開している自主研究やハッカソン作品のハイライト。</p>
+  <div class="card-grid">
+    <article class="card">
+      <h3>Zeta Explorer</h3>
+      <p>リーマンゼータ関数の複素零点をインタラクティブに表示する Web アプリ。平面上の位相を色相で表現。</p>
+      <p><%= link_to 'リポジトリを見る', 'https://github.com', target: '_blank', rel: 'noopener' %></p>
+    </article>
+    <article class="card">
+      <h3>Math Notes Generator</h3>
+      <p>Markdown の証明メモを Rails でビルドして GitHub Pages にデプロイできる CLI ツール。</p>
+      <p><%= link_to 'ドキュメント', publications_path %></p>
+    </article>
+    <article class="card">
+      <h3>Contest Analytics</h3>
+      <p>過去の数学コンテストの問題傾向をデータベース化し、分野別の学習プランをレコメンド。</p>
+      <p><%= link_to '学習ノートで読む', teaching_path %></p>
+    </article>
+  </div>
+</section>
+
+<section class="section">
+  <h2>最近のトピック</h2>
+  <p class="section-subtitle">日々の学びやコンテスト、イベント参加の記録。</p>
   <div class="timeline">
     <div class="timeline-item">
-      <h3>2024 年 10 月</h3>
-      <p>保型 L-関数の特殊値に関する共同研究が <em>Journal of Number Theory</em> に採択。</p>
+      <h3>2025 年 2 月</h3>
+      <p>大学合同ゼミでリーマン予想の背景と関数方程式に関する発表を担当。</p>
     </div>
     <div class="timeline-item">
-      <h3>2024 年 6 月</h3>
-      <p>国際会議「Automorphic Forms and Beyond」で招待講演を実施。</p>
+      <h3>2024 年 11 月</h3>
+      <p>国際学生数学コンテスト (IMC) にチームで参加し、解析分野で銀賞獲得。</p>
     </div>
     <div class="timeline-item">
-      <h3>2023 年 12 月</h3>
-      <p>JSPS 研究費（基盤 B）「保型形式の算術的側面の研究」採択。</p>
+      <h3>2024 年 7 月</h3>
+      <p>GitHub Pages で数学ブログ「Proof Sketch」を公開。週 1 本のペースで連載中。</p>
     </div>
   </div>
 </section>
