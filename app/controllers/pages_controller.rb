@@ -11,6 +11,13 @@ class PagesController < ApplicationController
     @site = @content[:site]
   end
 
+  def diary
+    @content = PortfolioContent.diary
+    @site = @content[:site]
+    @entry = DiaryEntry.new(entry_date: Date.current)
+    @entries = DiaryEntry.includes(:user).sorted
+  end
+
   def research; end
 
   def teaching; end

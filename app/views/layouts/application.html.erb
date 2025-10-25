@@ -27,7 +27,8 @@
              { label: 'プロジェクト', href: '#projects' },
              { label: '活動記録', href: '#timeline' },
              { label: 'リソース', href: '#resources' },
-             { label: 'About', href: about_path }
+             { label: 'About', href: about_path },
+             { label: 'Diary', href: diary_path }
            ]
          else
            [
@@ -36,9 +37,25 @@
              { label: '研究関心', href: root_path(anchor: 'focus') },
              { label: 'プロジェクト', href: root_path(anchor: 'projects') },
              { label: '活動記録', href: root_path(anchor: 'timeline') },
-             { label: 'About', href: about_path, active: controller.action_name == 'about' }
+             { label: 'About', href: about_path, active: controller.action_name == 'about' },
+             { label: 'Diary', href: diary_path, active: controller.action_name == 'diary' }
            ]
          end %>
+    <% account_item =
+         if logged_in?
+           {
+             label: 'ログアウト',
+             href: logout_path,
+             data: { turbo_method: :delete, turbo_confirm: 'ログアウトしますか？' }
+           }
+         else
+           {
+             label: 'ログイン',
+             href: login_path,
+             active: controller.controller_name == 'sessions'
+           }
+         end %>
+    <% nav_items << account_item %>
 
     <div class="page-wrap">
       <header>
@@ -52,8 +69,12 @@
               <% classes = ['nav-link'] << ('is-active' if item[:active]) %>
               <% data_attributes = {} %>
               <% data_attributes[:action] = 'smooth-scroll#scroll' if item[:href].is_a?(String) && item[:href].include?('#') %>
+              <% data_attributes = data_attributes.merge(item[:data]) if item[:data].present? %>
+              <% link_options = { class: classes.compact.join(' ') } %>
+              <% link_options[:aria] = { current: 'page' } if item[:active] %>
+              <% link_options[:data] = data_attributes if data_attributes.present? %>
               <li>
-                <%= link_to item[:label], item[:href], class: classes.compact.join(' '), aria: (item[:active] ? { current: 'page' } : nil), data: (data_attributes.presence) %>
+                <%= link_to item[:label], item[:href], **link_options %>
               </li>
             <% end %>
           </ul>
@@ -61,6 +82,13 @@
       </header>
 
       <main>
+        <% flash.each do |type, message| %>
+          <% next if message.blank? %>
+          <% notice = type.to_s == 'notice' %>
+          <% flash_class = notice ? 'flash flash-notice' : 'flash flash-alert' %>
+          <% role = notice ? 'status' : 'alert' %>
+          <div class="<%= flash_class %>" role="<%= role %>"><%= message %></div>
+        <% end %>
         <%= yield %>
       </main>
 
@@ -70,6 +98,12 @@
           <div class="footer-links">
             <%= link_to 'Home', root_path %>
             <%= link_to 'About', about_path %>
+            <%= link_to 'Diary', diary_path %>
+            <% if logged_in? %>
+              <%= link_to 'Logout', logout_path, data: { turbo_method: :delete, turbo_confirm: 'ログアウトしますか？' } %>
+            <% else %>
+              <%= link_to 'Login', login_path %>
+            <% end %>
             <%= link_to 'Contact', controller.action_name == 'home' ? '#contact' : root_path(anchor: 'contact') %>
           </div>
         </div>

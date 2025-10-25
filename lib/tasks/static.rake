@@ -36,6 +36,19 @@ namespace :static do
           content = PortfolioContent.about
           { content: content, site: content[:site] }
         }
+      },
+      {
+        filename: 'diary/index.html',
+        template: 'pages/diary',
+        assigns: -> {
+          content = PortfolioContent.diary
+          {
+            content: content,
+            site: content[:site],
+            entry: DiaryEntry.new(entry_date: Date.current),
+            entries: DiaryEntry.includes(:user).sorted
+          }
+        }
       }
     ]
 

@@ -1,0 +1,98 @@
+<% content_for :title, @content[:page_title] if @content[:page_title].present? %>
+
+<% hero = @content[:hero] %>
+<section class="section">
+  <div class="section-header">
+    <% if hero[:eyebrow].present? %>
+      <span class="section-eyebrow"><%= hero[:eyebrow] %></span>
+    <% end %>
+    <h2><%= hero[:title] %></h2>
+    <%= portfolio_html(hero[:description_html]) %>
+  </div>
+</section>
+
+<% editor = @content[:editor] %>
+<section class="section">
+  <div class="split-grid diary-grid" data-controller="diary" data-diary-storage-key-value="akari-math-lab-diary">
+    <article class="profile-card diary-editor">
+      <% if editor[:eyebrow].present? %>
+        <span class="section-eyebrow"><%= editor[:eyebrow] %></span>
+      <% end %>
+      <h2><%= editor[:title] %></h2>
+      <%= portfolio_html(editor[:description_html]) %>
+
+      <% if logged_in? %>
+        <% if @entry.errors.any? %>
+          <div class="form-errors" role="alert">
+            <strong>入力内容を確認してください。</strong>
+            <ul>
+              <% @entry.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <%= form_with model: @entry, url: diary_entries_path, class: 'diary-form', data: { diary_target: 'form', action: 'turbo:submit-end->diary#handleSubmitEnd' } do |form| %>
+          <label class="diary-label">
+            <span>タイトル</span>
+            <%= form.text_field :title, class: 'diary-input', placeholder: editor[:placeholders][:title], data: { diary_target: 'titleField' } %>
+          </label>
+          <label class="diary-label">
+            <span>日付</span>
+            <%= form.date_field :entry_date, class: 'diary-input', placeholder: editor[:placeholders][:date], value: @entry.entry_date, data: { diary_target: 'dateField' } %>
+          </label>
+          <label class="diary-label">
+            <span>本文</span>
+            <%= form.text_area :body, class: 'diary-textarea', rows: 8, placeholder: editor[:placeholders][:body], data: { diary_target: 'bodyField' } %>
+          </label>
+          <div class="diary-actions">
+            <%= form.submit editor[:buttons][:save], class: 'btn btn-primary' %>
+            <button type="button" class="btn btn-outline" data-action="click->diary#clearDraft"><%= editor[:buttons][:clear] %></button>
+          </div>
+        <% end %>
+        <div class="diary-secondary-actions">
+          <%= link_to 'ログアウト', logout_path, data: { turbo_method: :delete, turbo_confirm: 'ログアウトしますか？' }, class: 'btn btn-outline' %>
+        </div>
+      <% else %>
+        <div class="diary-login-callout">
+          <p>日記を追加するにはログインしてください。</p>
+          <%= link_to 'ログインする', login_path, class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </article>
+
+    <aside class="profile-card diary-entries">
+      <h3><%= editor[:entries_heading] %></h3>
+      <% if @entries.any? %>
+        <ul class="diary-list">
+          <% @entries.each do |entry| %>
+            <li class="diary-item">
+              <div class="diary-item-header">
+                <div class="diary-item-meta">
+                  <h4><%= entry.title.presence || '無題' %></h4>
+                  <% if entry.entry_date.present? %>
+                    <time datetime="<%= entry.entry_date %>"><%= entry.entry_date.strftime('%Y-%m-%d') %></time>
+                  <% end %>
+                  <% if entry.user.present? %>
+                    <p class="diary-item-author">by <%= entry.user.name %></p>
+                  <% end %>
+                </div>
+                <% if logged_in? && entry.user_id == current_user.id %>
+                  <%= button_to editor[:delete_label], diary_entry_path(entry), method: :delete, class: 'diary-delete', form_class: 'diary-delete-form', data: { turbo_confirm: 'この日記を削除しますか？' } %>
+                <% end %>
+              </div>
+              <div class="diary-item-body">
+                <%= simple_format(entry.body, {}, sanitize: true) %>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="diary-empty">
+          <%= portfolio_html(editor[:empty_state_html]) %>
+        </div>
+      <% end %>
+    </aside>
+  </div>
+</section>

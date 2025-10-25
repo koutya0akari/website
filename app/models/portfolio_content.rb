@@ -12,6 +12,10 @@ class PortfolioContent
       load_yaml(:about)
     end
 
+    def diary
+      load_yaml(:diary)
+    end
+
     private
 
     def load_yaml(name)
