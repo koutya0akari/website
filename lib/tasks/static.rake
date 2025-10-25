@@ -47,9 +47,10 @@ namespace :static do
         assigns: assigns
       )
 
+      depth = depth_for(page[:filename])
       destination = output_dir.join(page[:filename])
       FileUtils.mkdir_p(destination.dirname)
-      File.write(destination, rewrite_static_paths(html))
+      File.write(destination, rewrite_static_paths(html, depth))
     end
 
     assets_source = Rails.root.join('public/assets')
@@ -69,21 +70,37 @@ namespace :static do
   end
 end
 
-def rewrite_static_paths(html)
-  processed = html.dup
+def depth_for(filename)
+  dirname = File.dirname(filename)
+  return 0 if dirname == '.'
 
-  processed.gsub!('href="/"', 'href="index.html"')
-  processed.gsub!(/href="\/#([^"]+)"/) { "href=\"index.html##{$1}\"" }
-  processed.gsub!(/href="\/([^"#?]+)(#[^"]*)?"/) do
+  dirname.split('/').size
+end
+
+def rewrite_static_paths(html, depth)
+  processed = html.dup
+  prefix = '../' * depth
+
+  processed.gsub!('href="/"', %(href="#{prefix}index.html"))
+  processed.gsub!(/href="\/#([^"]+)"/) { %(href="#{prefix}index.html##{$1}") }
+
+  processed.gsub!(/href="\/([^"#?]*)(#[^"]*)?"/) do
     path = Regexp.last_match(1)
     anchor = Regexp.last_match(2).to_s
-    next "href=\"#{path}\"" if path.include?('.')
-    next Regexp.last_match(0) if path.start_with?('assets')
-    "href=\"#{path}/index.html#{anchor}\""
+
+    if path.nil? || path.empty?
+      %(href="#{prefix}index.html#{anchor}")
+    elsif path.include?('.')
+      %(href="#{prefix}#{path}#{anchor}")
+    elsif path.start_with?('assets')
+      %(href="#{prefix}#{path}#{anchor}")
+    else
+      %(href="#{prefix}#{path}/index.html#{anchor}")
+    end
   end
 
-  processed.gsub!(/(href|src)="\/assets\//, '\1="assets/')
-  processed.gsub!('"/assets/', '"assets/')
+  processed.gsub!(/(href|src)="\/assets\//) { %(#{Regexp.last_match(1)}="#{prefix}assets/) }
+  processed.gsub!('"/assets/', %("#{prefix}assets/))
 
   processed
 end
