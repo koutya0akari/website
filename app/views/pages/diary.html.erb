@@ -21,18 +21,22 @@
       <h2><%= editor[:title] %></h2>
       <%= portfolio_html(editor[:description_html]) %>
 
-      <% if logged_in? %>
-        <% if @entry.errors.any? %>
-          <div class="form-errors" role="alert">
-            <strong>入力内容を確認してください。</strong>
-            <ul>
-              <% @entry.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-              <% end %>
-            </ul>
-          </div>
-        <% end %>
+      <% if @entry.errors.any? %>
+        <div class="form-errors" role="alert">
+          <strong>入力内容を確認してください。</strong>
+          <ul>
+            <% @entry.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
 
+      <% if static_export? %>
+        <div class="diary-password-callout">
+          <p>GitHub Pages の静的バージョンでは投稿機能を利用できません。</p>
+        </div>
+      <% else %>
         <%= form_with model: @entry, url: diary_entries_path, class: 'diary-form', data: { diary_target: 'form', action: 'turbo:submit-end->diary#handleSubmitEnd' } do |form| %>
           <label class="diary-label">
             <span>タイトル</span>
@@ -46,19 +50,15 @@
             <span>本文</span>
             <%= form.text_area :body, class: 'diary-textarea', rows: 8, placeholder: editor[:placeholders][:body], data: { diary_target: 'bodyField' } %>
           </label>
+          <label class="diary-label">
+            <span>投稿パスワード</span>
+            <%= form.password_field :post_password, class: 'diary-input', placeholder: editor[:placeholders][:password], autocomplete: 'current-password' %>
+          </label>
           <div class="diary-actions">
             <%= form.submit editor[:buttons][:save], class: 'btn btn-primary' %>
             <button type="button" class="btn btn-outline" data-action="click->diary#clearDraft"><%= editor[:buttons][:clear] %></button>
           </div>
         <% end %>
-        <div class="diary-secondary-actions">
-          <%= link_to 'ログアウト', logout_path, data: { turbo_method: :delete, turbo_confirm: 'ログアウトしますか？' }, class: 'btn btn-outline' %>
-        </div>
-      <% else %>
-        <div class="diary-login-callout">
-          <p>日記を追加するにはログインしてください。</p>
-          <%= link_to 'ログインする', login_path, class: 'btn btn-primary' %>
-        </div>
       <% end %>
     </article>
 
@@ -78,8 +78,11 @@
                     <p class="diary-item-author">by <%= entry.user.name %></p>
                   <% end %>
                 </div>
-                <% if logged_in? && entry.user_id == current_user.id %>
-                  <%= button_to editor[:delete_label], diary_entry_path(entry), method: :delete, class: 'diary-delete', form_class: 'diary-delete-form', data: { turbo_confirm: 'この日記を削除しますか？' } %>
+                <% unless static_export? %>
+                  <%= form_with url: diary_entry_path(entry), method: :delete, class: 'diary-delete-form', data: { turbo_confirm: 'この日記を削除しますか？' }, scope: :diary_entry do |form| %>
+                    <%= form.password_field :post_password, class: 'diary-input diary-delete-password', placeholder: editor[:placeholders][:password], autocomplete: 'current-password' %>
+                    <%= form.submit editor[:delete_label], class: 'diary-delete' %>
+                  <% end %>
                 <% end %>
               </div>
               <div class="diary-item-body">

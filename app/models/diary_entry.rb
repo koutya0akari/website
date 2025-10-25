@@ -1,5 +1,7 @@
 class DiaryEntry < ApplicationRecord
-  belongs_to :user
+  belongs_to :user, optional: true
+
+  attr_accessor :post_password
 
   validates :body, presence: true
   validates :entry_date, presence: true

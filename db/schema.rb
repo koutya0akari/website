@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_10_25_110046) do
+ActiveRecord::Schema[7.1].define(version: 2025_10_25_120000) do
   create_table "diary_entries", force: :cascade do |t|
-    t.integer "user_id", null: false
+    t.integer "user_id"
     t.string "title"
     t.date "entry_date"
     t.text "body"

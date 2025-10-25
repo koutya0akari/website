@@ -38,20 +38,6 @@ namespace :static do
         }
       },
       {
-        filename: 'login/index.html',
-        template: 'sessions/new',
-        assigns: -> {
-          site = PortfolioContent.home[:site]
-          {
-            content: {
-              page_title: 'ログイン',
-              meta_description: 'Akari Math Lab の学習日記にログインします。'
-            },
-            site: site
-          }
-        }
-      },
-      {
         filename: 'diary/index.html',
         template: 'pages/diary',
         assigns: -> {

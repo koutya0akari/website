@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>学習日記 | Akari Math Lab</title>
-    <meta name="description" content="学習の気づきを記録できる日記ページ。ログインしてサーバーに保存し、下書きはブラウザに残せます。">
+    <meta name="description" content="学習の気づきを記録できる日記ページ。投稿パスワードを入力するとサーバーに保存でき、下書きはブラウザに残ります。">
     
     
 
@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Signika+Negative:wght@600&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
 
-    <link rel="stylesheet" href="../assets/application-210777f992fe82ca117849bdbfb8ec8a2b522f83024df66d7f6be9b4c20dddff.css" data-turbo-track="reload" media="all" debug="false" />
+    <link rel="stylesheet" href="../assets/application-88a8cf12b58a6a4cb4414be585164eb6e517036bfd66a8ccd9fe1df3402384e0.css" data-turbo-track="reload" media="all" debug="false" />
     <script type="importmap" data-turbo-track="reload">{
   "imports": {
     "@hotwired/turbo-rails": "../assets/turbo.min-c74be0932cb32c32e67be87ed26ae1eae819736c1055a6a4056c773f2b044211.js",
@@ -43,7 +43,6 @@
 <script type="module">import "application"</script>
   </head>
   <body>
-
     <div class="page-wrap">
       <header>
         <nav class="nav" aria-label="主要ナビゲーション" data-controller="smooth-scroll">
@@ -72,9 +71,6 @@
               <li>
                 <a class="nav-link" href="../diary/index.html">Diary</a>
               </li>
-              <li>
-                <a class="nav-link" href="../login/index.html">ログイン</a>
-              </li>
           </ul>
         </nav>
       </header>
@@ -86,9 +82,9 @@
       <span class="section-eyebrow">Diary</span>
     <h2>学習日記を書く</h2>
     <p>
-  日々の学びや気づきを短くメモできるミニ日記です。ログインするとサーバーに保存され、
-  公開ページとして表示されます。下書きは端末のローカルストレージに自動保存されるため、
-  安心して書き進められます。
+  日々の学びや気づきを短くメモできるミニ日記です。投稿パスワードを知っているメンバーだけが
+  サーバーに記録を保存でき、公開ページにも反映されます。下書きは端末のローカルストレージに
+  自動保存されるので、安心して書き進められます。
 </p>
 
   </div>
@@ -100,14 +96,15 @@
         <span class="section-eyebrow">Entry</span>
       <h2>今日の記録</h2>
       <p>
-  タイトルと本文を入力し、「日記に追加」を押すと右側の一覧に公開されます。ログイン中はサーバーに保存され、閲覧者にも共有されます。
-  書いている途中の内容はブラウザに自動保存されるので、ページを離れても続きから再開できます。
+  タイトルと本文を入力し、「日記に追加」を押すと右側の一覧に公開されます。送信前に
+  投稿パスワードを入力するとサーバーに保存され、閲覧者にも共有されます。書いている途中の
+  内容はブラウザに自動保存されるため、ページを離れても続きから再開できます。
 </p>
 
 
-        <div class="diary-login-callout">
-          <p>日記を追加するにはログインしてください。</p>
-          <a class="btn btn-primary" href="../login/index.html">ログインする</a>
+
+        <div class="diary-password-callout">
+          <p>GitHub Pages の静的バージョンでは投稿機能を利用できません。</p>
         </div>
     </article>
 
@@ -129,7 +126,6 @@
             <a href="../index.html">Home</a>
             <a href="../about/index.html">About</a>
             <a href="../diary/index.html">Diary</a>
-              <a href="../login/index.html">Login</a>
             <a href="../index.html#contact">Contact</a>
           </div>
         </div>
