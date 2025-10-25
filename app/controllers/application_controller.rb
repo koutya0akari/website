@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-  helper_method :current_user, :logged_in?
+  helper_method :current_user, :logged_in?, :static_export?
 
   private
 
@@ -19,5 +19,9 @@ class ApplicationController < ActionController::Base
     return if logged_in?
 
     redirect_to login_path, alert: 'この操作にはログインが必要です。'
+  end
+
+  def static_export?
+    ENV['STATIC_EXPORT'] == 'true'
   end
 end
