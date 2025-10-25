@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About | Yu Math Lab</title>
+    <meta
+      name="description"
+      content="数学科の学生ユウのプロフィール。研究バックグラウンド、スキルセット、指導経験、登壇歴を紹介。"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Signika+Negative:wght@600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-wrap">
+      <header>
+        <nav class="nav" aria-label="主要ナビゲーション">
+          <a class="brand" href="index.html">
+            Yu Math Lab
+          </a>
+          <ul class="nav-list">
+            <li><a class="nav-link" href="index.html#about">プロフィール</a></li>
+            <li><a class="nav-link" href="index.html#focus">研究関心</a></li>
+            <li><a class="nav-link" href="index.html#projects">プロジェクト</a></li>
+            <li><a class="nav-link" href="index.html#timeline">活動記録</a></li>
+            <li><a class="nav-link" href="index.html#resources">リソース</a></li>
+            <li><a class="nav-link" href="about.html" aria-current="page">About</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <main>
+        <section class="section">
+          <div class="section-header">
+            <span class="section-eyebrow">Biography</span>
+            <h2>数学を軸に世界を見つめる</h2>
+            <p>
+              東京の大学で解析数論を専攻。抽象的な構造をデータサイエンス・デザインに落とし込み、数学の魅力を広く伝えることを目標にしています。
+              ここではこれまでの学習・研究・指導の歩みを紹介します。
+            </p>
+          </div>
+          <div class="split-grid">
+            <article class="profile-card">
+              <h3>研究・学習テーマ</h3>
+              <ul class="list-reset">
+                <li>
+                  <strong>ゼータ関数と L 関数</strong><br />
+                  リーマンゼータ関数の零点分布とモジュラー形式の保型表現に関心。Julia で数値実験を実施。
+                </li>
+                <li>
+                  <strong>数理モデリング</strong><br />
+                  最適輸送問題と組合せ最適化を応用し、需要予測・推薦システムに活用するプロジェクトを経験。
+                </li>
+                <li>
+                  <strong>数学 UX デザイン</strong><br />
+                  複素関数の変換をインタラクティブに体験できる UI を制作。教育現場での活用を目指す。
+                </li>
+              </ul>
+            </article>
+            <article class="profile-card" id="activities">
+              <h3>活動・受賞歴</h3>
+              <ul class="list-reset">
+                <li>
+                  <strong>2025</strong> ゼータ関数の特異点解析で学内研究奨励賞受賞。
+                </li>
+                <li>
+                  <strong>2024</strong> International Mathematics Competition 銀賞。
+                </li>
+                <li>
+                  <strong>2023</strong> 数学コミュニティ「Proof Sketch」を共同創設、100 名規模の輪講を運営。
+                </li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="section" id="writing">
+          <div class="section-header">
+            <span class="section-eyebrow">Writing &amp; Teaching</span>
+            <h2>書くことで学ぶ、教えることで深める</h2>
+            <p>
+              学部生・高校生向けに証明の読み方や問題解法を解説するオンライン記事を連載し、数学コンテストのコーチングも行っています。
+            </p>
+          </div>
+          <div class="card-grid">
+            <article class="card">
+              <h3>Proof Sketch ブログ</h3>
+              <p>解析・代数・トポロジーの学習ノートを公開。LaTeX ソースと図版生成スクリプトを GitHub で配布。</p>
+              <a class="resource-link" href="https://zenn.dev" target="_blank" rel="noopener">最新記事</a>
+            </article>
+            <article class="card">
+              <h3>数学コンテスト指導</h3>
+              <p>高校生向けにオンライン講座を開講。数列・整式・不等式の応用問題で直感を養うカリキュラム。</p>
+              <a class="resource-link" href="mailto:hello@yu-math.dev">指導の相談をする</a>
+            </article>
+            <article class="card">
+              <h3>勉強会資料</h3>
+              <p>大学の輪講資料や発表スライドを Speaker Deck で公開。読書会のアーカイブも整理中。</p>
+              <a class="resource-link" href="https://speakerdeck.com" target="_blank" rel="noopener">Speaker Deck</a>
+            </article>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-header">
+            <span class="section-eyebrow">Skills</span>
+            <h2>使いこなす言語・ツール・ライブラリ</h2>
+            <p>研究と開発を横断する技術スタックと、数学を魅力的に伝えるためのデザインツール。</p>
+          </div>
+          <div class="card-grid">
+            <article class="card">
+              <h3>Mathematics</h3>
+              <p>解析数論 / 代数的数論 / 表現論 / 微分幾何の基礎。専門書の輪講経験と演習問題の執筆。</p>
+            </article>
+            <article class="card">
+              <h3>Programming</h3>
+              <p>Python, Julia, TypeScript, Ruby。SageMath・SymPy での数値・象徴計算の自動化。</p>
+            </article>
+            <article class="card">
+              <h3>Design &amp; Tooling</h3>
+              <p>Figma, Blender, Adobe Illustrator。在学中に加筆した図版を教材に提供。</p>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <div class="footer-inner">
+          <p>© 2025 Yu Math Lab. ご覧いただきありがとうございます。</p>
+          <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="#writing">Writing</a>
+            <a href="mailto:hello@yu-math.dev">Contact</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
