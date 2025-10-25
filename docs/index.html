@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ユウ・数学学生ポートフォリオ</title>
+    <title>Akariポートフォリオ</title>
     <meta
       name="description"
-      content="数論とデータサイエンスを学ぶ大学生ユウのポートフォリオ。研究テーマ、制作プロジェクト、発表記録、学習リソースをまとめた GitHub Pages サイト。"
+      content="Akariのポートフォリオ。研究テーマ、制作プロジェクト、発表記録、学習リソースをまとめた GitHub Pages サイト。"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -35,10 +35,9 @@
         <section class="hero" id="about">
           <div class="hero-inner">
             <div class="hero-intro">
-              <span class="tagline">Number Theory × Data Science × Visualization</span>
-              <h1>ユウ / 数学科 3 年</h1>
+              <span class="tagline">Algebraic Geometry × Category Theory × Representation Theory</span>
+              <h1>Akari / B2</h1>
               <p>
-                解析数論を研究しながら、データサイエンスや可視化技術で抽象的な構造を見える形にすることに情熱を注いでいます。
                 GitHub Pages を活用したこのホームページでは、大学での学び、研究ログ、個人制作、発表資料をまとめています。
               </p>
               <div class="hero-actions">
@@ -46,7 +45,7 @@
                 <a class="btn btn-outline" href="about.html">自己紹介を読む</a>
               </div>
               <ul class="pill-list">
-                <li class="pill">💡 解析数論・L 関数</li>
+                <li class="pill">🔍 研究テーマ: 代数幾何学 × 圏論 × 表現論</li>
                 <li class="pill">🧮 数学コンテストコーチング</li>
                 <li class="pill">💻 Python / Julia / Ruby</li>
               </ul>
@@ -55,16 +54,16 @@
               <h2>現在のテーマ</h2>
               <div class="profile-grid">
                 <div>
-                  <strong>ゼータ関数の振る舞いの可視化</strong>
-                  <p>複素平面上の零点分布を WebGL と GPU シェーダで描画する研究プロトタイプを開発。</p>
+                  <strong>代数幾何学</strong>
+                  <p>スキーム論の基礎を学習中。</p>
                 </div>
                 <div>
-                  <strong>数理モデリングゼミ</strong>
-                  <p>離散最適化とゲーム理論を組み合わせ、現実課題を数理モデルとして分析。</p>
+                  <strong>圏論</strong>
+                  <p>抽象的構造を捉えるための道具として学習中。</p>
                 </div>
                 <div>
-                  <strong>Proof Sketch ブログ</strong>
-                  <p>毎週 1 本、数論・可換代数・カテゴリ理論の復習ノートを公開中。</p>
+                  <strong>表現論</strong>
+                  <p>群の表現を通じて、代数的構造の理解を深めることに取り組んでいます。</p>
                 </div>
               </div>
             </aside>
@@ -75,23 +74,30 @@
           <div class="section-header">
             <span class="section-eyebrow">Focus</span>
             <h2>取り組んでいる学習領域</h2>
-            <p>大学の輪講・自主ゼミ・インターンで磨いている数理領域と、その背景となるツール群。</p>
+            <p>自主ゼミを通じて、以下のテーマに取り組んでいます。</p>
+            <ul class="list-reset pill-list">
+              <li class="pill">スキーム論</li>
+              <li class="pill">無限圏論</li>
+              <li class="pill">可換環論</li>
+              <li class="pill">ホモトピー型理論</li>
+              <li class="pill">Topos理論</li>
+            </ul>
           </div>
           <div class="card-grid">
             <article class="card">
-              <h3>保型形式と L 関数</h3>
-              <p>モジュラー形式のフーリエ係数とゼータ関数の零点分布を、計算実験と文献輪講を通じて追いかけています。</p>
+              <h3>スキーム論</h3>
+              <p>スキームの基本概念とその応用について学習中。</p>
               <span class="badge">SageMath / PARI</span>
             </article>
             <article class="card">
-              <h3>離散最適化とゲーム理論</h3>
-              <p>整数計画法とメカニズムデザインを応用し、共同研究で産業データの分析を実施。</p>
-              <span class="badge">Gurobi / Python</span>
+              <h3>無限圏論</h3>
+              <p>ホモトピー+圏論の視点から、無限圏の構造を探求中。</p>
+              <span class="badge">Catlab / Julia</span>
             </article>
             <article class="card">
-              <h3>数式可視化と UI デザイン</h3>
-              <p>Three.js と D3.js でインタラクティブなグラフ・複素関数の可視化体験を設計。</p>
-              <span class="badge">TypeScript / WebGL</span>
+              <h3>表現論</h3>
+              <p>群の表現を通じて、代数的構造の理解を深めることに取り組んでいます。</p>
+              <span class="badge">SageMath / PARI</span>
             </article>
           </div>
         </section>
@@ -102,47 +108,27 @@
             <h2>代表的な制作・研究プロジェクト</h2>
             <p>GitHub で公開している自主制作物とゼミでの成果物のスナップショット。</p>
           </div>
-          <div class="card-grid">
-            <article class="card">
-              <h3>Zeta Explorer</h3>
-              <p>リーマンゼータ関数の零点を可視化する Web アプリ。ユーザーがパラメータを操作して複素関数の振る舞いを体感。</p>
-              <a class="resource-link" href="https://github.com" target="_blank" rel="noopener">GitHub</a>
-            </article>
-            <article class="card">
-              <h3>Proof Sketch</h3>
-              <p>毎週更新の学習ノート。LaTeX と Julia を組み合わせて証明を実装し、そのままページに展開。</p>
-              <a class="resource-link" href="about.html#writing">学習ノート</a>
-            </article>
-            <article class="card">
-              <h3>Contest Analytics</h3>
-              <p>数学コンテストの出題傾向をデータベース化し、受験生向けの学習レコメンドを生成。</p>
-              <a class="resource-link" href="about.html#activities">詳細を見る</a>
-            </article>
-          </div>
         </section>
 
         <section class="section" id="timeline">
           <div class="section-header">
             <span class="section-eyebrow">Timeline</span>
             <h2>最近の活動ログ</h2>
-            <p>学会発表やゼミでの登壇、外部コンテスト参加などの記録をピックアップ。</p>
+            <p>講演やゼミの記録をピックアップ。</p>
           </div>
           <ul class="timeline">
             <li class="timeline-item">
-              <h4>2025 春学期</h4>
-              <p>卒業研究としてゼータ関数の特異点解析を開始。Hecke 作用素のスペクトル解析を進める。</p>
+              <h4>2025 秋</h4>
+              <p>第8回すうがく徒のつどいで「層からGrothendieck Toposへの入門」を講演</p>
             </li>
             <li class="timeline-item">
-              <h4>2024 冬</h4>
-              <p>国際学生数学コンテスト IMC に出場。解析部門で銀賞を獲得し、論文をまとめる。</p>
+              <h4>2025 夏</h4>
+              <p>spm29th参加・運営</p>
             </li>
             <li class="timeline-item">
-              <h4>2024 夏</h4>
-              <p>数理モデリングインターンに参加し、需要予測モデルを最適化。結果を企業向けに講演。</p>
-            </li>
-            <li class="timeline-item">
-              <h4>2024 春</h4>
-              <p>大学合同ゼミで「保型形式の L 関数の零点分布」について発表し、資料を公開。</p>
+              <h4>2025 春</h4>
+              <p>第7回すうがく徒のつどいで「中山の補題のいろいろ」を講演</p>
+              <p>spm28th参加</p>
             </li>
           </ul>
         </section>
@@ -153,13 +139,12 @@
               <span class="section-eyebrow">Profile</span>
               <h2>自己紹介</h2>
               <p>
-                都内大学の数学科に所属。解析数論と美しい証明スタイルに惹かれて学び始め、今では数式を実装し可視化することで、
-                多くの人に数学の面白さを伝える活動をしています。研究以外では、数学コンテストのコーチングと技術同人誌の執筆が趣味です。
+                徳島大学理工学部理工学科数理科学コースB2所属。主に代数幾何学を専攻し、圏論などの抽象的概念を用いた数学の統一を目指しています。「すうがく徒のつどい」や「数物セミナー」の運営を通じて、数学の魅力を広める活動にも注力しています。
               </p>
               <ul class="list-reset pill-list">
                 <li class="pill">指導経験: 高校数学オリンピック対策</li>
                 <li class="pill">好きな定理: ペロンの定理</li>
-                <li class="pill">今読んでいる本: Iwaniec &amp; Kowalski</li>
+                <li class="pill">今読んでいる本: 松村可換環論、Liu、SGL、TeXbook、代数的サイクルと絵タールコホモロジー</li>
               </ul>
             </article>
             <article class="profile-card" id="contact">
@@ -190,7 +175,7 @@
 
       <footer>
         <div class="footer-inner">
-          <p>© 2025 Yu Math Lab. Crafted for GitHub Pages.</p>
+          <p>© 2025 Akari Math Lab. Crafted for GitHub Pages.</p>
           <div class="footer-links">
             <a href="index.html">Home</a>
             <a href="about.html">About</a>
