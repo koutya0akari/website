@@ -1,0 +1,61 @@
+page_title: "About"
+meta_description: "Akariのプロフィールを紹介。"
+site:
+  brand: "Akari Math Lab"
+hero:
+  eyebrow: "Biography"
+  title: "Recoltes et Semailles"
+  description_html: |
+    <p>
+      徳島大学理工学部理工学科数理科学コースB2所属。主に代数幾何学を専攻し、圏論などの抽象的概念を用いた数学の統一を目指しています。「すうがく徒のつどい」や「数物セミナー」の運営を通じて、数学の魅力を広める活動にも注力しています。
+    </p>
+  columns:
+    - title: "学習テーマ"
+      body_html: |
+        <ul class="list-reset">
+          <li><strong>導来代数幾何</strong></li>
+          <p>現代的な「正しい」代数幾何を学ぶことを目指しています。</p>
+          <li><strong>幾何学的ラングランズ対応</strong></li>
+          <p>表現論と数論の橋渡しを理解したいです。</p>
+          <li><strong>McKay対応</strong></li>
+          <p>有限群の表現と幾何学的対象の関係性に興味があります。</p>
+          <li><strong>TeX</strong></li>
+          <p>数学文書作成の基盤技術として、Knuthの思想を理解したいです。</p>
+        </ul>
+    - title: "活動"
+      id: "activities"
+      body_html: |
+        <ul class="list-reset">
+          <li>
+            <strong>2025</strong> 
+            <ul>
+              <li>第8回すうがく徒のつどい参加・運営。</li>
+              <li>第7回すうがく徒のつどい参加・運営。</li>
+              <li>spm29th参加・運営。</li>
+              <li>spmAdv7th参加。</li>
+            </ul>
+          </li>
+          <li>
+            <strong>2024</strong> 
+            <ul>
+              <li>第6回すうがく徒のつどい参加・運営。</li>
+              <li>第5回すうがく徒のつどい参加・運営。</li>
+              <li>spm28th参加</li>
+            </ul>
+          </li>
+          <li>
+            <strong>2022</strong> 
+            <ul>
+              <li>第42回数理の翼夏季セミナー参加。</li>
+            </ul>
+          </li>
+        </ul>
+skills:
+  eyebrow: "Skills"
+  title: "スキル"
+  description_html: "<p>数学をメインとして、プログラミングなども細々と学んでいます。</p>"
+  cards:
+    - title: "Mathematics"
+      body_html: "<p>代数幾何/圏論/表現論/可換環論</p>"
+    - title: "Programming"
+      body_html: "<p>TeX/C++/Python/Ruby/Rust/HTML/CSS/JavaScript</p>"

@@ -10,22 +10,34 @@ namespace :static do
     FileUtils.rm_rf(output_dir)
     FileUtils.mkdir_p(output_dir)
 
-    pages = {
-      'index.html' => 'pages/home',
-      'research/index.html' => 'pages/research',
-      'teaching/index.html' => 'pages/teaching',
-      'talks/index.html' => 'pages/talks',
-      'publications/index.html' => 'pages/publications',
-      'contact/index.html' => 'pages/contact'
-    }
+    pages = [
+      {
+        filename: 'index.html',
+        template: 'pages/home',
+        assigns: -> {
+          content = PortfolioContent.home
+          { content: content, site: content[:site] }
+        }
+      },
+      {
+        filename: 'about/index.html',
+        template: 'pages/about',
+        assigns: -> {
+          content = PortfolioContent.about
+          { content: content, site: content[:site] }
+        }
+      }
+    ]
 
-    pages.each do |filename, template|
+    pages.each do |page|
+      assigns = page[:assigns].call
       html = ApplicationController.render(
-        template: template,
-        layout: 'application'
+        template: page[:template],
+        layout: 'application',
+        assigns: assigns
       )
 
-      destination = output_dir.join(filename)
+      destination = output_dir.join(page[:filename])
       FileUtils.mkdir_p(destination.dirname)
       File.write(destination, html)
     end

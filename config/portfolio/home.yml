@@ -1,0 +1,110 @@
+page_title: "Akariポートフォリオ"
+meta_description: "Akariのポートフォリオ。研究テーマ、制作プロジェクト、発表記録、学習リソースをまとめた GitHub Pages サイト。"
+site:
+  brand: "Akari Math Lab"
+hero:
+  tagline: "Algebraic Geometry × Category Theory × Representation Theory"
+  name: "Akari"
+  description_html: |
+    <p>
+      GitHub Pages を活用したこのホームページでは、大学での学び、自主ゼミ資料、趣味の成果物をまとめています。
+    </p>
+  actions:
+    - label: "代表的な制作物へ"
+      href: "#projects"
+      style: "primary"
+    - label: "自己紹介を読む"
+      path_helper: about_path
+      style: "outline"
+  pills:
+    - "🔍 研究テーマ: 代数幾何学 × 圏論 × 表現論"
+    - "💻 TeX、C++、Ruby"
+  highlights:
+    - title: "導来代数幾何"
+      description_html: "<p>現代的な「正しい」代数幾何を学ぶことを目指しています。</p>"
+    - title: "幾何学的ラングランズ対応"
+      description_html: "<p>表現論と数論の橋渡しを理解したいです。</p>"
+    - title: "McKay対応"
+      description_html: "<p>有限群の表現と幾何学的対象の関係性に興味があります。</p>"
+    - title: "TeX"
+      description_html: "<p>数学文書作成の基盤技術として、Knuthの思想を理解したいです。</p>"
+focus:
+  eyebrow: "Focus"
+  title: "取り組んでいる学習領域"
+  description_html: "<p>自主ゼミを通じて、以下のテーマに取り組んでいます。</p>"
+  pills_html: |
+    <li class="pill">スキーム論</li>
+    <li class="pill">可換環論</li>
+    <li class="pill">(無限)圏論</li>
+    <li class="pill">ホモトピー型理論</li>
+    <li class="pill">Topos理論</li>
+    <li class="pill">表現論</li>
+    <li class="pill">TeX</li>
+  topics:
+    - title: "スキーム論"
+      body_html: "<p>Liuの「Algebraic Geometry and Arithmetic Curves」を友人らとの自主ゼミで読み進め、スキーム論の基礎を学習中。また、スキームの応用については、Huybrechts の「Fourier-Mukai Transforms in Algebraic Geometry」を参考に一人で学習しています。導来代数幾何が目標です。</p>"
+    - title: "可換環論"
+      body_html: "<p>スキーム論を学ぶなら、可換環論は必要だろうということで、可換環の基本概念とその応用について松村の「復刊 可換環論」で自主ゼミを行っています。</p>"
+    - title: "(無限)圏論"
+      body_html: |
+        <p>導来代数幾何を念頭に学習中。Haugseng の 「Yet Another Introduction to Infinity Categories」を読み進めています。今後、ゼミになる可能性があります。synthetic なアプローチにも興味があり、Rijke の「An Introduction to Homotopy Type Theory」</a>でHomotopy Type Theoryの基礎をゼミを通して学んでおり、いずれ、Emily Riehl, Michael Shulmanの「A type theory for synthetic \(\infty\) -categories」</a>を学習したいと考えています。<br/>
+        <ul>
+          <li>Rijke : <a class="resource-link" href="https://arxiv.org/abs/2212.11082" target="_blank" rel="noopener">https://arxiv.org/abs/2212.11082</a></li>
+          <li>Riehl, Shulman: <a class="resource-link" href="https://arxiv.org/abs/1705.07442" target="_blank" rel="noopener">https://arxiv.org/abs/1705.07442</a></li>
+        </ul>
+        </p>
+    - title: "Topos理論"
+      body_html: "<p>圏論の学習と並行して、Topos理論にも取り組んでいます。Mac Lane, Moerdijk の「Sheaves in Geometry and Logic」を自主ゼミで読み進め、Grothendieck topos とその応用について学んでいます。将来的には、Johnstone の「Sketches of an Elephant」も読みたいと考えています。空間としてのToposの理解を深めたいです。</p>"
+    - title: "表現論"
+      body_html: "<p>群の表現を通じて、代数的構造の理解を深めることに取り組んでいます。D-加群や傾理論などの学習をしています。現在は、Assem, Simson, Skowrońskiの「Elements of the Representation Theory of Associative Algebras」を一人で読んでいます。</p>"
+    - title: "TeX"
+      body_html: "<p>数学の文書作成に必須なツールであるTeXの習得のため、Knuthの「The TeXbook」を参考に、プリミティブな部分のゼミを行っています。Knuthの本を通じて、その思想を体現できるような組版を行えるようになることを目標としています。</p>"
+projects:
+  eyebrow: "Projects"
+  title: "代表的な制作・研究プロジェクト"
+  description_html: "<p>GitHub で公開している自主制作物とゼミでの成果物。</p>"
+  items: []
+timeline:
+  eyebrow: "Timeline"
+  title: "最近の活動ログ"
+  description_html: "<p>講演やゼミの記録をピックアップ。</p>"
+  items:
+    - period: "2025 秋"
+      details:
+        - "第8回すうがく徒のつどいで「層からGrothendieck Toposへの入門」を講演"
+    - period: "2025 夏"
+      details:
+        - "spm29th参加・運営"
+        - "spmAdv7th参加。"
+    - period: "2025 春"
+      details:
+        - "第7回すうがく徒のつどいで「中山の補題のいろいろ」を講演"
+        - "spm28th参加"
+resources:
+  profile:
+    eyebrow: "Profile"
+    title: "自己紹介"
+    description_html: |
+      <p>
+        徳島大学理工学部理工学科数理科学コースB2所属。<br />
+        主に代数幾何学を専攻し、圏論などの抽象的概念を用いた数学の統一を目指しています。「すうがく徒のつどい」や「数物セミナー」の運営を通じて、数学の魅力を広める活動にも注力しています。
+      </p>
+    highlights:
+      - "最近の興味: フロントエンド開発"
+      - "今読んでいる本: 松村可換環論、Liu、SGL、代数的サイクルとエタールコホモロジー、ASS、TeXbook、"
+  links:
+    eyebrow: "Resources"
+    title: "資料・リンク"
+    items:
+      - heading: "GitHub"
+        label: "github.com/koutya0akari"
+        url: "https://github.com/koutya0akari"
+      - heading: "はてなブログ"
+        label: "akari0koutya.hatenablog.com"
+        url: "https://akari0koutya.hatenablog.com/"
+      - heading: "Twitter"
+        label: "twitter.com/akari0koutya"
+        url: "https://twitter.com/akari0koutya"
+      - heading: "Contact"
+        label: "koutya0akari[at]gmail.com"
+        url: "mailto:koutya0akari[at]gmail.com"

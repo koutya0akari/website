@@ -1,42 +1,76 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><%= page_title(content_for?(:title) ? yield(:title) : nil) %></title>
-    <meta name="description" content="大学で数学を学ぶ学生ユウのポートフォリオ。研究プロジェクト、学習ノート、イベント登壇、アウトプットをまとめた GitHub Pages 向けウェブサイト。">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= page_title(content_for?(:title) ? yield(:title) : nil, @site) %></title>
+    <% meta_description = @content&.dig(:meta_description) || 'Akari Math Lab のポートフォリオサイト。' %>
+    <meta name="description" content="<%= meta_description %>">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Signika+Negative:wght@600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
 
     <%= stylesheet_link_tag 'application', 'data-turbo-track': 'reload', media: 'all' %>
     <%= javascript_importmap_tags %>
   </head>
   <body>
-    <nav class="navbar">
-      <div class="container">
-        <%= link_to t('math_website.title'), root_path, class: 'brand' %>
-        <div class="nav-links">
-          <%= nav_link(:home, root_path) %>
-          <%= nav_link(:research, research_path) %>
-          <%= nav_link(:teaching, teaching_path) %>
-          <%= nav_link(:talks, talks_path) %>
-          <%= nav_link(:publications, publications_path) %>
-          <%= nav_link(:contact, contact_path) %>
+    <% brand = @site&.dig(:brand) || 'Akari Math Lab' %>
+    <% nav_items =
+         if controller.action_name == 'home'
+           [
+             { label: 'プロフィール', href: '#about' },
+             { label: '研究関心', href: '#focus' },
+             { label: 'プロジェクト', href: '#projects' },
+             { label: '活動記録', href: '#timeline' },
+             { label: 'リソース', href: '#resources' },
+             { label: 'About', href: about_path }
+           ]
+         else
+           [
+             { label: 'ホーム', href: root_path },
+             { label: 'プロフィール', href: root_path(anchor: 'about') },
+             { label: '研究関心', href: root_path(anchor: 'focus') },
+             { label: 'プロジェクト', href: root_path(anchor: 'projects') },
+             { label: '活動記録', href: root_path(anchor: 'timeline') },
+             { label: 'About', href: about_path, active: controller.action_name == 'about' }
+           ]
+         end %>
+
+    <div class="page-wrap">
+      <header>
+        <nav class="nav" aria-label="主要ナビゲーション" data-controller="smooth-scroll">
+          <%= link_to brand, root_path, class: 'brand' %>
+          <ul class="nav-list">
+            <% nav_items.each do |item| %>
+              <% classes = ['nav-link'] << ('is-active' if item[:active]) %>
+              <% data_attributes = {} %>
+              <% data_attributes[:action] = 'smooth-scroll#scroll' if item[:href].is_a?(String) && item[:href].include?('#') %>
+              <li>
+                <%= link_to item[:label], item[:href], class: classes.compact.join(' '), aria: (item[:active] ? { current: 'page' } : nil), data: (data_attributes.presence) %>
+              </li>
+            <% end %>
+          </ul>
+        </nav>
+      </header>
+
+      <main>
+        <%= yield %>
+      </main>
+
+      <footer>
+        <div class="footer-inner">
+          <p>© <%= Time.current.year %> <%= brand %>. Crafted for GitHub Pages.</p>
+          <div class="footer-links">
+            <%= link_to 'Home', root_path %>
+            <%= link_to 'About', about_path %>
+            <%= link_to 'Contact', controller.action_name == 'home' ? '#contact' : root_path(anchor: 'contact') %>
+          </div>
         </div>
-      </div>
-    </nav>
-
-    <main>
-      <%= yield %>
-    </main>
-
-    <footer class="footer">
-      <p>&copy; <%= Time.current.year %> <%= t('math_website.title') %></p>
-      <p>
-        <%= link_to 'GitHub', 'https://github.com', target: '_blank', rel: 'noopener' %>
-        <%= link_to 'Zenn', 'https://zenn.dev', target: '_blank', rel: 'noopener' %>
-        <%= link_to 'Speaker Deck', 'https://speakerdeck.com', target: '_blank', rel: 'noopener' %>
-      </p>
-    </footer>
+      </footer>
+    </div>
   </body>
 </html>

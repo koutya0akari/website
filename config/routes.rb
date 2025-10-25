@@ -3,6 +3,8 @@
 Rails.application.routes.draw do
   root 'pages#home'
 
+  get 'about', to: 'pages#about'
+
   get 'research', to: 'pages#research'
   get 'teaching', to: 'pages#teaching'
   get 'talks', to: 'pages#talks'

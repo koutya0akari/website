@@ -1,44 +1,65 @@
-# 数学者ポートフォリオ（Ruby on Rails）
+# Akari Math Lab – 数学科学生のポートフォリオ (Rails)
 
-Ruby on Rails で構築した数学者向けのポートフォリオサイトです。研究概要、教育活動、講演情報、出版物、連絡先を整理し、最新の実績を紹介するシンプルなシングルユーザーアプリケーションになっています。
+Akari の学習・研究活動を紹介するポートフォリオを Ruby on Rails で構築したプロジェクトです。静的 HTML だった `docs/` の構成を分析し、Rails のビューと YAML コンテンツに置き換えて動的にレンダリングできるようにしました。
 
-## 主な機能
+## 主な特徴
 
-- トップページで研究トピックと最新の成果を紹介
-- 研究・教育・講演・出版・連絡先の各ページを個別に整備
-- Rails の `importmap` と Sprockets によるシンプルなフロントエンド構成
-- 日本語を主体としたメタデータとデザインを設定
+- `config/portfolio/*.yml` に定義したデータを読み込み、ヒーローセクションからタイムラインまでを動的に構成
+- `app/views/pages/home.html.erb` / `about.html.erb` で繰り返し要素をループ処理し、カード・タイムラインを簡単に追加可能
+- Google Fonts (Inter, Signika Negative) と MathJax をレイアウトに組み込み、数学系コンテンツ向けの見た目を整備
+- `app/assets/stylesheets/application.css` にレスポンシブ対応のカスタムデザインを集約
+- Stimulus を用いたハイライトの自動ローテーションやスクロール時のフェードイン、スムーズスクロールで動的な体験を提供
 
-## 開発環境のセットアップ
+## セットアップ
 
-1. 必要な Ruby（3.2 以上）と Node.js（任意）を用意します。
+1. Ruby 3.2.3 以上を用意し、Bundler をインストールします。
 2. 依存関係をインストールします。
 
    ```bash
    bundle install
    ```
 
-   ※ このリポジトリでは `rails` や関連 gem を取得するためにネットワークアクセスが必要です。環境によっては `bundle install` 実行時に 403 エラーが発生する場合があります。その際はプロキシ設定やミラーを利用するなど、Rubygems にアクセスできるネットワーク環境で再実行してください。
-
-3. データベースをセットアップします（SQLite3 を想定）。
-
-   ```bash
-   bin/rails db:prepare
-   ```
-
-4. 開発サーバーを起動します。
+3. サーバーを起動し、`http://localhost:3000` にアクセスします。
 
    ```bash
    bin/rails server
    ```
 
-5. ブラウザで `http://localhost:3000` にアクセスするとサイトを確認できます。
+SQLite を利用する機能は現時点でありませんが、Rails がデータベース接続を求める場合は `bin/rails db:prepare` を実行してください。
 
-## デプロイ
+## コンテンツの更新方法
 
-- 静的アセットは Sprockets により `public/assets` 以下にプリコンパイルされます。
-- データベースには SQLite を使用していますが、本番環境では PostgreSQL 等への切り替えを推奨します。
-- `config/environments/production.rb` の設定を適宜調整し、`RAILS_SERVE_STATIC_FILES` 等の環境変数を設定してください。
+- ホームページ: `config/portfolio/home.yml`
+  - `hero` … タグライン、自己紹介、アクションボタン、ピル型ハイライト
+  - `focus` … 学習領域のカード群とカテゴリーリスト
+  - `projects` … プロジェクト概要（現在はヘッダーのみ）
+  - `timeline` … 活動ログ（年度・詳細）
+  - `resources` … 自己紹介と外部リンク集
+- About ページ: `config/portfolio/about.yml`
+  - `hero` … プロフィール概要と 2 カラムの詳細
+  - `skills` … カード形式で表示するスキルセット
+
+※ HTML をそのまま反映したい項目は `_html` で終わるフィールドに格納しています（例: `description_html`）。docs/ と同じ文面・リンク構造を保つため、文章の書き換えが不要な場合は文字列をそのまま維持してください。
+
+YAML を編集後はサーバーを再起動するか、Spring を使用している場合は `bin/spring stop` を実行すると確実に反映されます。
+
+## GitHub Pages 用の静的エクスポート
+
+Rails で整形した HTML をそのまま GitHub Pages に配置したい場合は、以下のタスクで `docs/` を再生成できます。
+
+```bash
+bin/rake static:export
+```
+
+生成されるファイル:
+
+```
+docs/
+├── index.html
+└── about/index.html
+```
+
+必要に応じて GitHub Pages の設定で Branch: `main`, Folder: `/docs` を選択してください。
 
 ## ライセンス
 

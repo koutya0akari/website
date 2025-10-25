@@ -1,0 +1,40 @@
+<% content_for :title, @content[:page_title] if @content[:page_title].present? %>
+<% hero = @content[:hero] %>
+<section class="section">
+  <div class="section-header">
+    <% if hero[:eyebrow].present? %>
+      <span class="section-eyebrow"><%= hero[:eyebrow] %></span>
+    <% end %>
+    <h2><%= hero[:title] %></h2>
+    <%= portfolio_html(hero[:description_html]) %>
+  </div>
+
+  <div class="split-grid">
+    <% hero[:columns].each do |column| %>
+      <%= content_tag :article, class: 'profile-card', id: column[:id] do %>
+        <h3><%= column[:title] %></h3>
+        <%= portfolio_html(column[:body_html]) %>
+      <% end %>
+    <% end %>
+  </div>
+</section>
+
+<% skills = @content[:skills] %>
+<section class="section">
+  <div class="section-header">
+    <% if skills[:eyebrow].present? %>
+      <span class="section-eyebrow"><%= skills[:eyebrow] %></span>
+    <% end %>
+    <h2><%= skills[:title] %></h2>
+    <%= portfolio_html(skills[:description_html]) %>
+  </div>
+
+  <div class="card-grid">
+    <% skills[:cards].each do |card| %>
+      <article class="card">
+        <h3><%= card[:title] %></h3>
+        <%= portfolio_html(card[:body_html]) %>
+      </article>
+    <% end %>
+  </div>
+</section>
