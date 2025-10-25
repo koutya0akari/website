@@ -2,200 +2,244 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Akariポートフォリオ</title>
-    <meta
-      name="description"
-      content="Akariのポートフォリオ。研究テーマ、制作プロジェクト、発表記録、学習リソースをまとめた GitHub Pages サイト。"
-    />
+    <title>Akariポートフォリオ | Akari Math Lab</title>
+    <meta name="description" content="Akariのポートフォリオ。研究テーマ、制作プロジェクト、発表記録、学習リソースをまとめた GitHub Pages サイト。">
+    
+    
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Signika+Negative:wght@600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+
+    <link rel="stylesheet" href="/assets/application.debug-7df835e6ada908971aef69662485645609dda3dbfb1d89077569637c869ce2a4.css" data-turbo-track="reload" media="all" />
+    <script type="importmap" data-turbo-track="reload">{
+  "imports": {
+    "@hotwired/turbo-rails": "/assets/turbo.min-c74be0932cb32c32e67be87ed26ae1eae819736c1055a6a4056c773f2b044211.js",
+    "@hotwired/stimulus": "/assets/stimulus.min-dd364f16ec9504dfb72672295637a1c8838773b01c0b441bd41008124c407894.js",
+    "@hotwired/stimulus-loading": "/assets/stimulus-loading-3576ce92b149ad5d6959438c6f291e2426c86df3b874c525b30faad51b0d96b3.js",
+    "application": "/assets/application-d6599296d836642d3edae471a75365d850b6f60b11d91a1a2c0155887f0fc14c.js",
+    "controllers": "/assets/controllers/index-7118ae5356638f17d8eceff18588d04a8810880de84d56c6ca64024d4c8b1b0d.js",
+    "controllers/application": "/assets/controllers/application-14340bc4258787b7e2e5bdb01f4ce33a6ac936dff543cd7956dabf1ab3dc1eed.js",
+    "controllers/hello_controller": "/assets/controllers/hello_controller-15001e57a31442f322082a7ff50b3d66dc0312ce2637e079417cf163588b6951.js",
+    "controllers/hero_highlight_controller": "/assets/controllers/hero_highlight_controller-3860745f2ec714a505b08f03a49efcb69ab3671acf19309887e2267b8122fefe.js",
+    "controllers/reveal_controller": "/assets/controllers/reveal_controller-2876389d07d6bb3959711368fd8693e2f222073e26bbf4d4e8afebe7256ab3da.js",
+    "controllers/smooth_scroll_controller": "/assets/controllers/smooth_scroll_controller-e7de3f67b934944fff50ef079302b0a71a0c3bdcb18ea0cd39e84354ff3f41fe.js"
+  }
+}</script>
+<link rel="modulepreload" href="/assets/turbo.min-c74be0932cb32c32e67be87ed26ae1eae819736c1055a6a4056c773f2b044211.js">
+<link rel="modulepreload" href="/assets/stimulus.min-dd364f16ec9504dfb72672295637a1c8838773b01c0b441bd41008124c407894.js">
+<link rel="modulepreload" href="/assets/stimulus-loading-3576ce92b149ad5d6959438c6f291e2426c86df3b874c525b30faad51b0d96b3.js">
+<link rel="modulepreload" href="/assets/application-d6599296d836642d3edae471a75365d850b6f60b11d91a1a2c0155887f0fc14c.js">
+<link rel="modulepreload" href="/assets/controllers/index-7118ae5356638f17d8eceff18588d04a8810880de84d56c6ca64024d4c8b1b0d.js">
+<link rel="modulepreload" href="/assets/controllers/application-14340bc4258787b7e2e5bdb01f4ce33a6ac936dff543cd7956dabf1ab3dc1eed.js">
+<link rel="modulepreload" href="/assets/controllers/hello_controller-15001e57a31442f322082a7ff50b3d66dc0312ce2637e079417cf163588b6951.js">
+<link rel="modulepreload" href="/assets/controllers/hero_highlight_controller-3860745f2ec714a505b08f03a49efcb69ab3671acf19309887e2267b8122fefe.js">
+<link rel="modulepreload" href="/assets/controllers/reveal_controller-2876389d07d6bb3959711368fd8693e2f222073e26bbf4d4e8afebe7256ab3da.js">
+<link rel="modulepreload" href="/assets/controllers/smooth_scroll_controller-e7de3f67b934944fff50ef079302b0a71a0c3bdcb18ea0cd39e84354ff3f41fe.js">
+<script type="module">import "application"</script>
   </head>
   <body>
+
     <div class="page-wrap">
       <header>
-        <nav class="nav" aria-label="主要ナビゲーション">
-          <a class="brand" href="index.html">
-            Akari Math Lab
-          </a>
+        <nav class="nav" aria-label="主要ナビゲーション" data-controller="smooth-scroll">
+          <a class="brand" href="/">Akari Math Lab</a>
           <ul class="nav-list">
-            <li><a class="nav-link" href="#about">プロフィール</a></li>
-            <li><a class="nav-link" href="#focus">研究関心</a></li>
-            <li><a class="nav-link" href="#projects">プロジェクト</a></li>
-            <li><a class="nav-link" href="#timeline">活動記録</a></li>
-            <li><a class="nav-link" href="#resources">リソース</a></li>
-            <li><a class="nav-link" href="about.html">About</a></li>
+              <li>
+                <a class="nav-link" href="/">ホーム</a>
+              </li>
+              <li>
+                <a class="nav-link" data-action="smooth-scroll#scroll" href="/#about">プロフィール</a>
+              </li>
+              <li>
+                <a class="nav-link" data-action="smooth-scroll#scroll" href="/#focus">研究関心</a>
+              </li>
+              <li>
+                <a class="nav-link" data-action="smooth-scroll#scroll" href="/#projects">プロジェクト</a>
+              </li>
+              <li>
+                <a class="nav-link" data-action="smooth-scroll#scroll" href="/#timeline">活動記録</a>
+              </li>
+              <li>
+                <a class="nav-link" href="/about">About</a>
+              </li>
           </ul>
         </nav>
       </header>
 
       <main>
         <section class="hero" id="about">
-          <div class="hero-inner">
-            <div class="hero-intro">
-              <span class="tagline">Algebraic Geometry × Category Theory × Representation Theory</span>
-              <h1>Akari</h1>
-              <p>
-                GitHub Pages を活用したこのホームページでは、大学での学び、自主ゼミ資料、趣味の成果物をまとめています。
-              </p>
-              <div class="hero-actions">
-                <a class="btn btn-primary" href="#projects">代表的な制作物へ</a>
-                <a class="btn btn-outline" href="about.html">自己紹介を読む</a>
-              </div>
-              <ul class="pill-list">
-                <li class="pill">🔍 研究テーマ: 代数幾何学 × 圏論 × 表現論</li>
-                <li class="pill">💻 TeX、C++、Ruby</li>
-              </ul>
-            </div>
-            <aside class="hero-card">
-              <h2>現在のテーマ</h2>
-              <div class="profile-grid">
-                <ul class="list-reset profile-list">
-                  <li><strong>導来代数幾何</strong></li>
-                  <p>現代的な「正しい」代数幾何を学ぶことを目指しています。</p>
-                  <li><strong>幾何学的ラングランズ対応</strong></li>
-                  <p>表現論と数論の橋渡しを理解したいです。</p>
-                  <li><strong>McKay対応</strong></li>
-                  <p>有限群の表現と幾何学的対象の関係性に興味があります。</p>
-                  <li><strong>TeX</strong></li>
-                  <p>数学文書作成の基盤技術として、Knuthの思想を理解したいです。</p>
-                </ul>
-              </div>
-            </aside>
-          </div>
-        </section>
+  <div class="hero-inner">
+    <div class="hero-intro">
+        <span class="tagline">Algebraic Geometry × Category Theory × Representation Theory</span>
+      <h1>Akari</h1>
+      <p>
+  GitHub Pages を活用したこのホームページでは、大学での学び、自主ゼミ資料、趣味の成果物をまとめています。
+</p>
 
-        <section class="section" id="focus">
-          <div class="section-header">
-            <span class="section-eyebrow">Focus</span>
-            <h2>取り組んでいる学習領域</h2>
-            <p>自主ゼミを通じて、以下のテーマに取り組んでいます。</p>
-              <li class="pill">スキーム論</li>
-              <li class="pill">可換環論</li>
-              <li class="pill">(無限)圏論</li>
-              <li class="pill">ホモトピー型理論</li>
-              <li class="pill">Topos理論</li>
-              <li class="pill">表現論</li>
-              <li class="pill">TeX</li>
-          </div>
-          <div class="card-grid">
-            <article class="card">
-              <h3>スキーム論</h3>
-              <p>Liuの「Algebraic Geometry and Arithmetic Curves」を友人らとの自主ゼミで読み進め、スキーム論の基礎を学習中。また、スキームの応用については、Huybrechts の「Fourier-Mukai Transforms in Algebraic Geometry」を参考に一人で学習しています。導来代数幾何が目標です。</p>
-            </article>
+        <div class="hero-actions">
+            <a class="btn btn-primary" data-action="smooth-scroll#scroll" href="#projects">代表的な制作物へ</a>
+            <a class="btn btn-outline" href="/about">自己紹介を読む</a>
+        </div>
+        <ul class="pill-list">
+            <li class="pill">🔍 研究テーマ: 代数幾何学 × 圏論 × 表現論</li>
+            <li class="pill">💻 TeX、C++、Ruby</li>
+        </ul>
+    </div>
+      <aside class="hero-card" data-controller="hero-highlight" data-hero-highlight-interval-value="7000">
+        <h2>現在のテーマ</h2>
+        <div class="profile-grid">
+          <ul class="list-reset profile-list" data-hero-highlight-target="list">
+              <li data-hero-highlight-target="item">
+                <strong>導来代数幾何</strong>
+                <p>現代的な「正しい」代数幾何を学ぶことを目指しています。</p>
+</li>              <li data-hero-highlight-target="item">
+                <strong>幾何学的ラングランズ対応</strong>
+                <p>表現論と数論の橋渡しを理解したいです。</p>
+</li>              <li data-hero-highlight-target="item">
+                <strong>McKay対応</strong>
+                <p>有限群の表現と幾何学的対象の関係性に興味があります。</p>
+</li>              <li data-hero-highlight-target="item">
+                <strong>TeX</strong>
+                <p>数学文書作成の基盤技術として、Knuthの思想を理解したいです。</p>
+</li>          </ul>
+        </div>
+      </aside>
+  </div>
+</section>
 
-            <article class="card">
-              <h3>可換環論</h3>
-              <p>スキーム論を学ぶなら、可換環論は必要だろうということで、可換環の基本概念とその応用について松村の「復刊 可換環論」で自主ゼミを行っています。</p>
-            </article>
+<section class="section" id="focus" data-controller="reveal" data-reveal-threshold-value="0.12">
+  <div class="section-header">
+      <span class="section-eyebrow">Focus</span>
+    <h2>取り組んでいる学習領域</h2>
+    <p>自主ゼミを通じて、以下のテーマに取り組んでいます。</p>
+    <li class="pill">スキーム論</li>
+<li class="pill">可換環論</li>
+<li class="pill">(無限)圏論</li>
+<li class="pill">ホモトピー型理論</li>
+<li class="pill">Topos理論</li>
+<li class="pill">表現論</li>
+<li class="pill">TeX</li>
 
-            <article class="card">
-              <h3>(無限)圏論</h3>
-              <p>導来代数幾何を念頭に学習中。Haugseng の 「Yet Another Introduction to Infinity Categories」を読み進めています。今後、ゼミになる可能性があります。synthetic なアプローチにも興味があり、Rijke の「An Introduction to Homotopy Type Theory」</a>でHomotopy Type Theoryの基礎をゼミを通して学んでおり、いずれ、Emily Riehl, Michael Shulmanの「A type theory for synthetic \(\infty\) -categories」</a>を学習したいと考えています。<br/>
-                <ul>
-                  <li>Rijke : <a class="resource-link" href="https://arxiv.org/abs/2212.11082" target="_blank" rel="noopener">https://arxiv.org/abs/2212.11082</a></li>
-                  <li>Riehl, Shulman: <a class="resource-link" href="https://arxiv.org/abs/1705.07442" target="_blank" rel="noopener">https://arxiv.org/abs/1705.07442</a></li>
-                </ul>
-            </article>
+  </div>
+  <div class="card-grid" data-reveal-target="container">
+      <article class="card" data-reveal-target="item">
+        <h3>スキーム論</h3>
+        <p>Liuの「Algebraic Geometry and Arithmetic Curves」を友人らとの自主ゼミで読み進め、スキーム論の基礎を学習中。また、スキームの応用については、Huybrechts の「Fourier-Mukai Transforms in Algebraic Geometry」を参考に一人で学習しています。導来代数幾何が目標です。</p>
+      </article>
+      <article class="card" data-reveal-target="item">
+        <h3>可換環論</h3>
+        <p>スキーム論を学ぶなら、可換環論は必要だろうということで、可換環の基本概念とその応用について松村の「復刊 可換環論」で自主ゼミを行っています。</p>
+      </article>
+      <article class="card" data-reveal-target="item">
+        <h3>(無限)圏論</h3>
+        <p>導来代数幾何を念頭に学習中。Haugseng の 「Yet Another Introduction to Infinity Categories」を読み進めています。今後、ゼミになる可能性があります。synthetic なアプローチにも興味があり、Rijke の「An Introduction to Homotopy Type Theory」</a>でHomotopy Type Theoryの基礎をゼミを通して学んでおり、いずれ、Emily Riehl, Michael Shulmanの「A type theory for synthetic \(\infty\) -categories」</a>を学習したいと考えています。<br/>
+<ul>
+  <li>Rijke : <a class="resource-link" href="https://arxiv.org/abs/2212.11082" target="_blank" rel="noopener">https://arxiv.org/abs/2212.11082</a></li>
+  <li>Riehl, Shulman: <a class="resource-link" href="https://arxiv.org/abs/1705.07442" target="_blank" rel="noopener">https://arxiv.org/abs/1705.07442</a></li>
+</ul>
+</p>
 
-            <article class="card">
-              <h3>Topos理論</h3>
-              <p>圏論の学習と並行して、Topos理論にも取り組んでいます。Mac Lane, Moerdijk の「Sheaves in Geometry and Logic」を自主ゼミで読み進め、Grothendieck topos とその応用について学んでいます。将来的には、Johnstone の「Sketches of an Elephant」も読みたいと考えています。空間としてのToposの理解を深めたいです。</p>
-            </article>
+      </article>
+      <article class="card" data-reveal-target="item">
+        <h3>Topos理論</h3>
+        <p>圏論の学習と並行して、Topos理論にも取り組んでいます。Mac Lane, Moerdijk の「Sheaves in Geometry and Logic」を自主ゼミで読み進め、Grothendieck topos とその応用について学んでいます。将来的には、Johnstone の「Sketches of an Elephant」も読みたいと考えています。空間としてのToposの理解を深めたいです。</p>
+      </article>
+      <article class="card" data-reveal-target="item">
+        <h3>表現論</h3>
+        <p>群の表現を通じて、代数的構造の理解を深めることに取り組んでいます。D-加群や傾理論などの学習をしています。現在は、Assem, Simson, Skowrońskiの「Elements of the Representation Theory of Associative Algebras」を一人で読んでいます。</p>
+      </article>
+      <article class="card" data-reveal-target="item">
+        <h3>TeX</h3>
+        <p>数学の文書作成に必須なツールであるTeXの習得のため、Knuthの「The TeXbook」を参考に、プリミティブな部分のゼミを行っています。Knuthの本を通じて、その思想を体現できるような組版を行えるようになることを目標としています。</p>
+      </article>
+  </div>
+</section>
 
-            <article class="card">
-              <h3>表現論</h3>
-              <p>群の表現を通じて、代数的構造の理解を深めることに取り組んでいます。D-加群や傾理論などの学習をしています。現在は、Assem, Simson, Skowrońskiの「Elements of the Representation Theory of Associative Algebras」を一人で読んでいます。</p>
-            </article>
+<section class="section" id="projects" data-controller="reveal" data-reveal-threshold-value="0.1">
+  <div class="section-header">
+      <span class="section-eyebrow">Projects</span>
+    <h2>代表的な制作・研究プロジェクト</h2>
+    <p>GitHub で公開している自主制作物とゼミでの成果物。</p>
+  </div>
+</section>
 
-            <article class="card">
-              <h3>TeX</h3>
-              <p>数学の文書作成に必須なツールであるTeXの習得のため、Knuthの「The TeXbook」を参考に、プリミティブな部分のゼミを行っています。Knuthの本を通じて、その思想を体現できるような組版を行えるようになることを目標としています。</p>
-          </div>
-        </section>
+<section class="section" id="timeline" data-controller="reveal" data-reveal-threshold-value="0.08">
+  <div class="section-header">
+      <span class="section-eyebrow">Timeline</span>
+    <h2>最近の活動ログ</h2>
+    <p>講演やゼミの記録をピックアップ。</p>
+  </div>
+  <ul class="timeline" data-reveal-target="container">
+      <li class="timeline-item" data-reveal-target="item">
+        <h4>2025 秋</h4>
+          <p>第8回すうがく徒のつどいで「層からGrothendieck Toposへの入門」を講演</p>
+      </li>
+      <li class="timeline-item" data-reveal-target="item">
+        <h4>2025 夏</h4>
+          <p>spm29th参加・運営</p>
+          <p>spmAdv7th参加。</p>
+      </li>
+      <li class="timeline-item" data-reveal-target="item">
+        <h4>2025 春</h4>
+          <p>第7回すうがく徒のつどいで「中山の補題のいろいろ」を講演</p>
+          <p>spm28th参加</p>
+      </li>
+  </ul>
+</section>
 
-        <section class="section" id="projects">
-          <div class="section-header">
-            <span class="section-eyebrow">Projects</span>
-            <h2>代表的な制作・研究プロジェクト</h2>
-            <p>GitHub で公開している自主制作物とゼミでの成果物。</p>
-          </div>
-        </section>
+<section class="section" id="resources" data-controller="reveal" data-reveal-threshold-value="0.12">
+  <div class="split-grid">
+    <article class="profile-card" data-reveal-target="item">
+        <span class="section-eyebrow">Profile</span>
+      <h2>自己紹介</h2>
+      <p>
+  徳島大学理工学部理工学科数理科学コースB2所属。<br />
+  主に代数幾何学を専攻し、圏論などの抽象的概念を用いた数学の統一を目指しています。「すうがく徒のつどい」や「数物セミナー」の運営を通じて、数学の魅力を広める活動にも注力しています。
+</p>
 
-        <section class="section" id="timeline">
-          <div class="section-header">
-            <span class="section-eyebrow">Timeline</span>
-            <h2>最近の活動ログ</h2>
-            <p>講演やゼミの記録をピックアップ。</p>
-          </div>
-          <ul class="timeline">
-            <li class="timeline-item">
-              <h4>2025 秋</h4>
-              <p>第8回すうがく徒のつどいで「層からGrothendieck Toposへの入門」を講演</p>
-            </li>
-            <li class="timeline-item">
-              <h4>2025 夏</h4>
-              <p>spm29th参加・運営</p>
-              <p>spmAdv7th参加。</p>
-            </li>
-            <li class="timeline-item">
-              <h4>2025 春</h4>
-              <p>第7回すうがく徒のつどいで「中山の補題のいろいろ」を講演</p>
-              <p>spm28th参加</p>
-            </li>
-          </ul>
-        </section>
+        <ul class="list-reset pill-list">
+            <li class="pill">最近の興味: フロントエンド開発</li>
+            <li class="pill">今読んでいる本: 松村可換環論、Liu、SGL、代数的サイクルとエタールコホモロジー、ASS、TeXbook、</li>
+        </ul>
+    </article>
 
-        <section class="section" id="resources">
-          <div class="split-grid">
-            <article class="profile-card">
-              <span class="section-eyebrow">Profile</span>
-              <h2>自己紹介</h2>
-              <p>
-                徳島大学理工学部理工学科数理科学コースB2所属。<br />
-                主に代数幾何学を専攻し、圏論などの抽象的概念を用いた数学の統一を目指しています。「すうがく徒のつどい」や「数物セミナー」の運営を通じて、数学の魅力を広める活動にも注力しています。
-              </p>
-              <ul class="list-reset pill-list">
-                <li class="pill">最近の興味: フロントエンド開発</li>
-                <li class="pill">今読んでいる本: 松村可換環論、Liu、SGL、代数的サイクルとエタールコホモロジー、ASS、TeXbook、</li>
-              </ul>
-            </article>
-            <article class="profile-card" id="contact">
-              <span class="section-eyebrow">Resources</span>
-              <h2>資料・リンク</h2>
-              <ul class="list-reset">
-                <li>
-                  <strong>GitHub</strong><br />
-                  <a class="resource-link" href="https://github.com/koutya0akari" target="_blank" rel="noopener">github.com/koutya0akari</a>
-                </li>
-                <li>
-                  <strong>はてなブログ</strong><br />
-                  <a class="resource-link" href="https://akari0koutya.hatenablog.com/" target="_blank" rel="noopener">akari0koutya.hatenablog.com</a>
-                </li>
-                <li>
-                  <strong>Twitter</strong><br />
-                  <a class="resource-link" href="https://twitter.com/akari0koutya" target="_blank" rel="noopener">twitter.com/akari0koutya</a>
-                </li>
-                <li>
-                  <strong>Contact</strong><br />
-                  <a class="resource-link" href="mailto:koutya0akari[at]gmail.com">koutya0akari[at]gmail.com</a>
-                </li>
-              </ul>
-            </article>
-          </div>
-        </section>
+    <article class="profile-card" id="contact" data-reveal-target="item">
+        <span class="section-eyebrow">Resources</span>
+      <h2>資料・リンク</h2>
+      <ul class="list-reset">
+          <li>
+            <strong>GitHub</strong><br />
+            <a class="resource-link" target="_blank" rel="noopener" href="https://github.com/koutya0akari">github.com/koutya0akari</a>
+          </li>
+          <li>
+            <strong>はてなブログ</strong><br />
+            <a class="resource-link" target="_blank" rel="noopener" href="https://akari0koutya.hatenablog.com/">akari0koutya.hatenablog.com</a>
+          </li>
+          <li>
+            <strong>Twitter</strong><br />
+            <a class="resource-link" target="_blank" rel="noopener" href="https://twitter.com/akari0koutya">twitter.com/akari0koutya</a>
+          </li>
+          <li>
+            <strong>Contact</strong><br />
+            <a class="resource-link" href="mailto:koutya0akari[at]gmail.com">koutya0akari[at]gmail.com</a>
+          </li>
+      </ul>
+    </article>
+  </div>
+</section>
+
       </main>
 
       <footer>
         <div class="footer-inner">
           <p>© 2025 Akari Math Lab. Crafted for GitHub Pages.</p>
           <div class="footer-links">
-            <a href="index.html">Home</a>
-            <a href="about.html">About</a>
-            <a href="#contact">Contact</a>
+            <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/#contact">Contact</a>
           </div>
         </div>
       </footer>
