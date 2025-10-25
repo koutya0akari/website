@@ -43,7 +43,10 @@
     <div class="page-wrap">
       <header>
         <nav class="nav" aria-label="主要ナビゲーション" data-controller="smooth-scroll">
-          <%= link_to brand, root_path, class: 'brand' %>
+          <%= link_to root_path, class: 'brand' do %>
+            <%= image_tag 'tako-icon.svg', alt: 'Akari Math Lab アイコン', class: 'brand-icon' %>
+            <span class="brand-title"><%= brand %></span>
+          <% end %>
           <ul class="nav-list">
             <% nav_items.each do |item| %>
               <% classes = ['nav-link'] << ('is-active' if item[:active]) %>

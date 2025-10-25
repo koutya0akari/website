@@ -63,10 +63,32 @@ header {
 }
 
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
   font-weight: 700;
   font-size: 1.15rem;
   letter-spacing: 0.04em;
   color: var(--navy-900);
+  text-decoration: none;
+}
+
+.brand-icon {
+  width: 36px;
+  height: 36px;
+  display: block;
+}
+
+.brand-title {
+  display: inline-block;
+}
+
+.author-portrait {
+  width: 128px;
+  height: auto;
+  display: block;
+  margin: 1.75rem auto 1.25rem;
+  filter: drop-shadow(0 12px 24px rgba(6, 18, 41, 0.25));
 }
 
 .nav-list {

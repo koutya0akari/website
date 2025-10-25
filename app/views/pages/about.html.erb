@@ -6,6 +6,7 @@
       <span class="section-eyebrow"><%= hero[:eyebrow] %></span>
     <% end %>
     <h2><%= hero[:title] %></h2>
+    <%= image_tag 'tako-icon.svg', alt: 'Akari の肖像', class: 'author-portrait' %>
     <%= portfolio_html(hero[:description_html]) %>
   </div>
 
