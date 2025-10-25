@@ -12,6 +12,14 @@ namespace :static do
 
     ENV['STATIC_EXPORT'] = 'true'
 
+    precompile_task = Rake::Task['assets:precompile']
+    clobber_task = Rake::Task['assets:clobber']
+
+    precompile_task.reenable
+    clobber_task.reenable
+
+    precompile_task.invoke
+
     pages = [
       {
         filename: 'index.html',
@@ -43,14 +51,6 @@ namespace :static do
       FileUtils.mkdir_p(destination.dirname)
       File.write(destination, rewrite_static_paths(html))
     end
-
-    precompile_task = Rake::Task['assets:precompile']
-    clobber_task = Rake::Task['assets:clobber']
-
-    precompile_task.reenable
-    clobber_task.reenable
-
-    precompile_task.invoke
 
     assets_source = Rails.root.join('public/assets')
     assets_target = output_dir.join('assets')
