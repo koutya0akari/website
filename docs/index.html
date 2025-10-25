@@ -2,6 +2,7 @@
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Akariポートフォリオ</title>
     <meta
@@ -52,18 +53,16 @@
             <aside class="hero-card">
               <h2>現在のテーマ</h2>
               <div class="profile-grid">
-                <div>
-                  <strong>代数幾何学</strong>
-                  <p>スキーム論の基礎を学習中。</p>
-                </div>
-                <div>
-                  <strong>圏論</strong>
-                  <p>抽象的構造を捉えるための道具として学習中。</p>
-                </div>
-                <div>
-                  <strong>表現論</strong>
-                  <p>群の表現を通じて、代数的構造の理解を深めることに取り組んでいます。</p>
-                </div>
+                <ul class="list-reset profile-list">
+                  <li><strong>導来代数幾何</strong></li>
+                  <p>現代的な「正しい」代数幾何を学ぶことを目指しています。</p>
+                  <li><strong>幾何学的ラングランズ対応</strong></li>
+                  <p>表現論と数論の橋渡しを理解したいです。</p>
+                  <li><strong>McKay対応</strong></li>
+                  <p>有限群の表現と幾何学的対象の関係性に興味があります。</p>
+                  <li><strong>TeX</strong></li>
+                  <p>数学文書作成の基盤技術として、Knuthの思想を理解したいです。</p>
+                </ul>
               </div>
             </aside>
           </div>
@@ -75,27 +74,46 @@
             <h2>取り組んでいる学習領域</h2>
             <p>自主ゼミを通じて、以下のテーマに取り組んでいます。</p>
               <li class="pill">スキーム論</li>
-              <li class="pill">無限圏論</li>
               <li class="pill">可換環論</li>
+              <li class="pill">(無限)圏論</li>
               <li class="pill">ホモトピー型理論</li>
               <li class="pill">Topos理論</li>
+              <li class="pill">表現論</li>
+              <li class="pill">TeX</li>
           </div>
           <div class="card-grid">
             <article class="card">
               <h3>スキーム論</h3>
-              <p>スキームの基本概念とその応用について学習中。</p>
-              <span class="badge">SageMath / PARI</span>
+              <p>Liuの「Algebraic Geometry and Arithmetic Curves」を友人らとの自主ゼミで読み進め、スキーム論の基礎を学習中。また、スキームの応用については、Huybrechts の「Fourier-Mukai Transforms in Algebraic Geometry」を参考に一人で学習しています。導来代数幾何が目標です。</p>
             </article>
+
             <article class="card">
-              <h3>無限圏論</h3>
-              <p>ホモトピー+圏論の視点から、無限圏の構造を探求中。</p>
-              <span class="badge">Catlab / Julia</span>
+              <h3>可換環論</h3>
+              <p>スキーム論を学ぶなら、可換環論は必要だろうということで、可換環の基本概念とその応用について松村の「復刊 可換環論」で自主ゼミを行っています。</p>
             </article>
+
+            <article class="card">
+              <h3>(無限)圏論</h3>
+              <p>導来代数幾何を念頭に学習中。Haugseng の 「Yet Another Introduction to Infinity Categories」を読み進めています。今後、ゼミになる可能性があります。synthetic なアプローチにも興味があり、Rijke の「An Introduction to Homotopy Type Theory」</a>でHomotopy Type Theoryの基礎をゼミを通して学んでおり、いずれ、Emily Riehl, Michael Shulmanの「A type theory for synthetic \(\infty\) -categories」</a>を学習したいと考えています。<br/>
+                <ul>
+                  <li>Rijke : <a class="resource-link" href="https://arxiv.org/abs/2212.11082" target="_blank" rel="noopener">https://arxiv.org/abs/2212.11082</a></li>
+                  <li>Riehl, Shulman: <a class="resource-link" href="https://arxiv.org/abs/1705.07442" target="_blank" rel="noopener">https://arxiv.org/abs/1705.07442</a></li>
+                </ul>
+            </article>
+
+            <article class="card">
+              <h3>Topos理論</h3>
+              <p>圏論の学習と並行して、Topos理論にも取り組んでいます。Mac Lane, Moerdijk の「Sheaves in Geometry and Logic」を自主ゼミで読み進め、Grothendieck topos とその応用について学んでいます。将来的には、Johnstone の「Sketches of an Elephant」も読みたいと考えています。空間としてのToposの理解を深めたいです。</p>
+            </article>
+
             <article class="card">
               <h3>表現論</h3>
-              <p>群の表現を通じて、代数的構造の理解を深めることに取り組んでいます。</p>
-              <span class="badge">SageMath / PARI</span>
+              <p>群の表現を通じて、代数的構造の理解を深めることに取り組んでいます。D-加群や傾理論などの学習をしています。現在は、Assem, Simson, Skowrońskiの「Elements of the Representation Theory of Associative Algebras」を一人で読んでいます。</p>
             </article>
+
+            <article class="card">
+              <h3>TeX</h3>
+              <p>数学の文書作成に必須なツールであるTeXの習得のため、Knuthの「The TeXbook」を参考に、プリミティブな部分のゼミを行っています。Knuthの本を通じて、その思想を体現できるような組版を行えるようになることを目標としています。</p>
           </div>
         </section>
 
@@ -121,6 +139,7 @@
             <li class="timeline-item">
               <h4>2025 夏</h4>
               <p>spm29th参加・運営</p>
+              <p>spmAdv7th参加。</p>
             </li>
             <li class="timeline-item">
               <h4>2025 春</h4>
@@ -141,7 +160,7 @@
               </p>
               <ul class="list-reset pill-list">
                 <li class="pill">最近の興味: フロントエンド開発</li>
-                <li class="pill">今読んでいる本: 松村可換環論、Liu、SGL、TeXbook、代数的サイクルとエタールコホモロジー</li>
+                <li class="pill">今読んでいる本: 松村可換環論、Liu、SGL、代数的サイクルとエタールコホモロジー、ASS、TeXbook、</li>
               </ul>
             </article>
             <article class="profile-card" id="contact">
@@ -150,7 +169,7 @@
               <ul class="list-reset">
                 <li>
                   <strong>GitHub</strong><br />
-                  <a class="resource-link" href="https://github.com" target="_blank" rel="noopener">github.com/koutya0akari</a>
+                  <a class="resource-link" href="https://github.com/koutya0akari" target="_blank" rel="noopener">github.com/koutya0akari</a>
                 </li>
                 <li>
                   <strong>はてなブログ</strong><br />
