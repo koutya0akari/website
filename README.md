@@ -1,26 +1,45 @@
-# Sample Website
+# 数学者ポートフォリオ（Ruby on Rails）
 
-This is a sample website made as part of [*Learn Enough™ Git to Be
-Dangerous*](https://www.learnenough.com/git-tutorial), possibly the greatest
-beginner Git tutorial in the history of the Universe. You should totally [
-check it out](https://www.learnenough.com/git-tutorial), and be sure to [join
-the email list](https://www.learnenough.com/#email_list) and
-[follow @learnenough](http://twitter.com/learnenough) on Twitter.
+Ruby on Rails で構築した数学者向けのポートフォリオサイトです。研究概要、教育活動、講演情報、出版物、連絡先を整理し、最新の実績を紹介するシンプルなシングルユーザーアプリケーションになっています。
 
-After finishing *Learn Enough™ Git to Be Dangerous*, you'll know enough Git
-to be *dangerous*. This means you'll be able to use Git to track changes in
-your projects, back up data, share your work with others, and collaborate
-with programmers and other users of Git.
+## 主な機能
 
-> （参考訳）
-> # サンプルWebサイト
+- トップページで研究トピックと最新の成果を紹介
+- 研究・教育・講演・出版・連絡先の各ページを個別に整備
+- Rails の `importmap` と Sprockets によるシンプルなフロントエンド構成
+- 日本語を主体としたメタデータとデザインを設定
 
-> これは、おそらく史上最もよくできているGit初心者向けチュートリアル『[*Learn Enough™ Git to Be
-Dangerous*](https://www.learnenough.com/git-tutorial)』で使うサンプルサイトです。英語版の内容は
-[Gitチュートリアル](https://www.learnenough.com/git-tutorial)ですべて見ることができます。
-ぜひ[英語版メーリングリスト](https://www.learnenough.com/#email_list)に参加し、Twitterで
-[@learnenough](http://twitter.com/learnenough)のフォローをお願いします。
+## 開発環境のセットアップ
 
-> 『Learn Enough™ Git to Be Dangerous』でGitを学習すれば、文字どおり「デンジャラス」なまでにGitを
-使いこなせるようになります。プロジェクトの変更履歴を追いかけることも、データのバックアップも、
-成果を一般公開することも、他のプログラマーたちとGitで共同作業することも自由自在です。
+1. 必要な Ruby（3.2 以上）と Node.js（任意）を用意します。
+2. 依存関係をインストールします。
+
+   ```bash
+   bundle install
+   ```
+
+   ※ このリポジトリでは `rails` や関連 gem を取得するためにネットワークアクセスが必要です。環境によっては `bundle install` 実行時に 403 エラーが発生する場合があります。その際はプロキシ設定やミラーを利用するなど、Rubygems にアクセスできるネットワーク環境で再実行してください。
+
+3. データベースをセットアップします（SQLite3 を想定）。
+
+   ```bash
+   bin/rails db:prepare
+   ```
+
+4. 開発サーバーを起動します。
+
+   ```bash
+   bin/rails server
+   ```
+
+5. ブラウザで `http://localhost:3000` にアクセスするとサイトを確認できます。
+
+## デプロイ
+
+- 静的アセットは Sprockets により `public/assets` 以下にプリコンパイルされます。
+- データベースには SQLite を使用していますが、本番環境では PostgreSQL 等への切り替えを推奨します。
+- `config/environments/production.rb` の設定を適宜調整し、`RAILS_SERVE_STATIC_FILES` 等の環境変数を設定してください。
+
+## ライセンス
+
+このリポジトリは MIT ライセンスで公開しています。

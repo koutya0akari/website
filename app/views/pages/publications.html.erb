@@ -1,0 +1,43 @@
+<% content_for :title, 'アウトプット' %>
+<section class="section">
+  <h1>アウトプット</h1>
+  <p class="section-subtitle">
+    GitHub Pages で公開している記事、スライド、動画などのアウトプットをまとめています。数学の楽しさと学習のプロセスを可視化することを意識しています。
+  </p>
+  <div class="card-grid">
+    <article class="card">
+      <h3>Proof Sketch シリーズ</h3>
+      <p>ゼータ関数の歴史、保型形式との関わり、最新研究のトピックを解説するブログ連載。</p>
+      <p><%= link_to 'ブログで読む', 'https://github.com', target: '_blank', rel: 'noopener' %></p>
+    </article>
+    <article class="card">
+      <h3>ゼータ関数可視化スライド</h3>
+      <p>Student Number Theory Day で発表したスライド。インタラクティブデモとコード解説付き。</p>
+      <p><%= link_to 'Speaker Deck', 'https://speakerdeck.com', target: '_blank', rel: 'noopener' %></p>
+    </article>
+    <article class="card">
+      <h3>Math Modeling Podcast</h3>
+      <p>サークルメンバーと毎月収録している勉強会のポッドキャスト。モデル化の裏側を語っています。</p>
+      <p><%= link_to '最新エピソード', '#', class: 'button secondary' %></p>
+    </article>
+  </div>
+</section>
+
+<section class="section">
+  <h2>書いたもの</h2>
+  <p class="section-subtitle">論考やレポート、エッセイの抜粋です。PDF は GitHub Pages からダウンロードできます。</p>
+  <ul class="highlight-list">
+    <li>
+      <strong>ハーディの Z 関数に関するノート</strong>
+      <p>複素平面上の零点分布を追跡するための解析手法をまとめました。</p>
+    </li>
+    <li>
+      <strong>整数計画におけるカット生成の実装</strong>
+      <p>外部インターンでの実装経験を振り返り、改善したヒューリスティクスを紹介。</p>
+    </li>
+    <li>
+      <strong>数学コミュニティ運営の手引き</strong>
+      <p>オンラインでの輪講やイベント企画のノウハウをまとめたガイド。</p>
+    </li>
+  </ul>
+</section>

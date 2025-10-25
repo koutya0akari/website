@@ -1,0 +1,11 @@
+en:
+  hello: "Hello world"
+  math_website:
+    title: "数学ノート by ユウ"
+    navigation:
+      home: "ホーム"
+      research: "プロジェクト"
+      teaching: "学習ノート"
+      talks: "イベント"
+      publications: "アウトプット"
+      contact: "コンタクト"

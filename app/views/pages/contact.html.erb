@@ -1,0 +1,42 @@
+<% content_for :title, 'コンタクト' %>
+<section class="section">
+  <h1>コンタクト</h1>
+  <p class="section-subtitle">
+    コラボレーションの相談、勉強会のお誘い、GitHub Pages を使った数学サイトづくりの質問など、気軽にご連絡ください。
+  </p>
+</section>
+
+<section class="section">
+  <div class="card-grid">
+    <article class="card">
+      <h2>所属</h2>
+      <p>東京数学大学 理学部 数学科<br>学部 3 年</p>
+    </article>
+    <article class="card">
+      <h2>メール</h2>
+      <p><%= mail_to 'yu.math@example.jp' %></p>
+    </article>
+    <article class="card">
+      <h2>活動拠点</h2>
+      <p>東京都千代田区 学術キャンパス内<br>学生ラウンジ・メイカースペース</p>
+    </article>
+  </div>
+</section>
+
+<section class="section">
+  <h2>オンラインアカウント</h2>
+  <ul class="highlight-list">
+    <li>
+      <strong>GitHub</strong>
+      <p><%= link_to 'github.com/yu-math', 'https://github.com', target: '_blank', rel: 'noopener' %></p>
+    </li>
+    <li>
+      <strong>Qiita</strong>
+      <p><%= link_to 'qiita.com/yu_math', 'https://qiita.com', target: '_blank', rel: 'noopener' %></p>
+    </li>
+    <li>
+      <strong>YouTube</strong>
+      <p><%= link_to 'Math Log Channel', 'https://youtube.com', target: '_blank', rel: 'noopener' %></p>
+    </li>
+  </ul>
+</section>
