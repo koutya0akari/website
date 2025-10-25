@@ -10,6 +10,8 @@ namespace :static do
     FileUtils.rm_rf(output_dir)
     FileUtils.mkdir_p(output_dir)
 
+    ENV['STATIC_EXPORT'] = 'true'
+
     pages = [
       {
         filename: 'index.html',
@@ -39,7 +41,7 @@ namespace :static do
 
       destination = output_dir.join(page[:filename])
       FileUtils.mkdir_p(destination.dirname)
-      File.write(destination, html)
+      File.write(destination, rewrite_static_paths(html))
     end
 
     precompile_task = Rake::Task['assets:precompile']
@@ -58,9 +60,30 @@ namespace :static do
       FileUtils.cp_r("#{assets_source}/.", assets_target)
     end
   ensure
+    ENV.delete('STATIC_EXPORT')
+
     if defined?(clobber_task) && clobber_task
       clobber_task.reenable
       clobber_task.invoke
     end
   end
+end
+
+def rewrite_static_paths(html)
+  processed = html.dup
+
+  processed.gsub!('href="/"', 'href="index.html"')
+  processed.gsub!(/href="\/#([^"]+)"/) { "href=\"index.html##{$1}\"" }
+  processed.gsub!(/href="\/([^"#?]+)(#[^"]*)?"/) do
+    path = Regexp.last_match(1)
+    anchor = Regexp.last_match(2).to_s
+    next "href=\"#{path}\"" if path.include?('.')
+    next Regexp.last_match(0) if path.start_with?('assets')
+    "href=\"#{path}/index.html#{anchor}\""
+  end
+
+  processed.gsub!(/(href|src)="\/assets\//, '\1="assets/')
+  processed.gsub!('"/assets/', '"assets/')
+
+  processed
 end
