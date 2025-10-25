@@ -43,6 +43,23 @@ SQLite を利用する機能は現時点でありませんが、Rails がデー�
 
 YAML を編集後はサーバーを再起動するか、Spring を使用している場合は `bin/spring stop` を実行すると確実に反映されます。
 
+## 新しいページの追加手順
+
+1. **YAML コンテンツを用意**  
+   `config/portfolio/` に新しいファイル（例: `research.yml`）を作成し、ページで使用するテキストやセクションを定義します。`*_html` フィールドを使えば HTML をそのまま差し込めます。
+
+2. **ビューを作成**  
+   `app/views/pages/` に対応する `research.html.erb` を追加し、`home.html.erb` などを参考に YAML の内容を描画します。必要に応じて partial 化してください。
+
+3. **コントローラとルートを追加**  
+   `pages_controller.rb` に新アクションを追加し、`@content = PortfolioContent.research` のように YAML を読み込みます。`config/routes.rb` に `get 'research', to: 'pages#research'` を追加し、ナビゲーションを更新します。
+
+4. **静的エクスポートに登録**  
+   GitHub Pages に公開したい場合は `lib/tasks/static.rake` の `pages` 配列へ新ページを追加し、`bin/rake static:export` を実行して `docs/` に HTML を出力します。
+
+5. **デザインやインタラクションを調整**  
+   必要に応じて `app/assets/stylesheets/application.css` や `app/javascript/controllers/` に追記し、Stimulus コントローラを `index.js` に登録します。
+
 ## GitHub Pages 用の静的エクスポート
 
 Rails で整形した HTML をそのまま GitHub Pages に配置したい場合は、以下のタスクで `docs/` を再生成できます。
