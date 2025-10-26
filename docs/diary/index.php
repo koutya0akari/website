@@ -34,6 +34,10 @@ $sessionEditingId = $_SESSION['editing_id'] ?? '';
 unset($_SESSION['editing_id']);
 
 $entries = load_entries();
+$allCategories = collect_categories($entries);
+
+$categoryFilter = trim((string)($_GET['category'] ?? ''));
+$tagFilter = trim((string)($_GET['tag'] ?? ''));
 
 $editingId = trim((string)($_GET['edit'] ?? ''));
 if ($editingId === '' && !empty($formData['entry_id'])) {
@@ -57,7 +61,10 @@ if ($editingId !== '') {
     }
 }
 
-$displayEntries = sort_entries(filter_entries($entries, $query), $sort);
+$displayEntries = sort_entries(
+    filter_entries($entries, $query, $categoryFilter, $tagFilter),
+    $sort
+);
 $defaultDate = date('Y-m-d');
 $formData = array_merge(
     [
@@ -65,9 +72,10 @@ $formData = array_merge(
         'entry_date' => $defaultDate,
         'body' => '',
         'tags' => '',
+        'category' => '',
         'entry_id' => ''
     ],
-    array_intersect_key($formData, ['title' => true, 'entry_date' => true, 'body' => true, 'tags' => true, 'entry_id' => true])
+    array_intersect_key($formData, ['title' => true, 'entry_date' => true, 'body' => true, 'tags' => true, 'category' => true, 'entry_id' => true])
 );
 
 if ($editingEntry !== null) {
@@ -76,6 +84,7 @@ if ($editingEntry !== null) {
         $formData['entry_date'] = (string)($editingEntry['entry_date'] ?? $defaultDate);
         $formData['body'] = (string)($editingEntry['body'] ?? '');
         $formData['tags'] = implode(', ', $editingEntry['tags'] ?? []);
+        $formData['category'] = (string)($editingEntry['category'] ?? '');
     }
     $formData['entry_id'] = $editingId;
 } else {
@@ -86,8 +95,14 @@ $baseQueryParams = [];
 if ($query !== '') {
     $baseQueryParams['q'] = $query;
 }
+if ($categoryFilter !== '') {
+    $baseQueryParams['category'] = $categoryFilter;
+}
 if ($sort !== 'newest') {
     $baseQueryParams['sort'] = $sort;
+}
+if ($tagFilter !== '') {
+    $baseQueryParams['tag'] = $tagFilter;
 }
 
 function handle_post(): void
@@ -125,6 +140,8 @@ function handle_create(): void
     $title = trim((string)($_POST['title'] ?? ''));
     $entryDate = trim((string)($_POST['entry_date'] ?? ''));
     $body = trim((string)($_POST['body'] ?? ''));
+    $categoryInput = (string)($_POST['category'] ?? '');
+    $category = sanitize_category($categoryInput);
     $tagsInput = (string)($_POST['tags'] ?? '');
     $tags = parse_tags($tagsInput);
 
@@ -139,7 +156,13 @@ function handle_create(): void
 
     if (!empty($errors)) {
         persist_form_state(
-            ['title' => $title, 'entry_date' => $entryDate, 'body' => $body, 'tags' => $tagsInput],
+            [
+                'title' => $title,
+                'entry_date' => $entryDate,
+                'body' => $body,
+                'tags' => $tagsInput,
+                'category' => $categoryInput
+            ],
             $errors
         );
         redirect_to(base_redirect_params());
@@ -150,6 +173,7 @@ function handle_create(): void
         'title' => $title,
         'entry_date' => $entryDate,
         'body' => $body,
+        'category' => $category,
         'tags' => $tags,
         'created_at' => date('c'),
         'updated_at' => date('c')
@@ -189,6 +213,8 @@ function handle_update(): void
     $title = trim((string)($_POST['title'] ?? ''));
     $entryDate = trim((string)($_POST['entry_date'] ?? ''));
     $body = trim((string)($_POST['body'] ?? ''));
+    $categoryInput = (string)($_POST['category'] ?? '');
+    $category = sanitize_category($categoryInput);
     $tagsInput = (string)($_POST['tags'] ?? '');
     $tags = parse_tags($tagsInput);
 
@@ -203,7 +229,14 @@ function handle_update(): void
 
     if (!empty($errors)) {
         persist_form_state(
-            ['title' => $title, 'entry_date' => $entryDate, 'body' => $body, 'tags' => $tagsInput, 'entry_id' => $id],
+            [
+                'title' => $title,
+                'entry_date' => $entryDate,
+                'body' => $body,
+                'tags' => $tagsInput,
+                'category' => $categoryInput,
+                'entry_id' => $id
+            ],
             $errors
         );
         $_SESSION['editing_id'] = $id;
@@ -215,6 +248,7 @@ function handle_update(): void
     $entries[$index]['title'] = $title;
     $entries[$index]['entry_date'] = $entryDate;
     $entries[$index]['body'] = $body;
+    $entries[$index]['category'] = $category;
     $entries[$index]['tags'] = $tags;
     $entries[$index]['updated_at'] = date('c');
 
@@ -323,6 +357,7 @@ function save_entries(array $entries): void
 function normalize_entry(array $entry): array
 {
     $entry['tags'] = sanitize_tags($entry['tags'] ?? []);
+    $entry['category'] = sanitize_category($entry['category'] ?? '');
 
     return $entry;
 }
@@ -377,17 +412,68 @@ function parse_tags(string $input): array
     return array_values(array_unique($tags));
 }
 
-function filter_entries(array $entries, string $query): array
+function sanitize_category($value): string
 {
-    if ($query === '') {
-        return $entries;
+    if (!is_string($value)) {
+        return '';
     }
 
-    return array_values(array_filter($entries, static function ($entry) use ($query) {
+    return trim($value);
+}
+
+function collect_categories(array $entries): array
+{
+    $categories = [];
+    foreach ($entries as $entry) {
+        $value = sanitize_category($entry['category'] ?? '');
+        if ($value === '') {
+            continue;
+        }
+        $categories[$value] = true;
+    }
+
+    $list = array_keys($categories);
+    sort($list, SORT_NATURAL | SORT_FLAG_CASE);
+
+    return $list;
+}
+
+function filter_entries(array $entries, string $query, string $category, string $tag): array
+{
+    $category = sanitize_category($category);
+    $tag = trim($tag);
+
+    return array_values(array_filter($entries, static function ($entry) use ($query, $category, $tag) {
+        if ($category !== '') {
+            $entryCategory = sanitize_category($entry['category'] ?? '');
+            if (normalize_text($entryCategory) !== normalize_text($category)) {
+                return false;
+            }
+        }
+
+        if ($tag !== '') {
+            $tags = sanitize_tags($entry['tags'] ?? []);
+            $matched = false;
+            foreach ($tags as $entryTag) {
+                if (normalize_text($entryTag) === normalize_text($tag)) {
+                    $matched = true;
+                    break;
+                }
+            }
+            if (!$matched) {
+                return false;
+            }
+        }
+
+        if ($query === '') {
+            return true;
+        }
+
         $fields = [
             (string)($entry['title'] ?? ''),
             (string)($entry['body'] ?? ''),
-            implode(' ', $entry['tags'] ?? [])
+            sanitize_category($entry['category'] ?? ''),
+            implode(' ', sanitize_tags($entry['tags'] ?? []))
         ];
 
         foreach ($fields as $field) {
@@ -492,6 +578,16 @@ function base_redirect_params(): array
         $params['sort'] = $sort;
     }
 
+    $category = sanitize_category($_POST['redirect_category'] ?? '');
+    if ($category !== '') {
+        $params['category'] = $category;
+    }
+
+    $tag = trim((string)($_POST['redirect_tag'] ?? ''));
+    if ($tag !== '') {
+        $params['tag'] = $tag;
+    }
+
     return $params;
 }
 
@@ -510,8 +606,23 @@ function build_query_string(array $params): string
         if ($value === '' || $value === null) {
             continue;
         }
-        if ($key === 'sort' && !in_array($value, SORT_OPTIONS, true)) {
-            continue;
+        if ($key === 'sort') {
+            if (!in_array($value, SORT_OPTIONS, true) || $value === 'newest') {
+                continue;
+            }
+        }
+        if ($key === 'category') {
+            $clean = sanitize_category($value);
+            if ($clean === '') {
+                continue;
+            }
+            $value = $clean;
+        }
+        if ($key === 'tag') {
+            $value = trim((string)$value);
+            if ($value === '') {
+                continue;
+            }
         }
         $filtered[$key] = $value;
     }
@@ -628,6 +739,8 @@ function format_body(string $body): string
                 <input type="hidden" name="action" value="<?php echo $editingEntry ? 'update' : 'create'; ?>" />
                 <input type="hidden" name="redirect_q" value="<?php echo h($query); ?>" />
                 <input type="hidden" name="redirect_sort" value="<?php echo h($sort); ?>" />
+                <input type="hidden" name="redirect_category" value="<?php echo h($categoryFilter); ?>" />
+                <input type="hidden" name="redirect_tag" value="<?php echo h($tagFilter); ?>" />
                 <?php if (!empty($formData['entry_id'])): ?>
                   <input type="hidden" name="entry_id" value="<?php echo h($formData['entry_id']); ?>" />
                 <?php endif; ?>
@@ -643,6 +756,15 @@ function format_body(string $body): string
                   <span>本文</span>
                   <textarea name="body" class="diary-textarea" rows="8" placeholder="今日のメモや感想を書いてください…"><?php echo h($formData['body']); ?></textarea>
                 </label>
+                <label class="diary-label">
+                  <span>フォルダー</span>
+                  <input type="text" name="category" class="diary-input" list="diary-categories" placeholder="例: 研究メモ" value="<?php echo h($formData['category']); ?>" />
+                </label>
+                <datalist id="diary-categories">
+                  <?php foreach ($allCategories as $categoryName): ?>
+                    <option value="<?php echo h($categoryName); ?>"></option>
+                  <?php endforeach; ?>
+                </datalist>
                 <label class="diary-label">
                   <span>タグ (カンマ区切り)</span>
                   <input type="text" name="tags" class="diary-input" placeholder="例: 代数幾何, ゼミ" value="<?php echo h($formData['tags']); ?>" />
@@ -665,21 +787,61 @@ function format_body(string $body): string
               <h3>保存した日記</h3>
               <form method="get" class="diary-filter-form">
                 <input type="search" name="q" class="diary-input diary-filter-search" placeholder="キーワードで検索" value="<?php echo h($query); ?>" />
+                <select name="category" class="diary-input diary-select">
+                  <option value="">すべてのフォルダー</option>
+                  <?php foreach ($allCategories as $categoryName): ?>
+                    <option value="<?php echo h($categoryName); ?>" <?php if ($categoryFilter !== '' && normalize_text($categoryFilter) === normalize_text($categoryName)) { echo 'selected'; } ?>><?php echo h($categoryName); ?></option>
+                  <?php endforeach; ?>
+                </select>
                 <select name="sort" class="diary-input diary-select">
                   <?php foreach (SORT_LABELS as $key => $label): ?>
                     <option value="<?php echo h($key); ?>" <?php if ($sort === $key) { echo 'selected'; } ?>><?php echo h($label); ?></option>
                   <?php endforeach; ?>
                 </select>
+                <input type="hidden" name="tag" value="<?php echo h($tagFilter); ?>" />
                 <div class="diary-filter-actions">
                   <button type="submit" class="btn btn-outline">絞り込む</button>
                   <a href="index.php" class="btn btn-outline">リセット</a>
                 </div>
               </form>
+              <?php if (!empty($allCategories)): ?>
+                <div class="diary-category-buttons">
+                  <?php $allCategoryParams = $baseQueryParams; unset($allCategoryParams['category']); ?>
+                  <a class="diary-category-button<?php if ($categoryFilter === '') { echo ' is-active'; } ?>" href="index.php<?php echo build_query_string($allCategoryParams); ?>">フォルダー: すべて</a>
+                  <?php foreach ($allCategories as $categoryName): ?>
+                    <?php $categoryLinkParams = array_merge($baseQueryParams, ['category' => $categoryName]); ?>
+                    <a class="diary-category-button<?php if ($categoryFilter !== '' && normalize_text($categoryFilter) === normalize_text($categoryName)) { echo ' is-active'; } ?>" href="index.php<?php echo build_query_string($categoryLinkParams); ?>"><?php echo h($categoryName); ?></a>
+                  <?php endforeach; ?>
+                </div>
+              <?php endif; ?>
+              <?php if ($tagFilter !== ''): ?>
+                <?php $clearTagParams = $baseQueryParams; unset($clearTagParams['tag']); ?>
+                <div class="diary-tag-filter">
+                  <span class="diary-tag-filter-label">タグで絞り込み中: <strong>#<?php echo h($tagFilter); ?></strong></span>
+                  <a class="diary-tag-filter-clear" href="index.php<?php echo build_query_string($clearTagParams); ?>">タグを解除</a>
+                </div>
+              <?php endif; ?>
               <?php $resultCount = count($displayEntries); ?>
               <p class="diary-filter-result">
                 表示件数: <?php echo $resultCount; ?> 件
-                <?php if ($query !== '' || $sort !== 'newest'): ?>
-                  （<?php if ($query !== ''): ?>検索: "<?php echo h($query); ?>"<?php endif; ?><?php if ($query !== '' && $sort !== 'newest'): ?>、<?php endif; ?><?php if ($sort !== 'newest'): ?>並び替え: <?php echo h(SORT_LABELS[$sort] ?? ''); ?><?php endif; ?>）
+                <?php if ($query !== '' || $sort !== 'newest' || $categoryFilter !== '' || $tagFilter !== ''): ?>
+                  （
+                    <?php
+                      $filterParts = [];
+                      if ($query !== '') {
+                          $filterParts[] = '検索: "' . h($query) . '"';
+                      }
+                      if ($categoryFilter !== '') {
+                          $filterParts[] = 'フォルダー: ' . h($categoryFilter);
+                      }
+                      if ($tagFilter !== '') {
+                          $filterParts[] = 'タグ: #' . h($tagFilter);
+                      }
+                      if ($sort !== 'newest') {
+                          $filterParts[] = '並び替え: ' . h(SORT_LABELS[$sort] ?? '');
+                      }
+                      echo implode('、', $filterParts);
+                    ?>）
                 <?php endif; ?>
               </p>
               <?php if ($resultCount > 0): ?>
@@ -692,10 +854,29 @@ function format_body(string $body): string
                           <?php if (!empty($entry['entry_date'])): ?>
                             <time datetime="<?php echo h($entry['entry_date']); ?>"><?php echo h($entry['entry_date']); ?></time>
                           <?php endif; ?>
+                          <?php if (!empty($entry['category'])): ?>
+                            <?php
+                              $entryCategory = sanitize_category($entry['category']);
+                              $categoryLinkParams = array_merge($baseQueryParams, ['category' => $entryCategory]);
+                              $isActiveCategory = $categoryFilter !== '' && normalize_text($categoryFilter) === normalize_text($entryCategory);
+                            ?>
+                            <a class="diary-item-category<?php if ($isActiveCategory) { echo ' is-active'; } ?>" href="index.php<?php echo build_query_string($categoryLinkParams); ?>">
+                              <span class="diary-item-category-label">フォルダー</span>
+                              <?php echo h($entryCategory); ?>
+                            </a>
+                          <?php endif; ?>
                           <?php if (!empty($entry['tags'])): ?>
                             <ul class="diary-tag-list">
                               <?php foreach ($entry['tags'] as $tag): ?>
-                                <li class="diary-tag">#<?php echo h($tag); ?></li>
+                                <?php
+                                  $tagLinkParams = $baseQueryParams;
+                                  unset($tagLinkParams['q']);
+                                  $tagLinkParams['tag'] = $tag;
+                                  $isActiveTag = $tagFilter !== '' && normalize_text($tagFilter) === normalize_text($tag);
+                                ?>
+                                <li>
+                                  <a class="diary-tag<?php if ($isActiveTag) { echo ' is-active'; } ?>" href="index.php<?php echo build_query_string($tagLinkParams); ?>">#<?php echo h($tag); ?></a>
+                                </li>
                               <?php endforeach; ?>
                             </ul>
                           <?php endif; ?>
@@ -757,6 +938,7 @@ function format_body(string $body): string
         const dateField = form.querySelector('input[name="entry_date"]');
         const bodyField = form.querySelector('textarea[name="body"]');
         const tagsField = form.querySelector('input[name="tags"]');
+        const categoryField = form.querySelector('input[name="category"]');
         const clearButton = form.querySelector('[data-action="clear-draft"]');
 
         function currentDate() {
@@ -773,6 +955,7 @@ function format_body(string $body): string
             if (draft.date && dateField) dateField.value = draft.date;
             if (draft.body && bodyField) bodyField.value = draft.body;
             if (draft.tags && tagsField) tagsField.value = draft.tags;
+            if (draft.category && categoryField) categoryField.value = draft.category;
           } catch (error) {
             console.warn('Failed to load diary draft', error);
           }
@@ -785,10 +968,16 @@ function format_body(string $body): string
             title: titleField.value || '',
             date: dateField.value || '',
             body: bodyField.value || '',
-            tags: tagsField ? tagsField.value || '' : ''
+            tags: tagsField ? tagsField.value || '' : '',
+            category: categoryField ? categoryField.value || '' : ''
           };
 
-          const allBlank = !draft.title.trim() && !draft.date.trim() && !draft.body.trim() && !draft.tags.trim();
+          const allBlank =
+            !draft.title.trim() &&
+            !draft.date.trim() &&
+            !draft.body.trim() &&
+            !draft.tags.trim() &&
+            !draft.category.trim();
           if (allBlank) {
             localStorage.removeItem(storageKey);
             return;
@@ -801,6 +990,7 @@ function format_body(string $body): string
           if (titleField) titleField.value = '';
           if (bodyField) bodyField.value = '';
           if (tagsField) tagsField.value = '';
+          if (categoryField && !isEditing) categoryField.value = '';
           if (dateField) dateField.value = currentDate();
           localStorage.removeItem(storageKey);
         }
@@ -813,7 +1003,7 @@ function format_body(string $body): string
           loadDraft();
         }
 
-        [titleField, dateField, bodyField, tagsField].forEach(function(field) {
+        [titleField, dateField, bodyField, tagsField, categoryField].forEach(function(field) {
           if (field) {
             field.addEventListener('input', persistDraft);
           }
