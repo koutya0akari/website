@@ -102,7 +102,7 @@ function format_description(string $text): string
           <div class="section-header">
             <span class="section-eyebrow">Resources</span>
             <h2>公開資料</h2>
-            <p>ゼミ資料や制作した PDF をダウンロードできます。新しいファイルは <code>docs/resources/files/</code> に追加してください。</p>
+            <p>ゼミ資料や制作した PDF をダウンロードできます。</p>
           </div>
         </section>
 
