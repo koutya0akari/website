@@ -1,82 +1,75 @@
-# Akari Math Lab – 数学科学生のポートフォリオ (Rails)
+# Akari Math Lab – さくらのレンタルサーバー向けポートフォリオ
 
-Akari の学習・研究活動を紹介するポートフォリオを Ruby on Rails で構築したプロジェクトです。静的 HTML だった `docs/` の構成を分析し、Rails のビューと YAML コンテンツに置き換えて動的にレンダリングできるようにしました。
+数学科学生 Akari の活動を紹介するポートフォリオサイトです。静的 HTML と PHP で構成し、さくらのレンタルサーバー（ライトプラン）での運用に最適化しています。ホームと About は静的ページ、Diary は簡易パスワード付きの PHP アプリで投稿・削除ができます。
 
-## 主な特徴
+## リポジトリ構成
 
-- `config/portfolio/*.yml` に定義したデータを読み込み、ヒーローセクションからタイムラインまでを動的に構成
-- `app/views/pages/home.html.erb` / `about.html.erb` で繰り返し要素をループ処理し、カード・タイムラインを簡単に追加可能
-- Google Fonts (Inter, Signika Negative) と MathJax をレイアウトに組み込み、数学系コンテンツ向けの見た目を整備
-- `app/assets/stylesheets/application.css` にレスポンシブ対応のカスタムデザインを集約
-- Stimulus を用いたハイライトの自動ローテーションやスクロール時のフェードイン、スムーズスクロールで動的な体験を提供
+- `docs/index.html` – トップページ。静的 HTML として配信。
+- `docs/about/index.html` – About ページ。
+- `docs/diary/index.php` – 日記投稿・削除を扱う PHP ページ。`docs/data/diary_entries.json` に投稿を保存。
+- `docs/assets/` – 共通スタイル (`application.css`) とアイコン。
+- `docs/.htaccess` – さくらでの環境変数、CSP、X-Frame-Options を定義。
+- `docs/data/.gitkeep` – 投稿データを保存するディレクトリを保持。
+- `config/portfolio/*.yml`, `app/` 以下 – 元の Rails プロジェクト。ローカルで編集を支援したい場合に利用できます。
 
-## セットアップ
+## さくらのレンタルサーバーへのデプロイ手順
 
-1. Ruby 3.2.3 以上を用意し、Bundler をインストールします。
-2. 依存関係をインストールします。
+1. ローカルで `docs/` ディレクトリ全体を確認します。`docs/data/` が存在していること、`docs/.htaccess` にパスワードやヘッダ設定が記載されていることをチェックしてください。
+2. さくらのサーバー側で `docs/data` に書き込み権限を付与します（FTP クライアントで属性変更、またはサーバーパネルから設定）。
+3. `docs/` 以下をサーバーの公開ディレクトリ（例: `~/www/`）へ丸ごとアップロードします。
+4. ブラウザで `https://<あなたのドメイン>/docs/` にアクセスし、トップページと `diary/index.php` を確認します。
+5. 初回アクセス時に日記の投稿・削除ができるかテストし、`docs/data/diary_entries.json` が生成されるかを確認します。
 
-   ```bash
-   bundle install
-   ```
+## パスワードとセキュリティヘッダの設定
 
-3. サーバーを起動し、`http://localhost:3000` にアクセスします。
+- 日記の投稿パスワードは `docs/.htaccess` の `SetEnv DIARY_POST_PASSWORD '@Koutya0akari'` で指定しています。サーバー側で変更したい場合は値を書き換えてアップロードしてください。
+- 同ファイルで `Content-Security-Policy` と `X-Frame-Options` を設定しています。必要に応じて許可するドメインを追加してください。
+- `.htaccess` が無効なプランでは PHP 冒頭の `DEFAULT_DIARY_PASSWORD` を直接変更して運用します。
 
-   ```bash
-   bin/rails server
-   ```
+## 既存ページの編集
 
-SQLite を利用する機能は現時点でありませんが、Rails がデータベース接続を求める場合は `bin/rails db:prepare` を実行してください。
+### トップページ `docs/index.html`
+1. 任意のエディタで `docs/index.html` を開き、本文を修正します。
+2. ナビゲーション内のリンクを変更した場合は、`docs/about/index.html` や `docs/diary/index.php` 内のフッターなども同様に更新してください。
+3. スタイルを調整したい場合は `docs/assets/application.css` を編集します。編集後はブラウザキャッシュをクリアして反映を確認してください。
 
-## コンテンツの更新方法
+### About ページ `docs/about/index.html`
+1. `docs/about/index.html` を編集します。構造はトップページと同様の CSS を共有しています。
+2. 画像やアイコンを追加したい場合は `docs/assets/` にファイルを置き、相対パスで参照します。
 
-- ホームページ: `config/portfolio/home.yml`
-  - `hero` … タグライン、自己紹介、アクションボタン、ピル型ハイライト
-  - `focus` … 学習領域のカード群とカテゴリーリスト
-  - `projects` … プロジェクト概要（現在はヘッダーのみ）
-  - `timeline` … 活動ログ（年度・詳細）
-  - `resources` … 自己紹介と外部リンク集
-- About ページ: `config/portfolio/about.yml`
-  - `hero` … プロフィール概要と 2 カラムの詳細
-  - `skills` … カード形式で表示するスキルセット
+### Diary ページの本文テキスト
+`docs/diary/index.php` 内の説明文（HTML 部分）を直接編集します。PHP ロジックより下にある説明文やラベルを調整することで、フォームの文言を変更できます。
 
-※ HTML をそのまま反映したい項目は `_html` で終わるフィールドに格納しています（例: `description_html`）。docs/ と同じ文面・リンク構造を保つため、文章の書き換えが不要な場合は文字列をそのまま維持してください。
+## 新しいページの追加方法
 
-YAML を編集後はサーバーを再起動するか、Spring を使用している場合は `bin/spring stop` を実行すると確実に反映されます。
+1. **ディレクトリと HTML を作成**  
+   `docs/` 直下に新しいディレクトリ（例: `research/`）を作成し、その中に `index.html` を配置します。`docs/about/index.html` をコピーして内容を書き換えるとレイアウトを簡単に流用できます。
 
-## 新しいページの追加手順
+2. **スタイルの適用**  
+   `<head>` 内で `../assets/application.css` を読み込むようにリンクを書き換えます。必要なら追加用の CSS を別ファイルで作り、`docs/assets/` に保存します。
 
-1. **YAML コンテンツを用意**  
-   `config/portfolio/` に新しいファイル（例: `research.yml`）を作成し、ページで使用するテキストやセクションを定義します。`*_html` フィールドを使えば HTML をそのまま差し込めます。
+3. **ナビゲーション更新**  
+   トップページと対象ページ両方のナビゲーションに新しいリンクを追加します。ページ数が増える場合はフッターのリンクも忘れず更新してください。
 
-2. **ビューを作成**  
-   `app/views/pages/` に対応する `research.html.erb` を追加し、`home.html.erb` などを参考に YAML の内容を描画します。必要に応じて partial 化してください。
+4. **サーバーへアップロード**  
+   新しく追加したディレクトリと更新した HTML / CSS をアップロードし、ブラウザで表示を確認します。
 
-3. **コントローラとルートを追加**  
-   `pages_controller.rb` に新アクションを追加し、`@content = PortfolioContent.research` のように YAML を読み込みます。`config/routes.rb` に `get 'research', to: 'pages#research'` を追加し、ナビゲーションを更新します。
+## Diary データの管理
 
-4. **静的エクスポートに登録**  
-   GitHub Pages に公開したい場合は `lib/tasks/static.rake` の `pages` 配列へ新ページを追加し、`bin/rake static:export` を実行して `docs/` に HTML を出力します。
+- 投稿内容はサーバー上の `docs/data/diary_entries.json` に JSON 形式で保存されます。Git の追跡対象外なので、定期的にダウンロードしてバックアップを取ることを推奨します。
+- 投稿・削除は PHP 内でファイルロックを行っていますが、複数人が同時編集する場合は競合が発生する可能性があります。運用人数に応じてローテーションやバックアップを計画してください。
 
-5. **デザインやインタラクションを調整**  
-   必要に応じて `app/assets/stylesheets/application.css` や `app/javascript/controllers/` に追記し、Stimulus コントローラを `index.js` に登録します。
+## Rails 環境について（任意）
 
-## GitHub Pages 用の静的エクスポート
-
-Rails で整形した HTML をそのまま GitHub Pages に配置したい場合は、以下のタスクで `docs/` を再生成できます。
+このリポジトリには元となった Rails プロジェクトが含まれています。YAML 管理や Stimulus を使った開発環境を再利用したい場合は、以下の通りセットアップできます。
 
 ```bash
-bin/rake static:export
+bundle install
+bin/rails db:prepare
+bin/rails server
 ```
 
-生成されるファイル:
-
-```
-docs/
-├── index.html
-└── about/index.html
-```
-
-必要に応じて GitHub Pages の設定で Branch: `main`, Folder: `/docs` を選択してください。
+Rails 上でデザインやコピーを編集した後、`docs/` に手動で書き戻すことで静的サイト側へ反映する運用も可能です。ただし、現在の本番運用は `docs/` ディレクトリだけで完結します。
 
 ## ライセンス
 

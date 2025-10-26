@@ -6,6 +6,7 @@
 /storage/*
 !/storage/.keep
 /public/assets
+/docs/data/diary_entries.json
 /node_modules
 /yarn-error.log
 .byebug_history
