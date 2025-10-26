@@ -6,6 +6,12 @@ session_start();
 const DEFAULT_DIARY_PASSWORD = '@Koutya0akari';
 const DATA_DIR = __DIR__ . '/../data';
 const DATA_FILE = DATA_DIR . '/diary_entries.json';
+const SORT_OPTIONS = ['newest', 'oldest', 'title'];
+const SORT_LABELS = [
+    'newest' => '新しい順',
+    'oldest' => '古い順',
+    'title' => 'タイトル順'
+];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     handle_post();
@@ -18,14 +24,22 @@ $shouldClearDraft = $_SESSION['clear_draft'] ?? false;
 
 unset($_SESSION['flash'], $_SESSION['form_data'], $_SESSION['form_errors'], $_SESSION['clear_draft']);
 
+$query = trim((string)($_GET['q'] ?? ''));
+$sort = (string)($_GET['sort'] ?? 'newest');
+if (!in_array($sort, SORT_OPTIONS, true)) {
+    $sort = 'newest';
+}
+
 $entries = load_entries();
+$displayEntries = sort_entries(filter_entries($entries, $query), $sort);
 $formData = array_merge(
     [
         'title' => '',
         'entry_date' => date('Y-m-d'),
-        'body' => ''
+        'body' => '',
+        'tags' => ''
     ],
-    array_intersect_key($formData, ['title' => true, 'entry_date' => true, 'body' => true])
+    array_intersect_key($formData, ['title' => true, 'entry_date' => true, 'body' => true, 'tags' => true])
 );
 
 function handle_post(): void
@@ -55,6 +69,8 @@ function handle_create(): void
     $title = trim((string)($_POST['title'] ?? ''));
     $entryDate = trim((string)($_POST['entry_date'] ?? ''));
     $body = trim((string)($_POST['body'] ?? ''));
+    $tagsInput = (string)($_POST['tags'] ?? '');
+    $tags = parse_tags($tagsInput);
 
     if ($entryDate === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $entryDate)) {
         $entryDate = date('Y-m-d');
@@ -67,7 +83,7 @@ function handle_create(): void
 
     if (!empty($errors)) {
         persist_form_state(
-            ['title' => $title, 'entry_date' => $entryDate, 'body' => $body],
+            ['title' => $title, 'entry_date' => $entryDate, 'body' => $body, 'tags' => $tagsInput],
             $errors
         );
 
@@ -79,6 +95,7 @@ function handle_create(): void
         'title' => $title,
         'entry_date' => $entryDate,
         'body' => $body,
+        'tags' => $tags,
         'created_at' => date('c'),
         'updated_at' => date('c')
     ];
@@ -156,7 +173,9 @@ function load_entries(): array
         return strcmp($rightDate, $leftDate);
     });
 
-    return $data;
+    $normalized = array_map('normalize_entry', $data);
+
+    return $normalized;
 }
 
 function save_entries(array $entries): void
@@ -183,6 +202,154 @@ function save_entries(array $entries): void
     fclose($fp);
 }
 
+function normalize_entry(array $entry): array
+{
+    $entry['tags'] = sanitize_tags($entry['tags'] ?? []);
+
+    return $entry;
+}
+
+function sanitize_tags($value): array
+{
+    if (is_string($value)) {
+        return parse_tags($value);
+    }
+
+    if (!is_array($value)) {
+        return [];
+    }
+
+    $normalized = [];
+    foreach ($value as $tag) {
+        if (!is_string($tag)) {
+            continue;
+        }
+
+        $clean = trim($tag);
+        if ($clean === '') {
+            continue;
+        }
+
+        $normalized[] = $clean;
+    }
+
+    return array_values(array_unique($normalized));
+}
+
+function parse_tags(string $input): array
+{
+    if ($input === '') {
+        return [];
+    }
+
+    $parts = preg_split('/[,\n、]+/u', $input);
+    if ($parts === false) {
+        $parts = [$input];
+    }
+
+    $tags = [];
+    foreach ($parts as $part) {
+        $tag = trim($part);
+        if ($tag === '') {
+            continue;
+        }
+        $tags[] = $tag;
+    }
+
+    return array_values(array_unique($tags));
+}
+
+function filter_entries(array $entries, string $query): array
+{
+    if ($query === '') {
+        return $entries;
+    }
+
+    return array_values(array_filter($entries, static function ($entry) use ($query) {
+        $fields = [
+            (string)($entry['title'] ?? ''),
+            (string)($entry['body'] ?? ''),
+            implode(' ', $entry['tags'] ?? [])
+        ];
+
+        foreach ($fields as $field) {
+            if ($field === '') {
+                continue;
+            }
+
+            if (contains_text($field, $query)) {
+                return true;
+            }
+        }
+
+        return false;
+    }));
+}
+
+function sort_entries(array $entries, string $sort): array
+{
+    $sorted = $entries;
+
+    usort($sorted, static function ($a, $b) use ($sort) {
+        $dateA = (string)($a['entry_date'] ?? '');
+        $dateB = (string)($b['entry_date'] ?? '');
+        $createdA = (string)($a['created_at'] ?? '');
+        $createdB = (string)($b['created_at'] ?? '');
+
+        switch ($sort) {
+            case 'oldest':
+                $cmp = strcmp($dateA, $dateB);
+                if ($cmp !== 0) {
+                    return $cmp;
+                }
+                return strcmp($createdA, $createdB);
+            case 'title':
+                $titleA = normalize_text((string)($a['title'] ?? ''));
+                $titleB = normalize_text((string)($b['title'] ?? ''));
+                $cmp = strcmp($titleA, $titleB);
+                if ($cmp !== 0) {
+                    return $cmp;
+                }
+                return strcmp($createdB, $createdA);
+            case 'newest':
+            default:
+                $cmp = strcmp($dateB, $dateA);
+                if ($cmp !== 0) {
+                    return $cmp;
+                }
+                return strcmp($createdB, $createdA);
+        }
+    });
+
+    return $sorted;
+}
+
+function contains_text(string $haystack, string $needle): bool
+{
+    if ($needle === '') {
+        return true;
+    }
+
+    if (function_exists('mb_stripos')) {
+        return mb_stripos($haystack, $needle) !== false;
+    }
+
+    return stripos($haystack, $needle) !== false;
+}
+
+function normalize_text(string $value): string
+{
+    if ($value === '') {
+        return '';
+    }
+
+    if (function_exists('mb_strtolower')) {
+        return mb_strtolower($value);
+    }
+
+    return strtolower($value);
+}
+
 function add_flash(string $type, string $message): void
 {
     $_SESSION['flash'][$type][] = $message;
@@ -190,7 +357,7 @@ function add_flash(string $type, string $message): void
 
 function persist_form_state(array $data, array $errors): void
 {
-    $_SESSION['form_data'] = array_intersect_key($data, ['title' => true, 'entry_date' => true, 'body' => true]);
+    $_SESSION['form_data'] = array_intersect_key($data, ['title' => true, 'entry_date' => true, 'body' => true, 'tags' => true]);
     $_SESSION['form_errors'] = $errors;
 }
 
@@ -308,6 +475,10 @@ function format_body(string $body): string
                   <textarea name="body" class="diary-textarea" rows="8" placeholder="今日のメモや感想を書いてください…"><?php echo h($formData['body']); ?></textarea>
                 </label>
                 <label class="diary-label">
+                  <span>タグ (カンマ区切り)</span>
+                  <input type="text" name="tags" class="diary-input" placeholder="例: 代数幾何, ゼミ" value="<?php echo h($formData['tags']); ?>" />
+                </label>
+                <label class="diary-label">
                   <span>投稿パスワード</span>
                   <input type="password" name="post_password" class="diary-input" placeholder="投稿パスワード" autocomplete="off" />
                 </label>
@@ -323,15 +494,41 @@ function format_body(string $body): string
 
             <aside class="profile-card diary-entries">
               <h3>保存した日記</h3>
-              <?php if (!empty($entries)): ?>
+              <form method="get" class="diary-filter-form">
+                <input type="search" name="q" class="diary-input diary-filter-search" placeholder="キーワードで検索" value="<?php echo h($query); ?>" />
+                <select name="sort" class="diary-input diary-select">
+                  <?php foreach (SORT_LABELS as $key => $label): ?>
+                    <option value="<?php echo h($key); ?>" <?php if ($sort === $key) { echo 'selected'; } ?>><?php echo h($label); ?></option>
+                  <?php endforeach; ?>
+                </select>
+                <div class="diary-filter-actions">
+                  <button type="submit" class="btn btn-outline">絞り込む</button>
+                  <a href="index.php" class="btn btn-outline">リセット</a>
+                </div>
+              </form>
+              <?php $resultCount = count($displayEntries); ?>
+              <p class="diary-filter-result">
+                表示件数: <?php echo $resultCount; ?> 件
+                <?php if ($query !== '' || $sort !== 'newest'): ?>
+                  （<?php if ($query !== ''): ?>検索: "<?php echo h($query); ?>"<?php endif; ?><?php if ($query !== '' && $sort !== 'newest'): ?>、<?php endif; ?><?php if ($sort !== 'newest'): ?>並び替え: <?php echo h(SORT_LABELS[$sort] ?? ''); ?><?php endif; ?>）
+                <?php endif; ?>
+              </p>
+              <?php if ($resultCount > 0): ?>
                 <ul class="diary-list">
-                  <?php foreach ($entries as $entry): ?>
+                  <?php foreach ($displayEntries as $entry): ?>
                     <li class="diary-item">
                       <div class="diary-item-header">
                         <div class="diary-item-meta">
                           <h4><?php echo h($entry['title'] ?? '') ?: '無題'; ?></h4>
                           <?php if (!empty($entry['entry_date'])): ?>
                             <time datetime="<?php echo h($entry['entry_date']); ?>"><?php echo h($entry['entry_date']); ?></time>
+                          <?php endif; ?>
+                          <?php if (!empty($entry['tags'])): ?>
+                            <ul class="diary-tag-list">
+                              <?php foreach ($entry['tags'] as $tag): ?>
+                                <li class="diary-tag">#<?php echo h($tag); ?></li>
+                              <?php endforeach; ?>
+                            </ul>
                           <?php endif; ?>
                         </div>
                         <form method="post" class="diary-delete-form">
@@ -349,7 +546,11 @@ function format_body(string $body): string
                 </ul>
               <?php else: ?>
                 <div class="diary-empty">
-                  <p>まだ保存した日記はありません。</p>
+                  <?php if (!empty($entries)): ?>
+                    <p>検索条件に一致する日記はありません。</p>
+                  <?php else: ?>
+                    <p>まだ保存した日記はありません。</p>
+                  <?php endif; ?>
                 </div>
               <?php endif; ?>
             </aside>
@@ -379,6 +580,7 @@ function format_body(string $body): string
         const titleField = form.querySelector('input[name="title"]');
         const dateField = form.querySelector('input[name="entry_date"]');
         const bodyField = form.querySelector('textarea[name="body"]');
+        const tagsField = form.querySelector('input[name="tags"]');
         const clearButton = form.querySelector('[data-action="clear-draft"]');
 
         function currentDate() {
@@ -393,6 +595,7 @@ function format_body(string $body): string
             if (draft.title && titleField) titleField.value = draft.title;
             if (draft.date && dateField) dateField.value = draft.date;
             if (draft.body && bodyField) bodyField.value = draft.body;
+            if (draft.tags && tagsField) tagsField.value = draft.tags;
           } catch (error) {
             console.warn('Failed to load diary draft', error);
           }
@@ -403,10 +606,11 @@ function format_body(string $body): string
           const draft = {
             title: titleField.value || '',
             date: dateField.value || '',
-            body: bodyField.value || ''
+            body: bodyField.value || '',
+            tags: tagsField ? tagsField.value || '' : ''
           };
 
-          const allBlank = !draft.title.trim() && !draft.date.trim() && !draft.body.trim();
+          const allBlank = !draft.title.trim() && !draft.date.trim() && !draft.body.trim() && !draft.tags.trim();
           if (allBlank) {
             localStorage.removeItem(storageKey);
             return;
@@ -418,6 +622,7 @@ function format_body(string $body): string
         function clearDraft() {
           if (titleField) titleField.value = '';
           if (bodyField) bodyField.value = '';
+          if (tagsField) tagsField.value = '';
           if (dateField) dateField.value = currentDate();
           localStorage.removeItem(storageKey);
         }
@@ -428,7 +633,7 @@ function format_body(string $body): string
 
         loadDraft();
 
-        [titleField, dateField, bodyField].forEach(function(field) {
+        [titleField, dateField, bodyField, tagsField].forEach(function(field) {
           if (field) {
             field.addEventListener('input', persistDraft);
           }

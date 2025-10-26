@@ -525,6 +525,39 @@ main {
   gap: 0.75rem;
 }
 
+.diary-filter-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+
+.diary-filter-form .diary-input {
+  flex: 1 1 220px;
+  min-width: 180px;
+}
+
+.diary-select {
+  flex: 0 1 180px;
+}
+
+.diary-filter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.diary-filter-actions .btn {
+  flex: 0 1 auto;
+}
+
+.diary-filter-result {
+  margin: 0 0 1.2rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .form-errors {
   border: 1px solid rgba(255, 111, 97, 0.3);
   background: rgba(255, 111, 97, 0.1);
@@ -596,6 +629,24 @@ main {
 .diary-item-meta time {
   font-size: 0.9rem;
   color: var(--muted);
+}
+
+.diary-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.diary-tag {
+  background: rgba(32, 90, 140, 0.1);
+  color: var(--navy-700);
+  border-radius: 999px;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 600;
 }
 
 .diary-item-author {
