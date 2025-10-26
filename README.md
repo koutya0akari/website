@@ -6,7 +6,7 @@
 
 - `docs/index.html` – トップページ。静的 HTML として配信。
 - `docs/about/index.html` – About ページ。
-- `docs/diary/index.php` – 日記投稿・削除を扱う PHP ページ。`docs/data/diary_entries.json` に投稿を保存。MathJax、タグ付け、検索、並び替え（新しい順 / 古い順 / タイトル順）に対応しています。
+- `docs/diary/index.php` – 日記の投稿・編集・削除を扱う PHP ページ。`docs/data/diary_entries.json` に投稿を保存。MathJax、タグ付け、検索、並び替え（新しい順 / 古い順 / タイトル順）に対応しています。
 - `docs/assets/` – 共通スタイル (`application.css`) とアイコン。
 - `docs/.htaccess` – さくらでの環境変数、CSP、X-Frame-Options を定義。
 - `docs/data/.gitkeep` – 投稿データを保存するディレクトリを保持。
@@ -44,6 +44,7 @@
 - 一覧上部の検索ボックスに入力すると、タイトル・本文・タグを横断して絞り込みます。
 - プルダウンで「新しい順 / 古い順 / タイトル順」を切り替えられます。
 - 投稿フォームの「タグ (カンマ区切り)」でタグを設定すると、一覧に `#タグ名` として表示され、検索対象にも含まれます。
+- 各日記の「編集」リンクから内容を修正できます。編集時も投稿パスワードの入力が必要です。
 
 ## 新しいページの追加方法
 

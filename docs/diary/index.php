@@ -30,17 +30,65 @@ if (!in_array($sort, SORT_OPTIONS, true)) {
     $sort = 'newest';
 }
 
+$sessionEditingId = $_SESSION['editing_id'] ?? '';
+unset($_SESSION['editing_id']);
+
 $entries = load_entries();
+
+$editingId = trim((string)($_GET['edit'] ?? ''));
+if ($editingId === '' && !empty($formData['entry_id'])) {
+    $editingId = (string)$formData['entry_id'];
+}
+if ($editingId === '' && $sessionEditingId !== '') {
+    $editingId = (string)$sessionEditingId;
+}
+
+$editingEntry = null;
+if ($editingId !== '') {
+    foreach ($entries as $entry) {
+        if (($entry['id'] ?? '') === $editingId) {
+            $editingEntry = $entry;
+            break;
+        }
+    }
+
+    if ($editingEntry === null) {
+        $editingId = '';
+    }
+}
+
 $displayEntries = sort_entries(filter_entries($entries, $query), $sort);
+$defaultDate = date('Y-m-d');
 $formData = array_merge(
     [
         'title' => '',
-        'entry_date' => date('Y-m-d'),
+        'entry_date' => $defaultDate,
         'body' => '',
-        'tags' => ''
+        'tags' => '',
+        'entry_id' => ''
     ],
-    array_intersect_key($formData, ['title' => true, 'entry_date' => true, 'body' => true, 'tags' => true])
+    array_intersect_key($formData, ['title' => true, 'entry_date' => true, 'body' => true, 'tags' => true, 'entry_id' => true])
 );
+
+if ($editingEntry !== null) {
+    if (empty($formErrors) || ($formData['entry_id'] ?? '') !== $editingId) {
+        $formData['title'] = (string)($editingEntry['title'] ?? '');
+        $formData['entry_date'] = (string)($editingEntry['entry_date'] ?? $defaultDate);
+        $formData['body'] = (string)($editingEntry['body'] ?? '');
+        $formData['tags'] = implode(', ', $editingEntry['tags'] ?? []);
+    }
+    $formData['entry_id'] = $editingId;
+} else {
+    $formData['entry_id'] = '';
+}
+
+$baseQueryParams = [];
+if ($query !== '') {
+    $baseQueryParams['q'] = $query;
+}
+if ($sort !== 'newest') {
+    $baseQueryParams['sort'] = $sort;
+}
 
 function handle_post(): void
 {
@@ -49,19 +97,27 @@ function handle_post(): void
 
     if (!hash_equals(diary_password(), $password)) {
         add_flash('alert', '投稿パスワードが正しくありません。');
-        if ($action === 'create') {
-            persist_form_state($_POST, []);
+        persist_form_state($_POST, []);
+        $params = base_redirect_params();
+        if ($action === 'update') {
+            $editId = trim((string)($_POST['entry_id'] ?? ''));
+            if ($editId !== '') {
+                $params['edit'] = $editId;
+                $_SESSION['editing_id'] = $editId;
+            }
         }
-        redirect_self();
+        redirect_to($params);
     }
 
     if ($action === 'create') {
         handle_create();
+    } elseif ($action === 'update') {
+        handle_update();
     } elseif ($action === 'delete') {
         handle_delete();
+    } else {
+        redirect_to(base_redirect_params());
     }
-
-    redirect_self();
 }
 
 function handle_create(): void
@@ -86,8 +142,7 @@ function handle_create(): void
             ['title' => $title, 'entry_date' => $entryDate, 'body' => $body, 'tags' => $tagsInput],
             $errors
         );
-
-        redirect_self();
+        redirect_to(base_redirect_params());
     }
 
     $entry = [
@@ -106,6 +161,68 @@ function handle_create(): void
 
     add_flash('notice', '日記を保存しました。');
     $_SESSION['clear_draft'] = true;
+    redirect_to(base_redirect_params());
+}
+
+function handle_update(): void
+{
+    $id = trim((string)($_POST['entry_id'] ?? ''));
+    if ($id === '') {
+        add_flash('alert', '日記が見つかりませんでした。');
+        redirect_to(base_redirect_params());
+    }
+
+    $entries = load_entries();
+    $index = null;
+    foreach ($entries as $i => $entry) {
+        if (($entry['id'] ?? '') === $id) {
+            $index = $i;
+            break;
+        }
+    }
+
+    if ($index === null) {
+        add_flash('alert', '日記が見つかりませんでした。');
+        redirect_to(base_redirect_params());
+    }
+
+    $title = trim((string)($_POST['title'] ?? ''));
+    $entryDate = trim((string)($_POST['entry_date'] ?? ''));
+    $body = trim((string)($_POST['body'] ?? ''));
+    $tagsInput = (string)($_POST['tags'] ?? '');
+    $tags = parse_tags($tagsInput);
+
+    if ($entryDate === '' || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $entryDate)) {
+        $entryDate = date('Y-m-d');
+    }
+
+    $errors = [];
+    if ($body === '') {
+        $errors[] = '本文を入力してください。';
+    }
+
+    if (!empty($errors)) {
+        persist_form_state(
+            ['title' => $title, 'entry_date' => $entryDate, 'body' => $body, 'tags' => $tagsInput, 'entry_id' => $id],
+            $errors
+        );
+        $_SESSION['editing_id'] = $id;
+        $params = base_redirect_params();
+        $params['edit'] = $id;
+        redirect_to($params);
+    }
+
+    $entries[$index]['title'] = $title;
+    $entries[$index]['entry_date'] = $entryDate;
+    $entries[$index]['body'] = $body;
+    $entries[$index]['tags'] = $tags;
+    $entries[$index]['updated_at'] = date('c');
+
+    save_entries($entries);
+
+    add_flash('notice', '日記を更新しました。');
+    $_SESSION['clear_draft'] = true;
+    redirect_to(base_redirect_params());
 }
 
 function handle_delete(): void
@@ -113,7 +230,7 @@ function handle_delete(): void
     $id = trim((string)($_POST['id'] ?? ''));
     if ($id === '') {
         add_flash('alert', '日記が見つかりませんでした。');
-        return;
+        redirect_to(base_redirect_params());
     }
 
     $entries = load_entries();
@@ -128,12 +245,13 @@ function handle_delete(): void
 
     if (!$found) {
         add_flash('alert', '日記が見つかりませんでした。');
-        return;
+        redirect_to(base_redirect_params());
     }
 
     $entries = array_values($entries);
     save_entries($entries);
     add_flash('notice', '日記を削除しました。');
+    redirect_to(base_redirect_params());
 }
 
 function diary_password(): string
@@ -357,15 +475,52 @@ function add_flash(string $type, string $message): void
 
 function persist_form_state(array $data, array $errors): void
 {
-    $_SESSION['form_data'] = array_intersect_key($data, ['title' => true, 'entry_date' => true, 'body' => true, 'tags' => true]);
+    $_SESSION['form_data'] = array_intersect_key($data, ['title' => true, 'entry_date' => true, 'body' => true, 'tags' => true, 'entry_id' => true]);
     $_SESSION['form_errors'] = $errors;
 }
 
-function redirect_self(): void
+function base_redirect_params(): array
 {
-    $location = $_SERVER['REQUEST_URI'] ?? 'index.php';
+    $params = [];
+    $q = trim((string)($_POST['redirect_q'] ?? ''));
+    if ($q !== '') {
+        $params['q'] = $q;
+    }
+
+    $sort = (string)($_POST['redirect_sort'] ?? '');
+    if (in_array($sort, SORT_OPTIONS, true) && $sort !== 'newest') {
+        $params['sort'] = $sort;
+    }
+
+    return $params;
+}
+
+function redirect_to(array $params = []): void
+{
+    $query = http_build_query($params);
+    $location = 'index.php' . ($query !== '' ? '?' . $query : '');
     header('Location: ' . $location);
     exit;
+}
+
+function build_query_string(array $params): string
+{
+    $filtered = [];
+    foreach ($params as $key => $value) {
+        if ($value === '' || $value === null) {
+            continue;
+        }
+        if ($key === 'sort' && !in_array($value, SORT_OPTIONS, true)) {
+            continue;
+        }
+        $filtered[$key] = $value;
+    }
+
+    if (empty($filtered)) {
+        return '';
+    }
+
+    return '?' . http_build_query($filtered);
 }
 
 function generate_id(): string
@@ -449,6 +604,15 @@ function format_body(string $body): string
                 書いている途中の内容はブラウザに自動保存されるため、ページを離れても続きから再開できます。
               </p>
 
+              <?php if ($editingEntry !== null): ?>
+                <div class="diary-editing-banner">
+                  <div>
+                    <strong>編集中:</strong> <?php echo h($editingEntry['title'] ?? '無題'); ?>
+                  </div>
+                  <a class="diary-edit-cancel" href="index.php<?php echo build_query_string($baseQueryParams); ?>">編集をやめる</a>
+                </div>
+              <?php endif; ?>
+
               <?php if (!empty($formErrors)): ?>
                 <div class="form-errors" role="alert">
                   <strong>入力内容を確認してください。</strong>
@@ -460,8 +624,13 @@ function format_body(string $body): string
                 </div>
               <?php endif; ?>
 
-              <form method="post" class="diary-form">
-                <input type="hidden" name="action" value="create" />
+              <form method="post" class="diary-form" data-editing="<?php echo $editingEntry ? 'true' : 'false'; ?>">
+                <input type="hidden" name="action" value="<?php echo $editingEntry ? 'update' : 'create'; ?>" />
+                <input type="hidden" name="redirect_q" value="<?php echo h($query); ?>" />
+                <input type="hidden" name="redirect_sort" value="<?php echo h($sort); ?>" />
+                <?php if (!empty($formData['entry_id'])): ?>
+                  <input type="hidden" name="entry_id" value="<?php echo h($formData['entry_id']); ?>" />
+                <?php endif; ?>
                 <label class="diary-label">
                   <span>タイトル</span>
                   <input type="text" name="title" class="diary-input" placeholder="タイトル" value="<?php echo h($formData['title']); ?>" />
@@ -483,7 +652,7 @@ function format_body(string $body): string
                   <input type="password" name="post_password" class="diary-input" placeholder="投稿パスワード" autocomplete="off" />
                 </label>
                 <div class="diary-actions">
-                  <button type="submit" class="btn btn-primary">日記に追加</button>
+                  <button type="submit" class="btn btn-primary"><?php echo $editingEntry ? '日記を更新' : '日記に追加'; ?></button>
                   <button type="button" class="btn btn-outline" data-action="clear-draft">下書きをクリア</button>
                 </div>
               </form>
@@ -531,12 +700,18 @@ function format_body(string $body): string
                             </ul>
                           <?php endif; ?>
                         </div>
-                        <form method="post" class="diary-delete-form">
-                          <input type="hidden" name="action" value="delete" />
-                          <input type="hidden" name="id" value="<?php echo h($entry['id'] ?? ''); ?>" />
-                          <input type="password" name="post_password" class="diary-input diary-delete-password" placeholder="投稿パスワード" autocomplete="off" />
-                          <button type="submit" class="diary-delete">削除</button>
-                        </form>
+                        <div class="diary-item-actions">
+                          <?php $entryId = (string)($entry['id'] ?? ''); ?>
+                          <a class="diary-edit-link<?php if ($editingId !== '' && $editingId === $entryId) { echo ' is-active'; } ?>" href="index.php<?php echo build_query_string(array_merge($baseQueryParams, ['edit' => $entryId])); ?>">編集</a>
+                          <form method="post" class="diary-delete-form">
+                            <input type="hidden" name="action" value="delete" />
+                            <input type="hidden" name="id" value="<?php echo h($entryId); ?>" />
+                            <input type="hidden" name="redirect_q" value="<?php echo h($query); ?>" />
+                            <input type="hidden" name="redirect_sort" value="<?php echo h($sort); ?>" />
+                            <input type="password" name="post_password" class="diary-input diary-delete-password" placeholder="投稿パスワード" autocomplete="off" />
+                            <button type="submit" class="diary-delete">削除</button>
+                          </form>
+                        </div>
                       </div>
                       <div class="diary-item-body">
                         <?php echo format_body($entry['body'] ?? ''); ?>
@@ -577,6 +752,7 @@ function format_body(string $body): string
         if (!form) return;
 
         const storageKey = 'akari-math-lab-diary';
+        const isEditing = form.dataset.editing === 'true';
         const titleField = form.querySelector('input[name="title"]');
         const dateField = form.querySelector('input[name="entry_date"]');
         const bodyField = form.querySelector('textarea[name="body"]');
@@ -588,6 +764,7 @@ function format_body(string $body): string
         }
 
         function loadDraft() {
+          if (isEditing) return;
           try {
             const stored = localStorage.getItem(storageKey);
             if (!stored) return;
@@ -602,6 +779,7 @@ function format_body(string $body): string
         }
 
         function persistDraft() {
+          if (isEditing) return;
           if (!titleField || !dateField || !bodyField) return;
           const draft = {
             title: titleField.value || '',
@@ -631,7 +809,9 @@ function format_body(string $body): string
           dateField.value = currentDate();
         }
 
-        loadDraft();
+        if (!isEditing) {
+          loadDraft();
+        }
 
         [titleField, dateField, bodyField, tagsField].forEach(function(field) {
           if (field) {
