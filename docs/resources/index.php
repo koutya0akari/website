@@ -20,7 +20,8 @@ if ($handle !== false) {
             $items[] = [
                 'name' => $entry,
                 'size' => filesize($path),
-                'mtime' => filemtime($path)
+                'mtime' => filemtime($path),
+                'description' => load_description($filesDir, $entry)
             ];
         }
     }
@@ -41,6 +42,27 @@ function human_filesize(int $bytes): string
     }
 
     return $bytes . ' B';
+}
+
+function load_description(string $dir, string $filename): string
+{
+    $base = pathinfo($filename, PATHINFO_FILENAME);
+    foreach (['txt', 'md'] as $ext) {
+        $candidate = $dir . '/' . $base . '.' . $ext;
+        if (is_file($candidate)) {
+            $content = trim(file_get_contents($candidate));
+            if ($content !== '') {
+                return $content;
+            }
+        }
+    }
+
+    return '';
+}
+
+function format_description(string $text): string
+{
+    return nl2br(htmlspecialchars($text, ENT_QUOTES, 'UTF-8'), false);
 }
 ?>
 <!DOCTYPE html>
@@ -95,8 +117,11 @@ function human_filesize(int $bytes): string
                       <strong><?php echo htmlspecialchars($item['name'], ENT_QUOTES, 'UTF-8'); ?></strong>
                       <span><?php echo human_filesize($item['size']); ?></span>
                       <time datetime="<?php echo date('c', $item['mtime']); ?>"><?php echo date('Y-m-d', $item['mtime']); ?></time>
+                      <?php if (!empty($item['description'])): ?>
+                        <p class="resource-description"><?php echo format_description($item['description']); ?></p>
+                      <?php endif; ?>
                     </div>
-                    <a class="btn btn-outline" href="<?php echo htmlspecialchars($baseUrl . '/' . rawurlencode($item['name']), ENT_QUOTES, 'UTF-8'); ?>" download>ダウンロード</a>
+                    <a class="btn resource-download" href="<?php echo htmlspecialchars($baseUrl . '/' . rawurlencode($item['name']), ENT_QUOTES, 'UTF-8'); ?>" download>ダウンロード</a>
                   </li>
                 <?php endforeach; ?>
               </ul>

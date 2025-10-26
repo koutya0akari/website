@@ -67,7 +67,7 @@
 ## 画像・PDF の配置先
 
 - 画像: `docs/uploads/`（Git には `.gitkeep` のみを含め、実ファイルは必要に応じて追加してください）。
-- PDF: `docs/resources/files/`（同じく `.gitkeep` のみを追跡対象にしています）。
+- PDF: `docs/resources/files/`（同じく `.gitkeep` のみを追跡対象にしています）。同名の `.txt` または `.md` を置くとダウンロードボタン下に説明文が表示されます（例: `example.pdf` と `example.txt`）。
 - それぞれ `.gitignore` でディレクトリ配下の実ファイルを無視するため、デプロイ時にはアップロードを忘れないよう注意してください。
 
 ## 新しいページの追加方法
