@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-const DEFAULT_DIARY_PASSWORD = '@Koutya0akari';
+const DEFAULT_DIARY_PASSWORD = '@Koutya062525!akar1';
 const DATA_DIR = __DIR__ . '/../data';
 const DATA_FILE = DATA_DIR . '/diary_entries.json';
 const SORT_OPTIONS = ['newest', 'oldest', 'title'];
@@ -11,6 +11,7 @@ const SORT_LABELS = [
     'title' => 'タイトル順'
 ];
 const DIARY_LIKES_COOKIE = 'akari_diary_likes';
+const DIARY_ENTRIES_PER_PAGE = 10;
 
 function diary_password(): string
 {
@@ -297,6 +298,31 @@ function sort_entries(array $entries, string $sort): array
     return $sorted;
 }
 
+function paginate_entries(array $entries, int $page): array
+{
+    $perPage = max(1, DIARY_ENTRIES_PER_PAGE);
+    $totalItems = count($entries);
+    $totalPages = max(1, (int)ceil($totalItems / $perPage));
+    $page = max(1, min($page, $totalPages));
+    $offset = ($page - 1) * $perPage;
+    $items = array_slice($entries, $offset, $perPage);
+
+    $hasPrev = $page > 1;
+    $hasNext = $page < $totalPages;
+
+    return [
+        'items' => $items,
+        'page' => $page,
+        'total_pages' => $totalPages,
+        'total_items' => $totalItems,
+        'per_page' => $perPage,
+        'has_prev' => $hasPrev,
+        'has_next' => $hasNext,
+        'prev_page' => $hasPrev ? $page - 1 : 1,
+        'next_page' => $hasNext ? $page + 1 : $totalPages
+    ];
+}
+
 function contains_text(string $haystack, string $needle): bool
 {
     if ($needle === '') {
@@ -470,6 +496,11 @@ function base_redirect_params(): array
         $params['tag'] = $tag;
     }
 
+    $page = (int)($_POST['redirect_page'] ?? 1);
+    if ($page > 1) {
+        $params['page'] = $page;
+    }
+
     $anchor = trim((string)($_POST['redirect_anchor'] ?? ''));
     if ($anchor !== '') {
         $params['__anchor'] = ltrim($anchor, '#');
@@ -519,6 +550,14 @@ function build_query_string(array $params): string
             if ($value === '') {
                 continue;
             }
+        }
+        if ($key === 'page') {
+            $pageValue = (int)$value;
+            if ($pageValue <= 1) {
+                continue;
+            }
+            $filtered[$key] = $pageValue;
+            continue;
         }
         $filtered[$key] = $value;
     }

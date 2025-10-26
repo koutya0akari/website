@@ -25,7 +25,7 @@
 
 ## パスワードとセキュリティヘッダの設定
 
-- 日記の投稿パスワードは `docs/.htaccess` の `SetEnv DIARY_POST_PASSWORD '@Koutya0akari'` で指定しています。サーバー側で変更したい場合は値を書き換えてアップロードしてください。
+- 日記の投稿パスワードは `docs/.htaccess` の `SetEnv DIARY_POST_PASSWORD '@Koutya062525!akar1'` で指定しています。サーバー側で変更したい場合は値を書き換えてアップロードしてください。
 - 同ファイルで `Content-Security-Policy` と `X-Frame-Options` を設定しています。必要に応じて許可するドメインを追加してください。
 - `.htaccess` が無効なプランでは PHP 冒頭の `DEFAULT_DIARY_PASSWORD` を直接変更して運用します。
 

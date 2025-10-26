@@ -63,10 +63,15 @@ if ($editingId !== '') {
     }
 }
 
-$displayEntries = sort_entries(
-    filter_entries($entries, $query, $categoryFilter, $tagFilter),
-    $sort
-);
+$filteredEntries = filter_entries($entries, $query, $categoryFilter, $tagFilter);
+$sortedEntries = sort_entries($filteredEntries, $sort);
+$pageParam = (int)($_GET['page'] ?? 1);
+$pagination = paginate_entries($sortedEntries, $pageParam);
+$displayEntries = $pagination['items'];
+$currentPage = $pagination['page'];
+$totalPages = $pagination['total_pages'];
+$totalEntries = $pagination['total_items'];
+$perPage = $pagination['per_page'];
 $defaultDate = date('Y-m-d');
 $formData = array_merge(
     [
@@ -105,6 +110,10 @@ if ($sort !== 'newest') {
 }
 if ($tagFilter !== '') {
     $baseQueryParams['tag'] = $tagFilter;
+}
+$baseQueryParamsWithPage = $baseQueryParams;
+if ($currentPage > 1) {
+    $baseQueryParamsWithPage['page'] = $currentPage;
 }
 
 function handle_post(): void
@@ -452,7 +461,7 @@ function handle_comment(): void
                   <div>
                     <strong>編集中:</strong> <?php echo h($editingEntry['title'] ?? '無題'); ?>
                   </div>
-                  <a class="diary-edit-cancel" href="index.php<?php echo build_query_string($baseQueryParams); ?>">編集をやめる</a>
+                  <a class="diary-edit-cancel" href="index.php<?php echo build_query_string($baseQueryParamsWithPage); ?>">編集をやめる</a>
                 </div>
               <?php endif; ?>
 
@@ -473,6 +482,7 @@ function handle_comment(): void
                 <input type="hidden" name="redirect_sort" value="<?php echo h($sort); ?>" />
                 <input type="hidden" name="redirect_category" value="<?php echo h($categoryFilter); ?>" />
                 <input type="hidden" name="redirect_tag" value="<?php echo h($tagFilter); ?>" />
+                <input type="hidden" name="redirect_page" value="<?php echo h((string)($editingEntry !== null ? $currentPage : 1)); ?>" />
                 <?php if (!empty($formData['entry_id'])): ?>
                   <input type="hidden" name="entry_id" value="<?php echo h($formData['entry_id']); ?>" />
                 <?php endif; ?>
@@ -564,30 +574,36 @@ function handle_comment(): void
                   <a class="diary-tag-filter-clear" href="index.php<?php echo build_query_string($clearTagParams); ?>">タグを解除</a>
                 </div>
               <?php endif; ?>
-              <?php $resultCount = count($displayEntries); ?>
+              <?php
+                $resultCount = $totalEntries;
+                $pageItemCount = count($displayEntries);
+                $extraParts = [];
+                if ($totalPages > 1) {
+                    $extraParts[] = 'ページ ' . h((string)$currentPage) . ' / ' . h((string)$totalPages) . '（このページ ' . h((string)$pageItemCount) . ' 件）';
+                }
+                if ($query !== '' || $sort !== 'newest' || $categoryFilter !== '' || $tagFilter !== '') {
+                    $filterParts = [];
+                    if ($query !== '') {
+                        $filterParts[] = '検索: "' . h($query) . '"';
+                    }
+                    if ($categoryFilter !== '') {
+                        $filterParts[] = 'フォルダー: ' . h($categoryFilter);
+                    }
+                    if ($tagFilter !== '') {
+                        $filterParts[] = 'タグ: #' . h($tagFilter);
+                    }
+                    if ($sort !== 'newest') {
+                        $filterParts[] = '並び替え: ' . h(SORT_LABELS[$sort] ?? '');
+                    }
+                    if (!empty($filterParts)) {
+                        $extraParts[] = '条件: ' . implode('、', $filterParts);
+                    }
+                }
+              ?>
               <p class="diary-filter-result">
-                表示件数: <?php echo $resultCount; ?> 件
-                <?php if ($query !== '' || $sort !== 'newest' || $categoryFilter !== '' || $tagFilter !== ''): ?>
-                  （
-                    <?php
-                      $filterParts = [];
-                      if ($query !== '') {
-                          $filterParts[] = '検索: "' . h($query) . '"';
-                      }
-                      if ($categoryFilter !== '') {
-                          $filterParts[] = 'フォルダー: ' . h($categoryFilter);
-                      }
-                      if ($tagFilter !== '') {
-                          $filterParts[] = 'タグ: #' . h($tagFilter);
-                      }
-                      if ($sort !== 'newest') {
-                          $filterParts[] = '並び替え: ' . h(SORT_LABELS[$sort] ?? '');
-                      }
-                      echo implode('、', $filterParts);
-                    ?>）
-                <?php endif; ?>
+                表示件数: <?php echo $resultCount; ?> 件<?php if (!empty($extraParts)) { echo '（' . implode('／', $extraParts) . '）'; } ?>
               </p>
-              <?php if ($resultCount > 0): ?>
+              <?php if ($pageItemCount > 0): ?>
                 <ul class="diary-list">
                   <?php foreach ($displayEntries as $entry): ?>
                     <?php
@@ -602,6 +618,7 @@ function handle_comment(): void
                       $shareUrlEncoded = rawurlencode($entryUrl);
                       $shareTextEncoded = rawurlencode(($entry['title'] ?? '学習日記') . ' | Akari Diary');
                       $entryComments = $entry['comments'] ?? [];
+                      $commentCount = is_array($entryComments) ? count($entryComments) : 0;
                       $viewerHasLiked = has_liked_entry($entryId);
                     ?>
                     <li class="diary-item" id="<?php echo h($entryAnchor); ?>">
@@ -648,7 +665,7 @@ function handle_comment(): void
                           <?php endif; ?>
                         </div>
                         <div class="diary-item-actions">
-                          <a class="diary-edit-link<?php if ($editingId !== '' && $editingId === $entryId) { echo ' is-active'; } ?>" href="index.php<?php echo build_query_string(array_merge($baseQueryParams, ['edit' => $entryId])); ?>">編集</a>
+                          <a class="diary-edit-link<?php if ($editingId !== '' && $editingId === $entryId) { echo ' is-active'; } ?>" href="index.php<?php echo build_query_string(array_merge($baseQueryParamsWithPage, ['edit' => $entryId])); ?>">編集</a>
                           <form method="post" class="diary-delete-form">
                             <input type="hidden" name="action" value="delete" />
                             <input type="hidden" name="id" value="<?php echo h($entryId); ?>" />
@@ -656,6 +673,7 @@ function handle_comment(): void
                             <input type="hidden" name="redirect_sort" value="<?php echo h($sort); ?>" />
                             <input type="hidden" name="redirect_category" value="<?php echo h($categoryFilter); ?>" />
                             <input type="hidden" name="redirect_tag" value="<?php echo h($tagFilter); ?>" />
+                            <input type="hidden" name="redirect_page" value="<?php echo h((string)$currentPage); ?>" />
                             <input type="hidden" name="redirect_anchor" value="<?php echo h($entryAnchor); ?>" />
                             <input type="password" name="post_password" class="diary-input diary-delete-password" placeholder="投稿パスワード" autocomplete="off" />
                             <button type="submit" class="diary-delete">削除</button>
@@ -673,6 +691,7 @@ function handle_comment(): void
                           <input type="hidden" name="redirect_sort" value="<?php echo h($sort); ?>" />
                           <input type="hidden" name="redirect_category" value="<?php echo h($categoryFilter); ?>" />
                           <input type="hidden" name="redirect_tag" value="<?php echo h($tagFilter); ?>" />
+                          <input type="hidden" name="redirect_page" value="<?php echo h((string)$currentPage); ?>" />
                           <input type="hidden" name="redirect_anchor" value="<?php echo h($entryAnchor); ?>" />
                           <button
                             type="submit"
@@ -686,49 +705,96 @@ function handle_comment(): void
                           <a class="diary-share-button" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $shareUrlEncoded; ?>">Facebook</a>
                         </div>
                       </div>
-                      <div class="diary-comments" id="<?php echo h($commentsAnchor); ?>">
-                        <h4>コメント</h4>
-                        <?php if (!empty($entryComments)): ?>
-                          <ul class="diary-comment-list">
-                            <?php foreach ($entryComments as $comment): ?>
-                              <li class="diary-comment" id="comment-<?php echo h(($comment['id'] ?? '')); ?>">
-                                <div class="diary-comment-meta">
-                                  <span class="diary-comment-author"><?php echo h(!empty($comment['name']) ? $comment['name'] : '匿名'); ?></span>
-                                  <?php if (!empty($comment['posted_at'])): ?>
-                                    <time datetime="<?php echo h($comment['posted_at']); ?>"><?php echo h(date('Y-m-d H:i', strtotime($comment['posted_at']))); ?></time>
-                                  <?php endif; ?>
-                                </div>
-                                <div class="diary-comment-body"><?php echo nl2br(h($comment['body'] ?? ''), false); ?></div>
-                              </li>
-                            <?php endforeach; ?>
-                          </ul>
-                        <?php else: ?>
-                          <p class="diary-comments-empty">まだコメントはありません。</p>
-                        <?php endif; ?>
-                        <form method="post" class="diary-comment-form">
-                          <input type="hidden" name="action" value="comment" />
-                          <input type="hidden" name="entry_id" value="<?php echo h($entryId); ?>" />
-                          <input type="hidden" name="redirect_q" value="<?php echo h($query); ?>" />
-                          <input type="hidden" name="redirect_sort" value="<?php echo h($sort); ?>" />
-                          <input type="hidden" name="redirect_category" value="<?php echo h($categoryFilter); ?>" />
-                          <input type="hidden" name="redirect_tag" value="<?php echo h($tagFilter); ?>" />
-                          <input type="hidden" name="redirect_anchor" value="<?php echo h($commentsAnchor); ?>" />
-                          <label class="diary-label">
-                            <span>お名前 (任意)</span>
-                            <input type="text" name="comment_name" class="diary-input" placeholder="匿名" />
-                          </label>
-                          <label class="diary-label">
-                            <span>コメント</span>
-                          <textarea name="comment_body" class="diary-textarea" rows="3" placeholder="コメントを入力してください" required></textarea>
-                          </label>
-                          <div class="diary-comment-actions">
-                            <button type="submit" class="btn btn-outline">コメントを送信</button>
-                          </div>
-                        </form>
-                      </div>
+                      <details class="diary-comments" id="<?php echo h($commentsAnchor); ?>" open>
+                        <summary class="diary-comments-summary">
+                          コメント
+                          <?php if ($commentCount > 0): ?>
+                            <span class="diary-comments-count"><?php echo $commentCount; ?></span>
+                          <?php endif; ?>
+                        </summary>
+                        <div class="diary-comments-body">
+                          <?php if (!empty($entryComments)): ?>
+                            <ul class="diary-comment-list">
+                              <?php foreach ($entryComments as $comment): ?>
+                                <li class="diary-comment" id="comment-<?php echo h(($comment['id'] ?? '')); ?>">
+                                  <div class="diary-comment-meta">
+                                    <span class="diary-comment-author"><?php echo h(!empty($comment['name']) ? $comment['name'] : '匿名'); ?></span>
+                                    <?php if (!empty($comment['posted_at'])): ?>
+                                      <time datetime="<?php echo h($comment['posted_at']); ?>"><?php echo h(date('Y-m-d H:i', strtotime($comment['posted_at']))); ?></time>
+                                    <?php endif; ?>
+                                  </div>
+                                  <div class="diary-comment-body"><?php echo nl2br(h($comment['body'] ?? ''), false); ?></div>
+                                </li>
+                              <?php endforeach; ?>
+                            </ul>
+                          <?php else: ?>
+                            <p class="diary-comments-empty">まだコメントはありません。</p>
+                          <?php endif; ?>
+                          <form method="post" class="diary-comment-form">
+                            <input type="hidden" name="action" value="comment" />
+                            <input type="hidden" name="entry_id" value="<?php echo h($entryId); ?>" />
+                            <input type="hidden" name="redirect_q" value="<?php echo h($query); ?>" />
+                            <input type="hidden" name="redirect_sort" value="<?php echo h($sort); ?>" />
+                            <input type="hidden" name="redirect_category" value="<?php echo h($categoryFilter); ?>" />
+                            <input type="hidden" name="redirect_tag" value="<?php echo h($tagFilter); ?>" />
+                            <input type="hidden" name="redirect_page" value="<?php echo h((string)$currentPage); ?>" />
+                            <input type="hidden" name="redirect_anchor" value="<?php echo h($commentsAnchor); ?>" />
+                            <label class="diary-label">
+                              <span>お名前 (任意)</span>
+                              <input type="text" name="comment_name" class="diary-input" placeholder="匿名" />
+                            </label>
+                            <label class="diary-label">
+                              <span>コメント</span>
+                            <textarea name="comment_body" class="diary-textarea" rows="3" placeholder="コメントを入力してください" required></textarea>
+                            </label>
+                            <div class="diary-comment-actions">
+                              <button type="submit" class="btn btn-outline">コメントを送信</button>
+                            </div>
+                          </form>
+                        </div>
+                      </details>
                     </li>
                   <?php endforeach; ?>
                 </ul>
+                <?php if ($totalPages > 1): ?>
+                  <?php
+                    $paginationBaseParams = $baseQueryParams;
+                    unset($paginationBaseParams['page']);
+                    $hasPrev = $currentPage > 1;
+                    $hasNext = $currentPage < $totalPages;
+                    $prevPage = max(1, $currentPage - 1);
+                    $nextPage = min($totalPages, $currentPage + 1);
+                    $windowStart = max(1, $currentPage - 2);
+                    $windowEnd = min($totalPages, $currentPage + 2);
+                  ?>
+                  <nav class="diary-pagination" aria-label="日記のページ送り">
+                    <ul class="diary-pagination-list">
+                      <li>
+                        <?php if ($hasPrev): ?>
+                          <a class="diary-page-button" href="index.php<?php echo build_query_string(array_merge($paginationBaseParams, ['page' => $prevPage])); ?>">前へ</a>
+                        <?php else: ?>
+                          <span class="diary-page-button is-disabled" aria-disabled="true">前へ</span>
+                        <?php endif; ?>
+                      </li>
+                      <?php for ($pageNumber = $windowStart; $pageNumber <= $windowEnd; $pageNumber++): ?>
+                        <li>
+                          <?php if ($pageNumber === $currentPage): ?>
+                            <span class="diary-page-number is-active" aria-current="page"><?php echo $pageNumber; ?></span>
+                          <?php else: ?>
+                            <a class="diary-page-number" href="index.php<?php echo build_query_string(array_merge($paginationBaseParams, ['page' => $pageNumber])); ?>"><?php echo $pageNumber; ?></a>
+                          <?php endif; ?>
+                        </li>
+                      <?php endfor; ?>
+                      <li>
+                        <?php if ($hasNext): ?>
+                          <a class="diary-page-button" href="index.php<?php echo build_query_string(array_merge($paginationBaseParams, ['page' => $nextPage])); ?>">次へ</a>
+                        <?php else: ?>
+                          <span class="diary-page-button is-disabled" aria-disabled="true">次へ</span>
+                        <?php endif; ?>
+                      </li>
+                    </ul>
+                  </nav>
+                <?php endif; ?>
               <?php else: ?>
                 <div class="diary-empty">
                   <?php if (!empty($entries)): ?>
@@ -759,6 +825,22 @@ function handle_comment(): void
 
     <script>
       document.addEventListener('DOMContentLoaded', function() {
+        function openCommentsFromHash() {
+          const { hash } = window.location;
+          if (!hash) return;
+          try {
+            const target = document.querySelector(hash);
+            if (target && target.tagName === 'DETAILS') {
+              target.open = true;
+            }
+          } catch (error) {
+            // ignore invalid selectors
+          }
+        }
+
+        openCommentsFromHash();
+        window.addEventListener('hashchange', openCommentsFromHash);
+
         const form = document.querySelector('.diary-form');
         if (!form) return;
 

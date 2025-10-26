@@ -21,6 +21,10 @@ $tagFilter = trim((string)($_GET['tag'] ?? ''));
 
 $entries = load_entries();
 $allCategories = collect_categories($entries);
+$pageParam = (int)($_GET['page'] ?? 1);
+$currentPage = 1;
+$totalPages = 1;
+$totalEntries = 0;
 
 $matchedCategory = null;
 foreach ($allCategories as $candidate) {
@@ -34,10 +38,13 @@ if ($matchedCategory === null) {
     $matchedCategory = $folderName;
     $displayEntries = [];
 } else {
-    $displayEntries = sort_entries(
-        filter_entries($entries, $query, $matchedCategory, $tagFilter),
-        $sort
-    );
+    $filteredEntries = filter_entries($entries, $query, $matchedCategory, $tagFilter);
+    $sortedEntries = sort_entries($filteredEntries, $sort);
+    $pagination = paginate_entries($sortedEntries, $pageParam);
+    $displayEntries = $pagination['items'];
+    $currentPage = $pagination['page'];
+    $totalPages = $pagination['total_pages'];
+    $totalEntries = $pagination['total_items'];
 }
 
 function folder_query(array $params): string
@@ -45,6 +52,31 @@ function folder_query(array $params): string
     $filtered = [];
     foreach ($params as $key => $value) {
         if ($value === '' || $value === null) {
+            continue;
+        }
+        if ($key === 'q') {
+            $value = trim((string)$value);
+            if ($value === '') {
+                continue;
+            }
+        }
+        if ($key === 'sort') {
+            if (!in_array($value, SORT_OPTIONS, true) || $value === 'newest') {
+                continue;
+            }
+        }
+        if ($key === 'tag') {
+            $value = trim((string)$value);
+            if ($value === '') {
+                continue;
+            }
+        }
+        if ($key === 'page') {
+            $pageValue = (int)$value;
+            if ($pageValue <= 1) {
+                continue;
+            }
+            $filtered[$key] = $pageValue;
             continue;
         }
         $filtered[$key] = $value;
@@ -124,29 +156,33 @@ function folder_query(array $params): string
                 <a class="diary-tag-filter-clear" href="folder.php<?php echo folder_query(['name' => $matchedCategory, 'q' => $query, 'sort' => $sort]); ?>">タグを解除</a>
               </div>
             <?php endif; ?>
-
-            <?php $resultCount = count($displayEntries); ?>
+            <?php
+              $pageItemCount = count($displayEntries);
+              $extraParts = [];
+              if ($totalPages > 1) {
+                  $extraParts[] = 'ページ ' . h((string)$currentPage) . ' / ' . h((string)$totalPages) . '（このページ ' . h((string)$pageItemCount) . ' 件）';
+              }
+              if ($query !== '' || $sort !== 'newest' || $tagFilter !== '') {
+                  $filterParts = [];
+                  if ($query !== '') {
+                      $filterParts[] = '検索: "' . h($query) . '"';
+                  }
+                  if ($tagFilter !== '') {
+                      $filterParts[] = 'タグ: #' . h($tagFilter);
+                  }
+                  if ($sort !== 'newest') {
+                      $filterParts[] = '並び替え: ' . h(SORT_LABELS[$sort] ?? '');
+                  }
+                  if (!empty($filterParts)) {
+                      $extraParts[] = '条件: ' . implode('、', $filterParts);
+                  }
+              }
+            ?>
             <p class="diary-filter-result">
-              表示件数: <?php echo $resultCount; ?> 件
-              <?php if ($query !== '' || $sort !== 'newest' || $tagFilter !== ''): ?>
-                （
-                  <?php
-                    $filterParts = [];
-                    if ($query !== '') {
-                        $filterParts[] = '検索: "' . h($query) . '"';
-                    }
-                    if ($tagFilter !== '') {
-                        $filterParts[] = 'タグ: #' . h($tagFilter);
-                    }
-                    if ($sort !== 'newest') {
-                        $filterParts[] = '並び替え: ' . h(SORT_LABELS[$sort] ?? '');
-                    }
-                    echo implode('、', $filterParts);
-                  ?>）
-              <?php endif; ?>
+              表示件数: <?php echo $totalEntries; ?> 件<?php if (!empty($extraParts)) { echo '（' . implode('／', $extraParts) . '）'; } ?>
             </p>
 
-            <?php if ($resultCount > 0): ?>
+            <?php if ($pageItemCount > 0): ?>
               <ul class="diary-list">
                 <?php foreach ($displayEntries as $entry): ?>
                   <li class="diary-item">
@@ -182,6 +218,49 @@ function folder_query(array $params): string
                   </li>
                 <?php endforeach; ?>
               </ul>
+              <?php if ($totalPages > 1): ?>
+                <?php
+                  $paginationBaseParams = [
+                      'name' => $matchedCategory,
+                      'q' => $query,
+                      'sort' => $sort,
+                      'tag' => $tagFilter
+                  ];
+                  $hasPrev = $currentPage > 1;
+                  $hasNext = $currentPage < $totalPages;
+                  $prevPage = max(1, $currentPage - 1);
+                  $nextPage = min($totalPages, $currentPage + 1);
+                  $windowStart = max(1, $currentPage - 2);
+                  $windowEnd = min($totalPages, $currentPage + 2);
+                ?>
+                <nav class="diary-pagination" aria-label="フォルダーのページ送り">
+                  <ul class="diary-pagination-list">
+                    <li>
+                      <?php if ($hasPrev): ?>
+                        <a class="diary-page-button" href="folder.php<?php echo folder_query(array_merge($paginationBaseParams, ['page' => $prevPage])); ?>">前へ</a>
+                      <?php else: ?>
+                        <span class="diary-page-button is-disabled" aria-disabled="true">前へ</span>
+                      <?php endif; ?>
+                    </li>
+                    <?php for ($pageNumber = $windowStart; $pageNumber <= $windowEnd; $pageNumber++): ?>
+                      <li>
+                        <?php if ($pageNumber === $currentPage): ?>
+                          <span class="diary-page-number is-active" aria-current="page"><?php echo $pageNumber; ?></span>
+                        <?php else: ?>
+                          <a class="diary-page-number" href="folder.php<?php echo folder_query(array_merge($paginationBaseParams, ['page' => $pageNumber])); ?>"><?php echo $pageNumber; ?></a>
+                        <?php endif; ?>
+                      </li>
+                    <?php endfor; ?>
+                    <li>
+                      <?php if ($hasNext): ?>
+                        <a class="diary-page-button" href="folder.php<?php echo folder_query(array_merge($paginationBaseParams, ['page' => $nextPage])); ?>">次へ</a>
+                      <?php else: ?>
+                        <span class="diary-page-button is-disabled" aria-disabled="true">次へ</span>
+                      <?php endif; ?>
+                    </li>
+                  </ul>
+                </nav>
+              <?php endif; ?>
             <?php else: ?>
               <div class="diary-empty">
                 <p>このフォルダーにはまだ日記がありません。</p>
