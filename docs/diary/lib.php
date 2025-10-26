@@ -10,6 +10,7 @@ const SORT_LABELS = [
     'oldest' => '古い順',
     'title' => 'タイトル順'
 ];
+const DIARY_LIKES_COOKIE = 'akari_diary_likes';
 
 function diary_password(): string
 {
@@ -81,6 +82,8 @@ function normalize_entry(array $entry): array
 {
     $entry['tags'] = sanitize_tags($entry['tags'] ?? []);
     $entry['category'] = sanitize_category($entry['category'] ?? '');
+    $entry['likes_count'] = isset($entry['likes_count']) ? max(0, (int) $entry['likes_count']) : 0;
+    $entry['comments'] = sanitize_comments($entry['comments'] ?? []);
 
     return $entry;
 }
@@ -133,6 +136,48 @@ function parse_tags(string $input): array
     }
 
     return array_values(array_unique($tags));
+}
+
+function sanitize_comments($value): array
+{
+    if (!is_array($value)) {
+        return [];
+    }
+
+    $comments = [];
+    foreach ($value as $comment) {
+        if (!is_array($comment)) {
+            continue;
+        }
+
+        $body = trim((string)($comment['body'] ?? ''));
+        if ($body === '') {
+            continue;
+        }
+
+        $comments[] = [
+            'id' => (string)($comment['id'] ?? generate_id()),
+            'name' => trim((string)($comment['name'] ?? '')),
+            'body' => $body,
+            'posted_at' => isset($comment['posted_at']) && $comment['posted_at'] !== ''
+                ? (string)$comment['posted_at']
+                : date('c')
+        ];
+    }
+
+    usort($comments, static fn($a, $b) => strcmp($a['posted_at'], $b['posted_at']));
+
+    return $comments;
+}
+
+function create_comment(string $name, string $body): array
+{
+    return [
+        'id' => generate_id(),
+        'name' => trim($name),
+        'body' => trim($body),
+        'posted_at' => date('c')
+    ];
 }
 
 function sanitize_category($value): string
@@ -196,7 +241,8 @@ function filter_entries(array $entries, string $query, string $category, string 
             (string)($entry['title'] ?? ''),
             (string)($entry['body'] ?? ''),
             sanitize_category($entry['category'] ?? ''),
-            implode(' ', sanitize_tags($entry['tags'] ?? []))
+            implode(' ', sanitize_tags($entry['tags'] ?? [])),
+            implode(' ', array_map(static fn($comment) => (string)($comment['body'] ?? ''), $entry['comments'] ?? []))
         ];
 
         foreach ($fields as $field) {
@@ -424,13 +470,24 @@ function base_redirect_params(): array
         $params['tag'] = $tag;
     }
 
+    $anchor = trim((string)($_POST['redirect_anchor'] ?? ''));
+    if ($anchor !== '') {
+        $params['__anchor'] = ltrim($anchor, '#');
+    }
+
     return $params;
 }
 
 function redirect_to(array $params = []): void
 {
+    $anchor = '';
+    if (isset($params['__anchor'])) {
+        $anchor = '#' . ltrim((string)$params['__anchor'], '#');
+        unset($params['__anchor']);
+    }
+
     $query = http_build_query($params);
-    $location = 'index.php' . ($query !== '' ? '?' . $query : '');
+    $location = 'index.php' . ($query !== '' ? '?' . $query : '') . $anchor;
     header('Location: ' . $location);
     exit;
 }
@@ -440,6 +497,9 @@ function build_query_string(array $params): string
     $filtered = [];
     foreach ($params as $key => $value) {
         if ($value === '' || $value === null) {
+            continue;
+        }
+        if ($key === '__anchor') {
             continue;
         }
         if ($key === 'sort') {
@@ -468,6 +528,107 @@ function build_query_string(array $params): string
     }
 
     return '?' . http_build_query($filtered);
+}
+
+function liked_entry_ids(): array
+{
+    if (!isset($_COOKIE[DIARY_LIKES_COOKIE])) {
+        return [];
+    }
+
+    $raw = $_COOKIE[DIARY_LIKES_COOKIE];
+    if (!is_string($raw) || $raw === '') {
+        return [];
+    }
+
+    $decoded = base64_decode($raw, true);
+    if ($decoded === false || $decoded === '') {
+        return [];
+    }
+
+    $data = json_decode($decoded, true);
+    if (!is_array($data)) {
+        return [];
+    }
+
+    $ids = [];
+    foreach ($data as $value) {
+        if (!is_string($value)) {
+            continue;
+        }
+        $value = trim($value);
+        if ($value === '') {
+            continue;
+        }
+        $ids[$value] = true;
+    }
+
+    return array_keys($ids);
+}
+
+function has_liked_entry(string $id): bool
+{
+    if ($id === '') {
+        return false;
+    }
+
+    return in_array($id, liked_entry_ids(), true);
+}
+
+function remember_like_cookie(array $ids): void
+{
+    $normalized = [];
+    foreach ($ids as $id) {
+        if (!is_string($id)) {
+            $id = (string)$id;
+        }
+        $id = trim($id);
+        if ($id === '') {
+            continue;
+        }
+        $normalized[$id] = true;
+    }
+
+    $payload = json_encode(array_keys($normalized));
+    if ($payload === false) {
+        return;
+    }
+
+    $encoded = base64_encode($payload);
+    if ($encoded === false) {
+        return;
+    }
+
+    $expires = time() + (60 * 60 * 24 * 365 * 5);
+    $secure = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+    if (PHP_VERSION_ID >= 70300) {
+        setcookie(
+            DIARY_LIKES_COOKIE,
+            $encoded,
+            [
+                'expires' => $expires,
+                'path' => '/',
+                'secure' => $secure,
+                'httponly' => false,
+                'samesite' => 'Lax'
+            ]
+        );
+    } else {
+        setcookie(DIARY_LIKES_COOKIE, $encoded, $expires, '/', '', $secure, false);
+    }
+}
+
+function remember_like(string $id): void
+{
+    if ($id === '') {
+        return;
+    }
+
+    $ids = liked_entry_ids();
+    if (!in_array($id, $ids, true)) {
+        $ids[] = $id;
+        remember_like_cookie($ids);
+    }
 }
 
 function generate_id(): string

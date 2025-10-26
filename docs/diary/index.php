@@ -31,6 +31,16 @@ $allCategories = collect_categories($entries);
 $categoryFilter = trim((string)($_GET['category'] ?? ''));
 $tagFilter = trim((string)($_GET['tag'] ?? ''));
 
+$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? '';
+$scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+$scriptDir = rtrim(dirname($scriptName), '/\\');
+if ($scriptDir === '.' || $scriptDir === '/' || $scriptDir === '\\') {
+    $scriptDir = '';
+}
+$shareBaseUrl = $host !== '' ? $scheme . '://' . $host . $scriptDir : 'https://example.com/diary';
+$shareBaseUrl = rtrim($shareBaseUrl, '/');
+
 $editingId = trim((string)($_GET['edit'] ?? ''));
 if ($editingId === '' && !empty($formData['entry_id'])) {
     $editingId = (string)$formData['entry_id'];
@@ -100,30 +110,45 @@ if ($tagFilter !== '') {
 function handle_post(): void
 {
     $action = $_POST['action'] ?? '';
-    $password = (string)($_POST['post_password'] ?? '');
+    $requiresPassword = in_array($action, ['create', 'update', 'delete'], true);
 
-    if (!hash_equals(diary_password(), $password)) {
-        add_flash('alert', '投稿パスワードが正しくありません。');
-        persist_form_state($_POST, []);
-        $params = base_redirect_params();
-        if ($action === 'update') {
-            $editId = trim((string)($_POST['entry_id'] ?? ''));
-            if ($editId !== '') {
-                $params['edit'] = $editId;
-                $_SESSION['editing_id'] = $editId;
+    if ($requiresPassword) {
+        $password = (string)($_POST['post_password'] ?? '');
+        if (!hash_equals(diary_password(), $password)) {
+            add_flash('alert', '投稿パスワードが正しくありません。');
+            if ($action === 'create' || $action === 'update') {
+                persist_form_state($_POST, []);
             }
+            $params = base_redirect_params();
+            if ($action === 'update') {
+                $editId = trim((string)($_POST['entry_id'] ?? ''));
+                if ($editId !== '') {
+                    $params['edit'] = $editId;
+                    $_SESSION['editing_id'] = $editId;
+                }
+            }
+            redirect_to($params);
         }
-        redirect_to($params);
     }
 
-    if ($action === 'create') {
-        handle_create();
-    } elseif ($action === 'update') {
-        handle_update();
-    } elseif ($action === 'delete') {
-        handle_delete();
-    } else {
-        redirect_to(base_redirect_params());
+    switch ($action) {
+        case 'create':
+            handle_create();
+            break;
+        case 'update':
+            handle_update();
+            break;
+        case 'delete':
+            handle_delete();
+            break;
+        case 'like':
+            handle_like();
+            break;
+        case 'comment':
+            handle_comment();
+            break;
+        default:
+            redirect_to(base_redirect_params());
     }
 }
 
@@ -167,6 +192,8 @@ function handle_create(): void
         'body' => $body,
         'category' => $category,
         'tags' => $tags,
+        'likes_count' => 0,
+        'comments' => [],
         'created_at' => date('c'),
         'updated_at' => date('c')
     ];
@@ -277,6 +304,78 @@ function handle_delete(): void
     $entries = array_values($entries);
     save_entries($entries);
     add_flash('notice', '日記を削除しました。');
+    redirect_to(base_redirect_params());
+}
+
+function handle_like(): void
+{
+    $id = trim((string)($_POST['entry_id'] ?? ''));
+    if ($id === '') {
+        add_flash('alert', '日記が見つかりませんでした。');
+        redirect_to(base_redirect_params());
+    }
+
+    if (has_liked_entry($id)) {
+        add_flash('alert', 'この日記には既にいいねしています。');
+        $params = base_redirect_params();
+        $params['__anchor'] = 'entry-' . $id;
+        redirect_to($params);
+    }
+
+    $entries = load_entries();
+    foreach ($entries as $index => $entry) {
+        if (($entry['id'] ?? '') !== $id) {
+            continue;
+        }
+
+        $currentLikes = isset($entry['likes_count']) ? max(0, (int) $entry['likes_count']) : 0;
+        $entries[$index]['likes_count'] = $currentLikes + 1;
+        $entries[$index]['updated_at'] = date('c');
+        save_entries($entries);
+        remember_like($id);
+        add_flash('notice', 'いいねしました。');
+        $params = base_redirect_params();
+        $params['__anchor'] = 'entry-' . $id;
+        redirect_to($params);
+    }
+
+    add_flash('alert', '日記が見つかりませんでした。');
+    redirect_to(base_redirect_params());
+}
+
+function handle_comment(): void
+{
+    $id = trim((string)($_POST['entry_id'] ?? ''));
+    $body = trim((string)($_POST['comment_body'] ?? ''));
+    $name = trim((string)($_POST['comment_name'] ?? ''));
+
+    if ($id === '' || $body === '') {
+        add_flash('alert', 'コメントを入力してください。');
+        $params = base_redirect_params();
+        if ($id !== '') {
+            $params['__anchor'] = 'entry-' . $id;
+        }
+        redirect_to($params);
+    }
+
+    $entries = load_entries();
+    foreach ($entries as $index => $entry) {
+        if (($entry['id'] ?? '') !== $id) {
+            continue;
+        }
+
+        $comments = $entry['comments'] ?? [];
+        $comments[] = create_comment($name, $body);
+        $entries[$index]['comments'] = sanitize_comments($comments);
+        $entries[$index]['updated_at'] = date('c');
+        save_entries($entries);
+        add_flash('notice', 'コメントを投稿しました。');
+        $params = base_redirect_params();
+        $params['__anchor'] = 'entry-' . $id . '-comments';
+        redirect_to($params);
+    }
+
+    add_flash('alert', '日記が見つかりませんでした。');
     redirect_to(base_redirect_params());
 }
 
@@ -491,7 +590,21 @@ function handle_delete(): void
               <?php if ($resultCount > 0): ?>
                 <ul class="diary-list">
                   <?php foreach ($displayEntries as $entry): ?>
-                    <li class="diary-item">
+                    <?php
+                      $entryId = (string)($entry['id'] ?? '');
+                      if ($entryId === '') {
+                          continue;
+                      }
+                      $entryAnchor = 'entry-' . $entryId;
+                      $commentsAnchor = $entryAnchor . '-comments';
+                      $likesCount = isset($entry['likes_count']) ? (int) $entry['likes_count'] : 0;
+                      $entryUrl = $shareBaseUrl . '/index.php#' . $entryAnchor;
+                      $shareUrlEncoded = rawurlencode($entryUrl);
+                      $shareTextEncoded = rawurlencode(($entry['title'] ?? '学習日記') . ' | Akari Diary');
+                      $entryComments = $entry['comments'] ?? [];
+                      $viewerHasLiked = has_liked_entry($entryId);
+                    ?>
+                    <li class="diary-item" id="<?php echo h($entryAnchor); ?>">
                       <div class="diary-item-header">
                         <div class="diary-item-meta">
                           <h4><?php echo h($entry['title'] ?? '') ?: '無題'; ?></h4>
@@ -535,13 +648,15 @@ function handle_delete(): void
                           <?php endif; ?>
                         </div>
                         <div class="diary-item-actions">
-                          <?php $entryId = (string)($entry['id'] ?? ''); ?>
                           <a class="diary-edit-link<?php if ($editingId !== '' && $editingId === $entryId) { echo ' is-active'; } ?>" href="index.php<?php echo build_query_string(array_merge($baseQueryParams, ['edit' => $entryId])); ?>">編集</a>
                           <form method="post" class="diary-delete-form">
                             <input type="hidden" name="action" value="delete" />
                             <input type="hidden" name="id" value="<?php echo h($entryId); ?>" />
                             <input type="hidden" name="redirect_q" value="<?php echo h($query); ?>" />
                             <input type="hidden" name="redirect_sort" value="<?php echo h($sort); ?>" />
+                            <input type="hidden" name="redirect_category" value="<?php echo h($categoryFilter); ?>" />
+                            <input type="hidden" name="redirect_tag" value="<?php echo h($tagFilter); ?>" />
+                            <input type="hidden" name="redirect_anchor" value="<?php echo h($entryAnchor); ?>" />
                             <input type="password" name="post_password" class="diary-input diary-delete-password" placeholder="投稿パスワード" autocomplete="off" />
                             <button type="submit" class="diary-delete">削除</button>
                           </form>
@@ -549,6 +664,67 @@ function handle_delete(): void
                       </div>
                       <div class="diary-item-body">
                         <?php echo format_body($entry['body'] ?? ''); ?>
+                      </div>
+                      <div class="diary-engagement">
+                        <form method="post" class="diary-like-form" data-entry-id="<?php echo h($entryId); ?>">
+                          <input type="hidden" name="action" value="like" />
+                          <input type="hidden" name="entry_id" value="<?php echo h($entryId); ?>" />
+                          <input type="hidden" name="redirect_q" value="<?php echo h($query); ?>" />
+                          <input type="hidden" name="redirect_sort" value="<?php echo h($sort); ?>" />
+                          <input type="hidden" name="redirect_category" value="<?php echo h($categoryFilter); ?>" />
+                          <input type="hidden" name="redirect_tag" value="<?php echo h($tagFilter); ?>" />
+                          <input type="hidden" name="redirect_anchor" value="<?php echo h($entryAnchor); ?>" />
+                          <button
+                            type="submit"
+                            class="diary-like-button<?php if ($viewerHasLiked) { echo ' is-liked'; } ?>"
+                            <?php if ($viewerHasLiked) { echo 'disabled'; } ?>
+                          ><?php echo $viewerHasLiked ? 'いいね済み' : 'いいね'; ?></button>
+                          <span class="diary-like-count" data-like-count><?php echo $likesCount; ?></span>
+                        </form>
+                        <div class="diary-share-buttons">
+                          <a class="diary-share-button" target="_blank" rel="noopener" href="https://twitter.com/intent/tweet?url=<?php echo $shareUrlEncoded; ?>&text=<?php echo $shareTextEncoded; ?>">Twitter</a>
+                          <a class="diary-share-button" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $shareUrlEncoded; ?>">Facebook</a>
+                        </div>
+                      </div>
+                      <div class="diary-comments" id="<?php echo h($commentsAnchor); ?>">
+                        <h4>コメント</h4>
+                        <?php if (!empty($entryComments)): ?>
+                          <ul class="diary-comment-list">
+                            <?php foreach ($entryComments as $comment): ?>
+                              <li class="diary-comment" id="comment-<?php echo h(($comment['id'] ?? '')); ?>">
+                                <div class="diary-comment-meta">
+                                  <span class="diary-comment-author"><?php echo h(!empty($comment['name']) ? $comment['name'] : '匿名'); ?></span>
+                                  <?php if (!empty($comment['posted_at'])): ?>
+                                    <time datetime="<?php echo h($comment['posted_at']); ?>"><?php echo h(date('Y-m-d H:i', strtotime($comment['posted_at']))); ?></time>
+                                  <?php endif; ?>
+                                </div>
+                                <div class="diary-comment-body"><?php echo nl2br(h($comment['body'] ?? ''), false); ?></div>
+                              </li>
+                            <?php endforeach; ?>
+                          </ul>
+                        <?php else: ?>
+                          <p class="diary-comments-empty">まだコメントはありません。</p>
+                        <?php endif; ?>
+                        <form method="post" class="diary-comment-form">
+                          <input type="hidden" name="action" value="comment" />
+                          <input type="hidden" name="entry_id" value="<?php echo h($entryId); ?>" />
+                          <input type="hidden" name="redirect_q" value="<?php echo h($query); ?>" />
+                          <input type="hidden" name="redirect_sort" value="<?php echo h($sort); ?>" />
+                          <input type="hidden" name="redirect_category" value="<?php echo h($categoryFilter); ?>" />
+                          <input type="hidden" name="redirect_tag" value="<?php echo h($tagFilter); ?>" />
+                          <input type="hidden" name="redirect_anchor" value="<?php echo h($commentsAnchor); ?>" />
+                          <label class="diary-label">
+                            <span>お名前 (任意)</span>
+                            <input type="text" name="comment_name" class="diary-input" placeholder="匿名" />
+                          </label>
+                          <label class="diary-label">
+                            <span>コメント</span>
+                          <textarea name="comment_body" class="diary-textarea" rows="3" placeholder="コメントを入力してください" required></textarea>
+                          </label>
+                          <div class="diary-comment-actions">
+                            <button type="submit" class="btn btn-outline">コメントを送信</button>
+                          </div>
+                        </form>
                       </div>
                     </li>
                   <?php endforeach; ?>
@@ -673,6 +849,93 @@ function handle_delete(): void
         if (document.body.dataset.clearDraft === 'true') {
           clearDraft();
         }
+
+        const likesStorageKey = 'akari-diary-likes';
+        const likesCookieKey = 'akari_diary_likes';
+        const likeCookieMaxAge = 60 * 60 * 24 * 365 * 5;
+
+        const mergeUnique = (target, items) => {
+          if (!Array.isArray(items)) return;
+          items.forEach(item => {
+            if (typeof item !== 'string') return;
+            const trimmed = item.trim();
+            if (!trimmed) return;
+            if (!target.includes(trimmed)) {
+              target.push(trimmed);
+            }
+          });
+        };
+
+        let likedEntries = [];
+        try {
+          const storedLikes = JSON.parse(localStorage.getItem(likesStorageKey) || '[]');
+          mergeUnique(likedEntries, storedLikes);
+        } catch (error) {
+          likedEntries = [];
+        }
+
+        try {
+          const cookiePart = document.cookie.split('; ').find(row => row.startsWith(likesCookieKey + '='));
+          if (cookiePart) {
+            const encoded = cookiePart.substring(likesCookieKey.length + 1);
+            const decoded = atob(encoded);
+            const cookieLikes = JSON.parse(decoded);
+            mergeUnique(likedEntries, cookieLikes);
+          }
+        } catch (error) {
+          // ignore cookie parse errors
+        }
+
+        const persistLikes = () => {
+          try {
+            localStorage.setItem(likesStorageKey, JSON.stringify(likedEntries));
+          } catch (error) {
+            // ignore quota errors
+          }
+          try {
+            const encoded = btoa(JSON.stringify(likedEntries));
+            document.cookie = `${likesCookieKey}=${encoded};path=/;max-age=${likeCookieMaxAge};SameSite=Lax`;
+          } catch (error) {
+            // ignore cookie errors
+          }
+        };
+
+        if (likedEntries.length > 0) {
+          persistLikes();
+        }
+
+        document.querySelectorAll('.diary-like-form').forEach(form => {
+          const entryId = form.dataset.entryId;
+          if (!entryId) return;
+
+          const button = form.querySelector('.diary-like-button');
+          const countEl = form.querySelector('[data-like-count]');
+
+          const markLiked = () => {
+            if (!button) return;
+            button.classList.add('is-liked');
+            button.disabled = true;
+            button.textContent = 'いいね済み';
+          };
+
+          if (likedEntries.includes(entryId)) {
+            markLiked();
+          }
+
+          form.addEventListener('submit', () => {
+            if (!likedEntries.includes(entryId)) {
+              likedEntries.push(entryId);
+              persistLikes();
+              if (countEl) {
+                const current = parseInt(countEl.textContent, 10);
+                if (!Number.isNaN(current)) {
+                  countEl.textContent = current + 1;
+                }
+              }
+            }
+            markLiked();
+          });
+        });
       });
     </script>
   </body>
