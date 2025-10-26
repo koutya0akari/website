@@ -7,6 +7,10 @@
 !/storage/.keep
 /public/assets
 /docs/data/diary_entries.json
+/docs/uploads/*
+!/docs/uploads/.gitkeep
+/docs/resources/files/*
+!/docs/resources/files/.gitkeep
 /node_modules
 /yarn-error.log
 .byebug_history
