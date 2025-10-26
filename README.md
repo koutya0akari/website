@@ -6,7 +6,7 @@
 
 - `docs/index.html` – トップページ。静的 HTML として配信。
 - `docs/about/index.html` – About ページ。
-- `docs/diary/index.php` – 日記投稿・削除を扱う PHP ページ。`docs/data/diary_entries.json` に投稿を保存。
+- `docs/diary/index.php` – 日記投稿・削除を扱う PHP ページ。`docs/data/diary_entries.json` に投稿を保存。MathJax を読み込み、`\( ... \)` や `\[ ... \]` で数式を表示できます。
 - `docs/assets/` – 共通スタイル (`application.css`) とアイコン。
 - `docs/.htaccess` – さくらでの環境変数、CSP、X-Frame-Options を定義。
 - `docs/data/.gitkeep` – 投稿データを保存するディレクトリを保持。
@@ -38,7 +38,7 @@
 2. 画像やアイコンを追加したい場合は `docs/assets/` にファイルを置き、相対パスで参照します。
 
 ### Diary ページの本文テキスト
-`docs/diary/index.php` 内の説明文（HTML 部分）を直接編集します。PHP ロジックより下にある説明文やラベルを調整することで、フォームの文言を変更できます。
+`docs/diary/index.php` 内の説明文（HTML 部分）を直接編集します。PHP ロジックより下にある説明文やラベルを調整することで、フォームの文言を変更できます。本文には MathJax を利用できるため、`\( \alpha \)` や `\[ E = mc^2 \]` のような LaTeX 記法を書けばブラウザ上でレンダリングされます。
 
 ## 新しいページの追加方法
 

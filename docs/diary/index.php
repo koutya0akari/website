@@ -227,6 +227,7 @@ function format_body(string $body): string
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Signika+Negative:wght@600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../assets/application.css" />
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
   </head>
   <body data-clear-draft="<?php echo $shouldClearDraft ? 'true' : 'false'; ?>">
     <div class="page-wrap">
