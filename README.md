@@ -7,7 +7,10 @@
 - `docs/index.html` – トップページ。静的 HTML として配信。
 - `docs/about/index.html` – About ページ。
 - `docs/diary/index.php` – 日記の投稿・編集・削除を扱う PHP ページ。`docs/data/diary_entries.json` に投稿を保存。MathJax、フォルダー（カテゴリー）分け、タグ付け、検索、並び替え（新しい順 / 古い順 / タイトル順）に対応しています。
+- `docs/diary/show.php` – 日記 1 件を表示する詳細ページ。共有リンク、コメント、いいねを個別に確認できます。
+- `docs/diary/edit.php` – 個別投稿の編集専用ページ。落ち着いて本文やタグを更新できます（検索には載せない場合、sitemap から除外してください）。
 - `docs/diary/folder.php` – 指定フォルダーの投稿を別ページとして表示。URL 形式は `diary/folder.php?name=フォルダー名`。
+- `docs/robots.txt`, `public/robots.txt`, `docs/sitemap.php` – 検索エンジン向けのクローラ設定とサイトマップ。運用ドメインに合わせて URL を更新してください。
 - `docs/assets/` – 共通スタイル (`application.css`) とアイコン。
 - `docs/uploads/` – 日記本文から参照する画像置き場。`../uploads/ファイル名` で読み込めます。
 - `docs/resources/index.php` – PDF 公開用ページ。`docs/resources/files/` に配置した PDF を自動で一覧表示します。
@@ -67,6 +70,7 @@
 ## 公開用 PDF ページの使い方
 
 - `docs/resources/files/` に PDF を置くと、`docs/resources/index.php` に自動で一覧表示されます。ファイル名・サイズ・更新日が表示され、クリックでダウンロード可能です。
+- 各資料にはブラウザ単位で 1 回だけ押せる「いいね」ボタンと Twitter / Facebook の共有リンク、誰でも投稿できるコメント欄を備えています。リアクションは `docs/data/resources_meta.json` に保存されるため、必要に応じてバックアップを取得してください。
 - リンク切れを防ぐため、PDF を更新するときは同名ファイルを差し替えるか、README に記載した説明と一致するようにしてください。
 
 ## 画像・PDF の配置先

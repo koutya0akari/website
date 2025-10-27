@@ -11,7 +11,7 @@ const SORT_LABELS = [
     'title' => 'タイトル順'
 ];
 const DIARY_LIKES_COOKIE = 'akari_diary_likes';
-const DIARY_ENTRIES_PER_PAGE = 10;
+const DIARY_ENTRIES_PER_PAGE = 5;
 
 function diary_password(): string
 {
@@ -79,8 +79,21 @@ function save_entries(array $entries): void
     fclose($fp);
 }
 
+function normalize_newlines(string $text): string
+{
+    return str_replace(["\r\n", "\r"], "\n", $text);
+}
+
 function normalize_entry(array $entry): array
 {
+    $entry['body'] = normalize_newlines((string)($entry['body'] ?? ''));
+    $bodyHtml = $entry['body_html'] ?? '';
+    if (!is_string($bodyHtml) || trim($bodyHtml) === '') {
+        $entry['body_html'] = build_entry_html_from_raw($entry['body']);
+    } else {
+        $entry['body_html'] = $bodyHtml;
+    }
+
     $entry['tags'] = sanitize_tags($entry['tags'] ?? []);
     $entry['category'] = sanitize_category($entry['category'] ?? '');
     $entry['likes_count'] = isset($entry['likes_count']) ? max(0, (int) $entry['likes_count']) : 0;
@@ -151,15 +164,23 @@ function sanitize_comments($value): array
             continue;
         }
 
-        $body = trim((string)($comment['body'] ?? ''));
-        if ($body === '') {
+        $rawBody = normalize_newlines((string)($comment['body'] ?? ''));
+        $rawBody = trim($rawBody) === '' ? '' : $rawBody;
+        $bodyHtml = $comment['body_html'] ?? '';
+
+        if ($rawBody === '' && (!is_string($bodyHtml) || trim($bodyHtml) === '')) {
             continue;
+        }
+
+        if (!is_string($bodyHtml) || trim($bodyHtml) === '') {
+            $bodyHtml = build_comment_html_from_raw($rawBody);
         }
 
         $comments[] = [
             'id' => (string)($comment['id'] ?? generate_id()),
             'name' => trim((string)($comment['name'] ?? '')),
-            'body' => $body,
+            'body' => $rawBody,
+            'body_html' => $bodyHtml,
             'posted_at' => isset($comment['posted_at']) && $comment['posted_at'] !== ''
                 ? (string)$comment['posted_at']
                 : date('c')
@@ -173,10 +194,13 @@ function sanitize_comments($value): array
 
 function create_comment(string $name, string $body): array
 {
+    $normalizedBody = normalize_newlines(trim($body));
+
     return [
         'id' => generate_id(),
         'name' => trim($name),
-        'body' => trim($body),
+        'body' => $normalizedBody,
+        'body_html' => $normalizedBody !== '' ? build_comment_html_from_raw($normalizedBody) : '',
         'posted_at' => date('c')
     ];
 }
@@ -368,16 +392,20 @@ function sanitize_html(string $html): string
 function sanitize_anchor_tag(array $matches): string
 {
     $tag = $matches[0];
-    $allowedAttributes = ['href', 'title', 'target', 'rel'];
+    $allowedAttributes = ['href', 'title', 'target', 'rel', 'class'];
     $attributes = extract_attributes($tag);
     $sanitized = [];
 
-    $href = $attributes['href'] ?? '#';
-    $href = trim($href);
-    if (!preg_match('#^(https?:|mailto:|\/|\.|#)#i', $href)) {
+    $href = trim((string)($attributes['href'] ?? ''));
+    if ($href === '') {
         $href = '#';
     }
-    $sanitized['href'] = $href;
+
+    if (!preg_match('#^(https?:|mailto:|\/|\.|#)#i', $href)) {
+        $sanitized['href'] = $href;
+    } else {
+        $sanitized['href'] = $href;
+    }
 
     if (isset($attributes['title'])) {
         $sanitized['title'] = $attributes['title'];
@@ -392,6 +420,15 @@ function sanitize_anchor_tag(array $matches): string
 
     if (isset($attributes['rel']) && ($sanitized['target'] ?? '') !== '_blank') {
         $sanitized['rel'] = $attributes['rel'];
+    }
+
+    if (isset($attributes['class'])) {
+        $allowedClasses = ['diary-link-card', 'diary-link-card__link'];
+        $classCandidates = preg_split('/\s+/', trim((string)$attributes['class'])) ?: [];
+        $validClasses = array_intersect($classCandidates, $allowedClasses);
+        if (!empty($validClasses)) {
+            $sanitized['class'] = implode(' ', $validClasses);
+        }
     }
 
     $attrString = '';
@@ -497,8 +534,13 @@ function base_redirect_params(): array
     }
 
     $page = (int)($_POST['redirect_page'] ?? 1);
-    if ($page > 1) {
-        $params['page'] = $page;
+   if ($page > 1) {
+       $params['page'] = $page;
+   }
+
+    $path = trim((string)($_POST['redirect_path'] ?? ''));
+    if ($path !== '') {
+        $params['__path'] = ltrim($path, '/');
     }
 
     $anchor = trim((string)($_POST['redirect_anchor'] ?? ''));
@@ -511,6 +553,15 @@ function base_redirect_params(): array
 
 function redirect_to(array $params = []): void
 {
+    $path = 'index.php';
+    if (isset($params['__path'])) {
+        $candidate = trim((string)$params['__path']);
+        if ($candidate !== '') {
+            $path = $candidate;
+        }
+        unset($params['__path']);
+    }
+
     $anchor = '';
     if (isset($params['__anchor'])) {
         $anchor = '#' . ltrim((string)$params['__anchor'], '#');
@@ -518,7 +569,12 @@ function redirect_to(array $params = []): void
     }
 
     $query = http_build_query($params);
-    $location = 'index.php' . ($query !== '' ? '?' . $query : '') . $anchor;
+    $separator = '';
+    if ($query !== '') {
+        $separator = strpos($path, '?') === false ? '?' : '&';
+    }
+
+    $location = $path . ($query !== '' ? $separator . $query : '') . $anchor;
     header('Location: ' . $location);
     exit;
 }
@@ -530,7 +586,7 @@ function build_query_string(array $params): string
         if ($value === '' || $value === null) {
             continue;
         }
-        if ($key === '__anchor') {
+        if ($key === '__anchor' || $key === '__path') {
             continue;
         }
         if ($key === 'sort') {
@@ -675,6 +731,174 @@ function generate_id(): string
     return bin2hex(random_bytes(8));
 }
 
+function prepare_entry_body(string $body): array
+{
+    $normalized = normalize_newlines($body);
+
+    return [
+        'raw' => $normalized,
+        'html' => build_entry_html_from_raw($normalized)
+    ];
+}
+
+function build_entry_html_from_raw(string $body): string
+{
+    $normalized = normalize_newlines($body);
+    if (trim($normalized) === '') {
+        return '';
+    }
+
+    if (!preg_match('/<\s*[a-zA-Z!\/]/', $normalized)) {
+        return nl2br(auto_link_plain_text($normalized), false);
+    }
+
+    $sanitized = sanitize_html($normalized);
+
+    return convert_html_urls_to_cards($sanitized);
+}
+
+function convert_html_urls_to_cards(string $html): string
+{
+    $trimmed = trim($html);
+    if ($trimmed === '') {
+        return '';
+    }
+
+    if (!class_exists('DOMDocument')) {
+        return $html;
+    }
+
+    $dom = new DOMDocument('1.0', 'UTF-8');
+    libxml_use_internal_errors(true);
+
+    $flags = 0;
+    if (defined('LIBXML_HTML_NOIMPLIED')) {
+        $flags |= LIBXML_HTML_NOIMPLIED;
+    }
+    if (defined('LIBXML_HTML_NODEFDTD')) {
+        $flags |= LIBXML_HTML_NODEFDTD;
+    }
+
+    $wrapper = '<div id="diary-card-root">' . $html . '</div>';
+    $loaded = $dom->loadHTML('<?xml encoding="utf-8" ?>' . $wrapper, $flags);
+    if ($loaded === false) {
+        libxml_clear_errors();
+        return $html;
+    }
+
+    $root = $dom->getElementById('diary-card-root');
+    if (!$root) {
+        libxml_clear_errors();
+        return $html;
+    }
+
+    $xpath = new DOMXPath($dom);
+    $textNodes = $xpath->query('.//text()', $root);
+    if ($textNodes === false) {
+        libxml_clear_errors();
+        return $html;
+    }
+
+    $pattern = '/https?:\/\/[^\s<>"\'\)\]]+/i';
+    $skippedParents = ['a', 'script', 'style', 'iframe', 'code', 'pre'];
+
+    foreach ($textNodes as $node) {
+        $parent = $node->parentNode;
+        if (!$parent) {
+            continue;
+        }
+
+        if (in_array(strtolower($parent->nodeName), $skippedParents, true)) {
+            continue;
+        }
+
+        $ancestor = $parent;
+        $skip = false;
+        while ($ancestor) {
+            if ($ancestor->nodeType === XML_ELEMENT_NODE) {
+                $classAttr = $ancestor->attributes->getNamedItem('class');
+                if ($classAttr !== null && preg_match('/\bdiary-link-card\b/', (string)$classAttr->nodeValue)) {
+                    $skip = true;
+                    break;
+                }
+            }
+            $ancestor = $ancestor->parentNode;
+        }
+        if ($skip) {
+            continue;
+        }
+
+        $value = $node->nodeValue ?? '';
+        if ($value === '' || !preg_match($pattern, $value)) {
+            continue;
+        }
+
+        $parts = preg_split($pattern, $value, -1, PREG_SPLIT_DELIM_CAPTURE);
+        if ($parts === false || count($parts) < 2) {
+            continue;
+        }
+
+        $fragment = $dom->createDocumentFragment();
+        foreach ($parts as $index => $part) {
+            if ($part === '') {
+                continue;
+            }
+
+            if ($index % 2 === 1) {
+                $cardFragment = $dom->createDocumentFragment();
+                if (@$cardFragment->appendXML(render_link_card($part))) {
+                    $fragment->appendChild($cardFragment);
+                } else {
+                    $fragment->appendChild($dom->createTextNode($part));
+                }
+            } else {
+                $fragment->appendChild($dom->createTextNode($part));
+            }
+        }
+
+        $parent->replaceChild($fragment, $node);
+    }
+
+    libxml_clear_errors();
+
+    $output = '';
+    foreach ($root->childNodes as $child) {
+        $output .= $dom->saveHTML($child);
+    }
+
+    return $output;
+}
+
+function entry_body_html(array $entry): string
+{
+    $bodyHtml = $entry['body_html'] ?? '';
+    if (is_string($bodyHtml) && trim($bodyHtml) !== '') {
+        return $bodyHtml;
+    }
+
+    return build_entry_html_from_raw((string)($entry['body'] ?? ''));
+}
+
+function build_comment_html_from_raw(string $text): string
+{
+    $normalized = normalize_newlines($text);
+    if ($normalized === '') {
+        return '';
+    }
+
+    return nl2br(auto_link_plain_text($normalized), false);
+}
+
+function comment_body_html(array $comment): string
+{
+    $bodyHtml = $comment['body_html'] ?? '';
+    if (is_string($bodyHtml) && trim($bodyHtml) !== '') {
+        return $bodyHtml;
+    }
+
+    return build_comment_html_from_raw((string)($comment['body'] ?? ''));
+}
+
 function h(?string $value): string
 {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
@@ -682,14 +906,52 @@ function h(?string $value): string
 
 function format_body(string $body): string
 {
-    $trimmed = trim($body);
-    if ($trimmed === '') {
-        return '';
-    }
+    return build_entry_html_from_raw($body);
+}
 
-    if (!preg_match('/<\s*[a-zA-Z!\/]/', $body)) {
-        return nl2br(h($body), false);
-    }
+function auto_link_plain_text(string $text): string
+{
+    $escaped = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 
-    return sanitize_html($body);
+    return preg_replace_callback(
+        '/https?:\/\/[^\s<>\"\'\)\]]+/i',
+        static function ($matches) {
+            return render_link_card($matches[0]);
+        },
+        $escaped
+    );
+}
+
+
+
+function render_link_card(string $url, ?string $label = null, string $extraClass = ''): string
+{
+    $safeUrl = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+    $host = parse_url($url, PHP_URL_HOST) ?: '';
+    $host = $host !== '' ? $host : $url;
+    $hostEscaped = htmlspecialchars($host, ENT_QUOTES, 'UTF-8');
+
+    $title = $label ?? $url;
+    $titleEscaped = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+
+    $class = trim('diary-link-card ' . $extraClass);
+
+    return '<div class="' . $class . '">'
+        . '<div class="diary-link-card__preview">'
+        . '<iframe src="' . $safeUrl . '" loading="lazy" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" referrerpolicy="no-referrer"></iframe>'
+        . '</div>'
+        . '<div class="diary-link-card__meta">'
+        . '<span class="diary-link-card__host">' . $hostEscaped . '</span>'
+        . '<a class="diary-link-card__link" href="' . $safeUrl . '" target="_blank" rel="noopener noreferrer">'
+        . '<span class="diary-link-card__title">' . $titleEscaped . '</span>'
+        . '<span class="diary-link-card__icon" aria-hidden="true">↗</span>'
+        . '</a>'
+        . '</div>'
+        . '</div>';
+}
+
+
+function format_comment_body(string $text): string
+{
+    return build_comment_html_from_raw($text);
 }

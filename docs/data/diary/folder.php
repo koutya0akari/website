@@ -241,7 +241,7 @@ function folder_query(array $params): string
                       </div>
                     </div>
                     <div class="diary-item-body">
-                      <?php echo entry_body_html($entry); ?>
+                      <?php echo format_body($entry['body'] ?? ''); ?>
                     </div>
                     <div class="diary-item-footer">
                       <a class="diary-read-more" href="show.php?id=<?php echo h($entryId); ?>">続きを読む</a>

@@ -3,20 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>About | Akari Math Lab</title>
-    <meta name="description" content="Akariのプロフィールを紹介。">
-    <meta name="robots" content="index, follow" />
-    <meta property="og:title" content="About | Akari Math Lab" />
-    <meta property="og:description" content="Akariのプロフィールと学習関心を紹介します。" />
-    <meta property="og:type" content="profile" />
-    <meta property="og:url" content="https://akari0koutya.jp/about/" />
-    <meta property="og:image" content="https://akari0koutya.jp/assets/tako-icon.svg" />
-    <link rel="canonical" href="https://akari0koutya.jp/about/" />
-    <link rel="icon" href="../assets/tako-icon.svg" type="image/svg+xml" />
-    <link rel="shortcut icon" href="../assets/tako-icon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="../assets/tako-icon.svg" />
-    <link rel="manifest" href="../site.webmanifest" />
-    <meta name="theme-color" content="#0A2441" />
+    <title>学習日記 | Akari Math Lab</title>
+    <meta name="description" content="学習の気づきを記録できる日記ページ。投稿パスワードを入力するとサーバーに保存でき、下書きはブラウザに残ります。">
+    
+    
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Signika+Negative:wght@600&display=swap" rel="stylesheet" />
@@ -78,95 +69,61 @@
                 <a class="nav-link" href="../about/index.html">About</a>
               </li>
               <li>
-                <a class="nav-link" href="../resources/index.php">Resources</a>
-              </li>
-              <li>
-                <a class="nav-link" href="../diary/index.php">Diary</a>
+                <a class="nav-link" href="../diary/index.html">Diary</a>
               </li>
           </ul>
         </nav>
       </header>
 
       <main>
-        <section class="section">
+        
+<section class="section">
   <div class="section-header">
-      <span class="section-eyebrow">Biography</span>
-    <h2>Recoltes et Semailles</h2>
-    <img alt="Akari の肖像" class="author-portrait" src="../assets/tako-icon-0f8c82b6168d073869bc735753237460eb82d3a3b217d69a3aeaae0d73c20754.svg" />
+      <span class="section-eyebrow">Diary</span>
+    <h2>学習日記を書く</h2>
     <p>
-  徳島大学理工学部理工学科数理科学コースB2所属。<br />
-  主に代数幾何学を学習しており、圏論などの抽象的概念を用いた代数と幾何の統一の理解を目標としています。「すうがく徒のつどい」や「数物セミナー」の運営を通じて、数学の魅力を広める活動にも注力しています。
+  日々の学びや気づきを短くメモできるミニ日記です。投稿パスワードを知っているメンバーだけが
+  サーバーに記録を保存でき、公開ページにも反映されます。下書きは端末のローカルストレージに
+  自動保存されるので、安心して書き進められます。
 </p>
 
   </div>
-
-  <div class="split-grid">
-  <article class="profile-card">
-        <h3>学習テーマ</h3>
-        <div data-controller="hero-highlight" data-hero-highlight-threshold-value="0.5">
-          <ul class="list-reset profile-list" data-hero-highlight-target="list">
-              <li data-hero-highlight-target="item">
-                <strong>導来代数幾何</strong>
-                <p>現代的な「正しい」代数幾何を学ぶことを目指しています。</p>
-</li>              <li data-hero-highlight-target="item">
-                <strong>幾何学的ラングランズ対応</strong>
-                <p>表現論と数論の橋渡しを理解したいです。</p>
-</li>              <li data-hero-highlight-target="item">
-                <strong>凝縮数学</strong>
-                <p>Dustin Clausen 氏と Peter Scholze 氏の研究成果を学びたいと考えています。</p>
-</li>              <li data-hero-highlight-target="item">
-                <strong>TeX</strong>
-                <p>数学文書作成の基盤技術として、Knuthの思想を理解したいです。</p>
-</li>          </ul>
-        </div>
-</article> 
-   <article class="profile-card" id="activities">
-        <h3>活動</h3>
-        <ul class="list-reset">
-  <li>
-    <strong>2025</strong> 
-    <ul>
-      <li>第8回すうがく徒のつどい参加・運営。</li>
-      <li>第7回すうがく徒のつどい参加・運営。</li>
-      <li>spm29th参加・運営。</li>
-      <li>spmAdv7th参加。</li>
-    </ul>
-  </li>
-  <li>
-    <strong>2024</strong> 
-    <ul>
-      <li>第6回すうがく徒のつどい参加・運営。</li>
-      <li>第5回すうがく徒のつどい参加・運営。</li>
-      <li>spm28th参加</li>
-    </ul>
-  </li>
-  <li>
-    <strong>2022</strong> 
-    <ul>
-      <li>第42回数理の翼夏季セミナー参加。</li>
-    </ul>
-  </li>
-</ul>
-
-</article>  </div>
 </section>
 
 <section class="section">
-  <div class="section-header">
-      <span class="section-eyebrow">Skills</span>
-    <h2>スキル</h2>
-    <p>数学をメインとして、プログラミングなども細々と学んでいます。</p>
-  </div>
+  <div class="split-grid diary-grid" data-controller="diary" data-diary-storage-key-value="akari-math-lab-diary">
+    <article class="profile-card diary-editor">
+        <span class="section-eyebrow">Entry</span>
+      <h2>今日の記録</h2>
+      <p>
+  タイトルと本文を入力し、「日記に追加」を押すと右側の一覧に公開されます。送信前に
+  投稿パスワードを入力するとサーバーに保存され、閲覧者にも共有されます。書いている途中の
+  内容はブラウザに自動保存されるため、ページを離れても続きから再開できます。
+</p>
 
-  <div class="card-grid">
-      <article class="card">
-        <h3>Mathematics</h3>
-        <p>代数幾何/圏論/表現論/可換環論</p>
-      </article>
-      <article class="card">
-        <h3>Programming</h3>
-        <p>TeX/C++/Python/Ruby/Rust/HTML/CSS/JavaScript</p>
-      </article>
+
+
+        <div class="diary-password-callout">
+          <p>GitHub Pages の静的バージョンでは投稿機能を利用できません。</p>
+        </div>
+    </article>
+
+    <aside class="profile-card diary-entries">
+      <h3>保存した日記</h3>
+        <ul class="diary-list">
+            <li class="diary-item">
+              <div class="diary-item-header">
+                <div class="diary-item-meta">
+                  <h4>hoge</h4>
+                    <time datetime="2025-10-26">2025-10-26</time>
+                </div>
+              </div>
+              <div class="diary-item-body">
+                <p>\(infty\)</p>
+              </div>
+            </li>
+        </ul>
+    </aside>
   </div>
 </section>
 
@@ -174,12 +131,11 @@
 
       <footer>
         <div class="footer-inner">
-          <p>© 2025 Akari Math Lab. Crafted for さくらのレンタルサーバ.</p>
+          <p>© 2025 Akari Math Lab. Crafted for GitHub Pages.</p>
           <div class="footer-links">
             <a href="../index.html">Home</a>
             <a href="../about/index.html">About</a>
-            <a href="../resources/index.php">Resources</a>
-            <a href="../diary/index.php">Diary</a>
+            <a href="../diary/index.html">Diary</a>
             <a href="../index.html#contact">Contact</a>
           </div>
         </div>

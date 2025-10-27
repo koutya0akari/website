@@ -254,14 +254,32 @@ main {
 }
 
 .btn-outline {
-  border-color: rgba(255, 255, 255, 0.4);
-  color: #f4faff;
-  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(32, 90, 140, 0.35);
+  color: var(--navy-700);
+  background: rgba(32, 90, 140, 0.08);
 }
 
 .btn:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
+}
+
+.btn-outline:hover {
+  background: rgba(32, 90, 140, 0.18);
+  border-color: rgba(32, 90, 140, 0.5);
+  color: var(--navy-900);
+}
+
+.hero .btn-outline {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #f4faff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.hero .btn-outline:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.6);
+  color: #ffffff;
 }
 
 .hero-card {
@@ -478,6 +496,16 @@ main {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+.diary-editor-full {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.diary-editor-full .diary-textarea {
+  min-height: 360px;
+  font-size: 1.05rem;
 }
 
 .diary-form {
@@ -1046,15 +1074,21 @@ main {
 
 .resource-item {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 0.75rem;
   padding: 1rem 1.2rem;
   border: 1px solid rgba(11, 31, 51, 0.1);
   border-radius: 16px;
   background: #ffffff;
   box-shadow: var(--shadow-sm);
+}
+
+.resource-item-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .resource-meta {
@@ -1080,6 +1114,13 @@ main {
   color: var(--text);
 }
 
+.resource-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
 .resource-download {
   display: inline-flex;
   align-items: center;
@@ -1091,11 +1132,29 @@ main {
   border: none;
   font-weight: 600;
   transition: background 0.2s ease, transform 0.2s ease;
+  text-decoration: none;
 }
 
 .resource-download:hover {
   background: rgba(255, 111, 97, 0.85);
   transform: translateY(-1px);
+}
+
+.resource-engagement {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.resource-share-buttons {
+  margin-left: auto;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.resource-comments {
+  margin-top: 0;
 }
 
 .diary-item-actions {
@@ -1177,14 +1236,16 @@ main {
   color: var(--text);
   line-height: 1.6;
   max-height: 26rem;
-  overflow: auto;
-  padding-right: 0.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.5rem;
   word-break: break-word;
   overscroll-behavior: contain;
 }
 
 .diary-item-body p {
   margin: 0 0 0.9rem;
+  white-space: pre-wrap;
 }
 
 .diary-item-body p:last-child {
@@ -1213,13 +1274,161 @@ main {
   margin-bottom: 0;
 }
 
+.diary-item-body a {
+  color: var(--accent);
+  text-decoration: underline;
+  word-break: break-word;
+}
+
+.diary-item-body a:hover {
+  color: var(--navy-700);
+}
+
+.diary-item-title-link {
+  color: var(--navy-900);
+  text-decoration: none;
+}
+
+.diary-item-title-link:hover {
+  text-decoration: underline;
+  color: var(--navy-700);
+}
+
+.diary-item-footer {
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.diary-read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: var(--navy-700);
+  text-decoration: none;
+}
+
+.diary-read-more::after {
+  content: '→';
+  font-size: 0.9rem;
+}
+
+.diary-read-more:hover {
+  color: var(--navy-900);
+}
+
+.diary-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.diary-detail-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.diary-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.diary-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--navy-700);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.diary-back-link::before {
+  content: '←';
+}
+
+.diary-back-link:hover {
+  color: var(--navy-900);
+}
+
+.diary-link-card {
+  display: block;
+  margin: 0.85rem 0;
+  padding: 1rem 1.25rem;
+  border-radius: 18px;
+  border: 1px solid rgba(11, 31, 51, 0.08);
+  background: var(--card-bg);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  position: relative;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.diary-link-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.diary-link-card__host {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.diary-link-card__title {
+  display: block;
+  font-weight: 600;
+  color: var(--navy-700);
+  line-height: 1.5;
+  word-break: break-word;
+  padding-right: 2.25rem;
+}
+
+.diary-link-card__icon {
+  position: absolute;
+  right: 1.1rem;
+  top: 1.05rem;
+  font-size: 1rem;
+  color: var(--muted);
+}
+
 .diary-item-body::-webkit-scrollbar {
-  width: 8px;
+  height: 8px;
 }
 
 .diary-item-body::-webkit-scrollbar-thumb {
   background: rgba(32, 90, 140, 0.25);
   border-radius: 999px;
+}
+
+.external-link-icon,
+a[target="_blank"]:not(.btn):not(.diary-link-card):not(.resource-download)::after {
+  content: '';
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-left: 0.3rem;
+  background-color: currentColor;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="currentColor" d="M12.25 3H7.75a.75.75 0 0 1 0-1.5h5.5A1.75 1.75 0 0 1 15 3.25v5.5a.75.75 0 0 1-1.5 0V4.56L7.78 10.28a.75.75 0 0 1-1.06-1.06L12.44 3.5H9a.75.75 0 0 1 0-1.5h3.25Z"/><path fill="currentColor" d="M5.5 4.5h-3A.5.5 0 0 0 2 5v8a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-3a.75.75 0 0 1 1.5 0v3A2 2 0 0 1 10.5 15h-8A2 2 0 0 1 0 13V5a2 2 0 0 1 2-2h3a.75.75 0 0 1 0 1.5Z"/></svg>') no-repeat center / contain;
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="currentColor" d="M12.25 3H7.75a.75.75 0 0 1 0-1.5h5.5A1.75 1.75 0 0 1 15 3.25v5.5a.75.75 0 0 1-1.5 0V4.56L7.78 10.28a.75.75 0 0 1-1.06-1.06L12.44 3.5H9a.75.75 0 0 1 0-1.5h3.25Z"/><path fill="currentColor" d="M5.5 4.5h-3A.5.5 0 0 0 2 5v8a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-3a.75.75 0 0 1 1.5 0v3A2 2 0 0 1 10.5 15h-8A2 2 0 0 1 0 13V5a2 2 0 0 1 2-2h3a.75.75 0 0 1 0 1.5Z"/></svg>') no-repeat center / contain;
+}
+
+a[target="_blank"]:not(.btn):not(.diary-link-card):not(.resource-download) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.diary-detail .diary-item-body {
+  max-height: none;
+  padding-bottom: 1rem;
 }
 
 .flash {

@@ -1,0 +1,15 @@
+{
+  "name": "Akari Math Lab",
+  "short_name": "Akari Lab",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0A2441",
+  "icons": [
+    {
+      "src": "assets/tako-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

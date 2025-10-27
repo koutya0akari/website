@@ -177,11 +177,6 @@ function load_description(string $filename): string
     return '';
 }
 
-function resources_normalize_newlines(string $text): string
-{
-    return str_replace(["\r\n", "\r"], "\n", $text);
-}
-
 function format_description(string $text): string
 {
     return nl2br(h($text), false);
@@ -199,23 +194,15 @@ function sanitize_comments($value): array
             continue;
         }
 
-        $rawBody = resources_normalize_newlines((string)($comment['body'] ?? ''));
-        $rawBody = trim($rawBody) === '' ? '' : $rawBody;
-        $bodyHtml = $comment['body_html'] ?? '';
-
-        if ($rawBody === '' && (!is_string($bodyHtml) || trim($bodyHtml) === '')) {
+        $body = trim((string)($comment['body'] ?? ''));
+        if ($body === '') {
             continue;
-        }
-
-        if (!is_string($bodyHtml) || trim($bodyHtml) === '') {
-            $bodyHtml = build_resource_comment_html($rawBody);
         }
 
         $comments[] = [
             'id' => (string)($comment['id'] ?? generate_id()),
             'name' => trim((string)($comment['name'] ?? '')),
-            'body' => $rawBody,
-            'body_html' => $bodyHtml,
+            'body' => $body,
             'posted_at' => isset($comment['posted_at']) && $comment['posted_at'] !== ''
                 ? (string)$comment['posted_at']
                 : date('c')
@@ -229,49 +216,25 @@ function sanitize_comments($value): array
 
 function create_comment(string $name, string $body): array
 {
-    $normalizedBody = resources_normalize_newlines(trim($body));
-
     return [
         'id' => generate_id(),
-        'name' => trim($name),
-        'body' => $normalizedBody,
-        'body_html' => $normalizedBody !== '' ? build_resource_comment_html($normalizedBody) : '',
+        'name' => $name,
+        'body' => $body,
         'posted_at' => date('c')
     ];
 }
 
 function format_resource_comment(string $text): string
 {
-    return build_resource_comment_html($text);
-}
+    $escaped = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 
-function build_resource_comment_html(string $text): string
-{
-    $normalized = resources_normalize_newlines($text);
-    if ($normalized === '') {
-        return '';
-    }
-
-    $escaped = htmlspecialchars($normalized, ENT_QUOTES, 'UTF-8');
-    $linked = preg_replace_callback(
+    return preg_replace_callback(
         '/https?:\/\/[^\s<>\"\'\)\]]+/i',
         static function ($matches) {
             return render_resource_link_card($matches[0]);
         },
         $escaped
     );
-
-    return nl2br($linked, false);
-}
-
-function resource_comment_body_html(array $comment): string
-{
-    $bodyHtml = $comment['body_html'] ?? '';
-    if (is_string($bodyHtml) && trim($bodyHtml) !== '') {
-        return $bodyHtml;
-    }
-
-    return build_resource_comment_html((string)($comment['body'] ?? ''));
 }
 
 
@@ -608,7 +571,7 @@ function h(?string $value): string
                                     <time datetime="<?php echo h($comment['posted_at']); ?>"><?php echo h(date('Y-m-d H:i', strtotime($comment['posted_at']))); ?></time>
                                   <?php endif; ?>
                                 </div>
-                              <div class="diary-comment-body"><?php echo resource_comment_body_html($comment); ?></div>
+                              <div class="diary-comment-body"><?php echo format_resource_comment((string)($comment['body'] ?? '')); ?></div>
                               </li>
                             <?php endforeach; ?>
                           </ul>

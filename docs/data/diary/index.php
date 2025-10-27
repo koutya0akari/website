@@ -195,14 +195,11 @@ function handle_create(): void
         redirect_to(base_redirect_params());
     }
 
-    $bodyPayload = prepare_entry_body($body);
-
     $entry = [
         'id' => generate_id(),
         'title' => $title,
         'entry_date' => $entryDate,
-        'body' => $bodyPayload['raw'],
-        'body_html' => $bodyPayload['html'],
+        'body' => $body,
         'category' => $category,
         'tags' => $tags,
         'likes_count' => 0,
@@ -277,12 +274,9 @@ function handle_update(): void
         redirect_to($params);
     }
 
-    $bodyPayload = prepare_entry_body($body);
-
     $entries[$index]['title'] = $title;
     $entries[$index]['entry_date'] = $entryDate;
-    $entries[$index]['body'] = $bodyPayload['raw'];
-    $entries[$index]['body_html'] = $bodyPayload['html'];
+    $entries[$index]['body'] = $body;
     $entries[$index]['category'] = $category;
     $entries[$index]['tags'] = $tags;
     $entries[$index]['updated_at'] = date('c');
@@ -401,8 +395,8 @@ function handle_comment(): void
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>日記 | Akari Math Lab</title>
-    <meta name="description" content="学習の気づきや日常を記録できる日記。投稿パスワードを使ってサーバーに保存できます。">
+    <title>学習日記 | Akari Math Lab</title>
+    <meta name="description" content="学習の気づきを記録できる学習日記。投稿パスワードを使ってサーバーに保存できます。">
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="<?php echo h($canonicalUrl); ?>" />
     <link rel="icon" href="../assets/tako-icon.svg" type="image/svg+xml" />
@@ -455,7 +449,7 @@ function handle_comment(): void
             <p>
               日々の学びや気づきを短くメモできるミニ日記です。投稿パスワードを知っているメンバーだけが
               サーバーに記録を保存でき、公開ページにも反映されます。下書きは端末のローカルストレージに
-              自動保存されます。
+              自動保存されるので、安心して書き進められます。
             </p>
           </div>
         </section>
@@ -700,7 +694,7 @@ function handle_comment(): void
                         </div>
                       </div>
                       <div class="diary-item-body">
-                        <?php echo entry_body_html($entry); ?>
+                        <?php echo format_body($entry['body'] ?? ''); ?>
                       </div>
                       <div class="diary-item-footer">
                         <a class="diary-read-more" href="show.php?id=<?php echo h($entryId); ?>">続きを読む</a>
@@ -745,7 +739,7 @@ function handle_comment(): void
                                       <time datetime="<?php echo h($comment['posted_at']); ?>"><?php echo h(date('Y-m-d H:i', strtotime($comment['posted_at']))); ?></time>
                                     <?php endif; ?>
                                   </div>
-                                <div class="diary-comment-body"><?php echo comment_body_html($comment); ?></div>
+                                <div class="diary-comment-body"><?php echo format_comment_body((string)($comment['body'] ?? '')); ?></div>
                                 </li>
                               <?php endforeach; ?>
                             </ul>
