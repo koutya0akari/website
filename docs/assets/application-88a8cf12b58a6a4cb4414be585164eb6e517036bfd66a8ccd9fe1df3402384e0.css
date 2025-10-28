@@ -38,6 +38,18 @@ a {
   text-decoration: none;
 }
 
+.text-accent {
+  color: var(--accent);
+}
+
+.text-muted {
+  color: var(--muted);
+}
+
+.text-note {
+  color: var(--navy-900);
+}
+
 .page-wrap {
   display: flex;
   min-height: 100vh;
@@ -796,4 +808,106 @@ footer {
 
 .hero-card .profile-list li {
   color: #ffffff;
+}
+
+.diary-link-card {
+  display: flex;
+  gap: 0.75rem;
+  align-items: stretch;
+  position: relative;
+  margin: 0.65rem 0;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(11, 31, 51, 0.08);
+  background: var(--card-bg);
+  box-shadow: var(--shadow-sm);
+  text-decoration: none;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.diary-link-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.diary-link-card:focus-within {
+  box-shadow: var(--shadow-md), 0 0 0 2px rgba(255, 111, 97, 0.35);
+}
+
+.diary-link-card__preview {
+  flex: 0 0 110px;
+  height: 72px;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.diary-link-card__preview iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  pointer-events: none;
+}
+
+.diary-link-card__meta {
+  flex: 1 1 auto;
+  position: relative;
+  min-width: 0;
+}
+
+.diary-link-card__host {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.diary-link-card__title {
+  display: block;
+  font-weight: 600;
+  color: var(--navy-700);
+  line-height: 1.5;
+  word-break: break-word;
+  padding-right: 2rem;
+  transition: color 0.2s ease;
+}
+
+.diary-link-card__icon {
+  position: absolute;
+  right: 1rem;
+  top: 0.8rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.diary-link-card__description {
+  margin: 0.45rem 0 0;
+  font-size: 0.9rem;
+  color: rgba(11, 31, 51, 0.76);
+  line-height: 1.5;
+}
+
+.diary-link-card__overlay {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: inherit;
+  z-index: 5;
+}
+
+.diary-link-card__overlay:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.diary-link-card:hover .diary-link-card__title {
+  color: var(--navy-900);
+}
+
+.diary-link-card:hover .diary-link-card__icon {
+  color: var(--navy-600);
 }

@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../lib/link_preview.php';
+
 session_start();
 
 const RESOURCE_FILES_DIR = __DIR__ . '/files';
@@ -277,13 +279,51 @@ function resource_comment_body_html(array $comment): string
 
 function render_resource_link_card(string $url, ?string $label = null, string $extraClass = ''): string
 {
-    $safeUrl = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
-    $host = parse_url($url, PHP_URL_HOST) ?: '';
-    $host = $host !== '' ? $host : $url;
-    $hostEscaped = htmlspecialchars($host, ENT_QUOTES, 'UTF-8');
+    $trimmedUrl = trim($url);
+    if ($trimmedUrl === '') {
+        if ($label === null) {
+            return '';
+        }
 
-    $title = $label ?? $url;
-    $titleEscaped = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+        $labelTrimmed = trim($label);
+        if ($labelTrimmed === '') {
+            return '';
+        }
+
+        return htmlspecialchars($label, ENT_QUOTES, 'UTF-8');
+    }
+
+    $labelTrimmed = $label !== null ? trim($label) : '';
+    $hasCustomLabel = $labelTrimmed !== '' && $labelTrimmed !== $trimmedUrl;
+
+    $decodedUrl = html_entity_decode($trimmedUrl, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $normalizedUrl = link_preview_normalize_url($decodedUrl);
+    if ($normalizedUrl === '') {
+        $fallback = $hasCustomLabel ? ($label ?? $labelTrimmed) : $trimmedUrl;
+        return htmlspecialchars($fallback, ENT_QUOTES, 'UTF-8');
+    }
+
+    $safeUrl = htmlspecialchars($normalizedUrl, ENT_QUOTES, 'UTF-8');
+    $host = parse_url($normalizedUrl, PHP_URL_HOST) ?: $normalizedUrl;
+
+    $preview = link_preview_metadata($normalizedUrl);
+    $previewTitle = $preview['title'] ?? '';
+    $previewDescription = $preview['description'] ?? '';
+    $previewSite = $preview['site_name'] ?? '';
+
+    $displayTitleRaw = $hasCustomLabel ? ($label ?? $labelTrimmed) : ($previewTitle !== '' ? $previewTitle : $normalizedUrl);
+    $displayTitleEscaped = htmlspecialchars($displayTitleRaw, ENT_QUOTES, 'UTF-8');
+
+    $siteLabel = $previewSite !== '' ? $previewSite : ($host !== '' ? $host : $normalizedUrl);
+    $siteLabelEscaped = htmlspecialchars($siteLabel, ENT_QUOTES, 'UTF-8');
+
+    $descriptionHtml = '';
+    if ($previewDescription !== '') {
+        $descriptionHtml = '<p class="diary-link-card__description">' . htmlspecialchars($previewDescription, ENT_QUOTES, 'UTF-8') . '</p>';
+    }
+
+    $ariaText = $displayTitleRaw !== '' ? $displayTitleRaw : $normalizedUrl;
+    $ariaLabel = htmlspecialchars('新しいタブで開く: ' . $ariaText, ENT_QUOTES, 'UTF-8');
 
     $class = trim('diary-link-card ' . $extraClass);
 
@@ -292,12 +332,12 @@ function render_resource_link_card(string $url, ?string $label = null, string $e
         . '<iframe src="' . $safeUrl . '" loading="lazy" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" referrerpolicy="no-referrer"></iframe>'
         . '</div>'
         . '<div class="diary-link-card__meta">'
-        . '<span class="diary-link-card__host">' . $hostEscaped . '</span>'
-        . '<a class="diary-link-card__link" href="' . $safeUrl . '" target="_blank" rel="noopener noreferrer">'
-        . '<span class="diary-link-card__title">' . $titleEscaped . '</span>'
+        . '<span class="diary-link-card__host">' . $siteLabelEscaped . '</span>'
+        . '<span class="diary-link-card__title">' . $displayTitleEscaped . '</span>'
         . '<span class="diary-link-card__icon" aria-hidden="true">↗</span>'
-        . '</a>'
+        . $descriptionHtml
         . '</div>'
+        . '<a class="diary-link-card__overlay" href="' . $safeUrl . '" target="_blank" rel="noopener noreferrer" aria-label="' . $ariaLabel . '"></a>'
         . '</div>';
 }
 

@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../lib/link_preview.php';
+
 const DEFAULT_DIARY_PASSWORD = '@Koutya062525!akar1';
 const DATA_DIR = __DIR__ . '/../data';
 const DATA_FILE = DATA_DIR . '/diary_entries.json';
@@ -423,7 +425,7 @@ function sanitize_anchor_tag(array $matches): string
     }
 
     if (isset($attributes['class'])) {
-        $allowedClasses = ['diary-link-card', 'diary-link-card__link'];
+        $allowedClasses = ['diary-link-card', 'diary-link-card__link', 'diary-link-card__overlay'];
         $classCandidates = preg_split('/\s+/', trim((string)$attributes['class'])) ?: [];
         $validClasses = array_intersect($classCandidates, $allowedClasses);
         if (!empty($validClasses)) {
@@ -759,121 +761,270 @@ function build_entry_html_from_raw(string $body): string
 
 function convert_html_urls_to_cards(string $html): string
 {
-    $trimmed = trim($html);
-    if ($trimmed === '') {
-        return '';
-    }
+    $originalHtml = $html;
+    $resultHtml = $html;
 
-    if (!class_exists('DOMDocument')) {
-        return $html;
-    }
-
-    $dom = new DOMDocument('1.0', 'UTF-8');
-    libxml_use_internal_errors(true);
-
-    $flags = 0;
-    if (defined('LIBXML_HTML_NOIMPLIED')) {
-        $flags |= LIBXML_HTML_NOIMPLIED;
-    }
-    if (defined('LIBXML_HTML_NODEFDTD')) {
-        $flags |= LIBXML_HTML_NODEFDTD;
-    }
-
-    $wrapper = '<div id="diary-card-root">' . $html . '</div>';
-    $loaded = $dom->loadHTML('<?xml encoding="utf-8" ?>' . $wrapper, $flags);
-    if ($loaded === false) {
-        libxml_clear_errors();
-        return $html;
-    }
-
-    $root = $dom->getElementById('diary-card-root');
-    if (!$root) {
-        libxml_clear_errors();
-        return $html;
-    }
-
-    $xpath = new DOMXPath($dom);
-    $textNodes = $xpath->query('.//text()', $root);
-    if ($textNodes === false) {
-        libxml_clear_errors();
-        return $html;
-    }
-
-    $pattern = '/https?:\/\/[^\s<>"\'\)\]]+/i';
-    $skippedParents = ['a', 'script', 'style', 'iframe', 'code', 'pre'];
-
-    foreach ($textNodes as $node) {
-        $parent = $node->parentNode;
-        if (!$parent) {
-            continue;
+    try {
+        $trimmed = trim($html);
+        if ($trimmed === '') {
+            return '';
         }
 
-        if (in_array(strtolower($parent->nodeName), $skippedParents, true)) {
-            continue;
+        if (!class_exists('DOMDocument')) {
+            return $html;
         }
 
-        $ancestor = $parent;
-        $skip = false;
-        while ($ancestor) {
-            if ($ancestor->nodeType === XML_ELEMENT_NODE) {
-                $classAttr = $ancestor->attributes->getNamedItem('class');
-                if ($classAttr !== null && preg_match('/\bdiary-link-card\b/', (string)$classAttr->nodeValue)) {
-                    $skip = true;
-                    break;
-                }
-            }
-            $ancestor = $ancestor->parentNode;
+        $dom = new DOMDocument('1.0', 'UTF-8');
+        libxml_use_internal_errors(true);
+
+        $flags = 0;
+        if (defined('LIBXML_HTML_NOIMPLIED')) {
+            $flags |= LIBXML_HTML_NOIMPLIED;
         }
-        if ($skip) {
-            continue;
+        if (defined('LIBXML_HTML_NODEFDTD')) {
+            $flags |= LIBXML_HTML_NODEFDTD;
         }
 
-        $value = $node->nodeValue ?? '';
-        if ($value === '' || !preg_match($pattern, $value)) {
-            continue;
+        $wrapper = '<div id="diary-card-root">' . $html . '</div>';
+        $loaded = $dom->loadHTML('<?xml encoding="utf-8" ?>' . $wrapper, $flags);
+        if ($loaded === false) {
+            libxml_clear_errors();
+            return $html;
         }
 
-        $parts = preg_split($pattern, $value, -1, PREG_SPLIT_DELIM_CAPTURE);
-        if ($parts === false || count($parts) < 2) {
-            continue;
+        $root = $dom->getElementById('diary-card-root');
+        if (!$root) {
+            libxml_clear_errors();
+            return $html;
         }
 
-        $fragment = $dom->createDocumentFragment();
-        foreach ($parts as $index => $part) {
-            if ($part === '') {
+        $xpath = new DOMXPath($dom);
+        $textNodes = $xpath->query('.//text()', $root);
+        if ($textNodes === false) {
+            libxml_clear_errors();
+            return $html;
+        }
+
+        $pattern = '/https?:\/\/[^\s<>"\'\)\]]+/i';
+        $skippedParents = ['a', 'script', 'style', 'iframe', 'code', 'pre'];
+
+        foreach ($textNodes as $node) {
+            $parent = $node->parentNode;
+            if (!$parent) {
                 continue;
             }
 
-            if ($index % 2 === 1) {
-                $cardFragment = $dom->createDocumentFragment();
-                if (@$cardFragment->appendXML(render_link_card($part))) {
-                    $fragment->appendChild($cardFragment);
+            if (in_array(strtolower($parent->nodeName), $skippedParents, true)) {
+                continue;
+            }
+
+            $ancestor = $parent;
+            $skip = false;
+            while ($ancestor) {
+                if ($ancestor->nodeType === XML_ELEMENT_NODE) {
+                    $classAttr = $ancestor->attributes->getNamedItem('class');
+                    if ($classAttr !== null && preg_match('/\bdiary-link-card\b/', (string)$classAttr->nodeValue)) {
+                        $skip = true;
+                        break;
+                    }
+                }
+                $ancestor = $ancestor->parentNode;
+            }
+            if ($skip) {
+                continue;
+            }
+
+            $value = $node->nodeValue ?? '';
+            if ($value === '' || !preg_match($pattern, $value)) {
+                continue;
+            }
+
+            $parts = preg_split($pattern, $value, -1, PREG_SPLIT_DELIM_CAPTURE);
+            if ($parts === false || count($parts) < 2) {
+                continue;
+            }
+
+            $fragment = $dom->createDocumentFragment();
+            foreach ($parts as $index => $part) {
+                if ($part === '') {
+                    continue;
+                }
+
+                if ($index % 2 === 1) {
+                    $cardFragment = $dom->createDocumentFragment();
+                    if (@$cardFragment->appendXML(render_link_card($part))) {
+                        $fragment->appendChild($cardFragment);
+                    } else {
+                        $fragment->appendChild($dom->createTextNode($part));
+                    }
                 } else {
                     $fragment->appendChild($dom->createTextNode($part));
                 }
-            } else {
-                $fragment->appendChild($dom->createTextNode($part));
+            }
+
+            $parent->replaceChild($fragment, $node);
+        }
+
+        $anchorNodes = $xpath->query('.//a[@href]', $root);
+        if ($anchorNodes !== false && $anchorNodes->length > 0) {
+            $anchors = [];
+            foreach ($anchorNodes as $anchorNode) {
+                $anchors[] = $anchorNode;
+            }
+
+            foreach ($anchors as $anchor) {
+                if (!$anchor->parentNode) {
+                    continue;
+                }
+
+                $ancestor = $anchor;
+                $skip = false;
+                while ($ancestor) {
+                    if ($ancestor->nodeType === XML_ELEMENT_NODE) {
+                        $classAttr = $ancestor->attributes->getNamedItem('class');
+                        if ($classAttr !== null && preg_match('/\bdiary-link-card\b/', (string)$classAttr->nodeValue)) {
+                            $skip = true;
+                            break;
+                        }
+                    }
+                    $ancestor = $ancestor->parentNode;
+                }
+                if ($skip) {
+                    continue;
+                }
+
+                $hrefRaw = (string)$anchor->getAttribute('href');
+                $hrefTrimmed = trim($hrefRaw);
+                if ($hrefTrimmed === '') {
+                    continue;
+                }
+                $hrefDecoded = html_entity_decode($hrefTrimmed, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $normalizedHref = link_preview_normalize_url($hrefDecoded);
+                if ($normalizedHref === '') {
+                    continue;
+                }
+
+                $anchorText = trim((string)$anchor->textContent);
+                $labelNormalized = '';
+                if ($anchorText !== '') {
+                    $labelNormalized = link_preview_normalize_url(html_entity_decode($anchorText, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+                }
+
+                if ($labelNormalized === '' || $labelNormalized !== $normalizedHref) {
+                    continue;
+                }
+
+                $cardFragment = $dom->createDocumentFragment();
+                $cardHtml = render_link_card($hrefTrimmed);
+                if (@$cardFragment->appendXML($cardHtml)) {
+                    $anchor->parentNode->replaceChild($cardFragment, $anchor);
+                }
             }
         }
 
-        $parent->replaceChild($fragment, $node);
+        $cardNodes = $xpath->query('.//*[contains(concat(" ", normalize-space(@class), " "), " diary-link-card ")]', $root);
+        if ($cardNodes !== false && $cardNodes->length > 0) {
+            $cards = [];
+            foreach ($cardNodes as $cardNode) {
+                $cards[] = $cardNode;
+            }
+            $inlineParents = ['span', 'strong', 'em', 'b', 'i', 'u', 'mark', 'small', 'sup', 'sub', 'code'];
+            foreach ($cards as $card) {
+                $parent = $card->parentNode;
+                if (!$parent) {
+                    continue;
+                }
+                $parentName = strtolower($parent->nodeName);
+                if (!in_array($parentName, $inlineParents, true)) {
+                    continue;
+                }
+                $grandParent = $parent->parentNode;
+                if (!$grandParent) {
+                    continue;
+                }
+                $nextSibling = $parent->nextSibling;
+                $grandParent->insertBefore($card, $nextSibling);
+
+                $hasElements = false;
+                foreach ($parent->childNodes as $childNode) {
+                    if ($childNode->nodeType === XML_ELEMENT_NODE) {
+                        $hasElements = true;
+                        break;
+                    }
+                    if ($childNode->nodeType === XML_TEXT_NODE && trim($childNode->nodeValue ?? '') !== '') {
+                        $hasElements = true;
+                        break;
+                    }
+                }
+                if (!$hasElements) {
+                    $grandParent->removeChild($parent);
+                }
+            }
+        }
+
+        libxml_clear_errors();
+
+        $output = '';
+        foreach ($root->childNodes as $child) {
+            $output .= $dom->saveHTML($child);
+        }
+
+        $output = preg_replace_callback(
+            '/<a\b[^>]*href="([^"]+)"[^>]*>\s*(https?:\/\/[^\s<>"\']+)\s*<\/a>/i',
+            static function (array $matches) {
+                $hrefRaw = $matches[1] ?? '';
+                $textRaw = $matches[2] ?? '';
+                $hrefDecoded = html_entity_decode($hrefRaw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $textDecoded = html_entity_decode($textRaw, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                $hrefNormalized = link_preview_normalize_url($hrefDecoded);
+                $textNormalized = link_preview_normalize_url($textDecoded);
+                if ($hrefNormalized === '' || $hrefNormalized !== $textNormalized) {
+                    return $matches[0];
+                }
+
+                return render_link_card($hrefRaw);
+            },
+            $output
+        );
+        $resultHtml = is_string($output) ? $output : $html;
+    } catch (Throwable $e) {
+        error_log('convert_html_urls_to_cards failed: ' . $e->getMessage());
+        $resultHtml = $originalHtml;
     }
 
-    libxml_clear_errors();
-
-    $output = '';
-    foreach ($root->childNodes as $child) {
-        $output .= $dom->saveHTML($child);
+    if (strpos($resultHtml, 'diary-link-card') === false) {
+        $resultHtml = convert_plain_text_urls_to_cards($resultHtml);
     }
 
-    return $output;
+    return $resultHtml;
+}
+
+function convert_plain_text_urls_to_cards(string $html): string
+{
+    return preg_replace_callback(
+        '/(^|>)([^<]+)(?=<|$)/',
+        static function (array $matches) {
+            $prefix = $matches[1];
+            $textSegment = $matches[2];
+            $converted = preg_replace_callback(
+                '/https?:\/\/[^\s<>"\'\)\]]+/i',
+                static function ($urlMatches) {
+                    return render_link_card($urlMatches[0]);
+                },
+                $textSegment
+            );
+
+            return $prefix . ($converted ?? $textSegment);
+        },
+        $html
+    );
 }
 
 function entry_body_html(array $entry): string
 {
     $bodyHtml = $entry['body_html'] ?? '';
     if (is_string($bodyHtml) && trim($bodyHtml) !== '') {
-        return $bodyHtml;
+        return convert_html_urls_to_cards($bodyHtml);
     }
 
     return build_entry_html_from_raw((string)($entry['body'] ?? ''));
@@ -926,13 +1077,51 @@ function auto_link_plain_text(string $text): string
 
 function render_link_card(string $url, ?string $label = null, string $extraClass = ''): string
 {
-    $safeUrl = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
-    $host = parse_url($url, PHP_URL_HOST) ?: '';
-    $host = $host !== '' ? $host : $url;
-    $hostEscaped = htmlspecialchars($host, ENT_QUOTES, 'UTF-8');
+    $trimmedUrl = trim($url);
+    if ($trimmedUrl === '') {
+        if ($label === null) {
+            return '';
+        }
 
-    $title = $label ?? $url;
-    $titleEscaped = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+        $labelTrimmed = trim($label);
+        if ($labelTrimmed === '') {
+            return '';
+        }
+
+        return htmlspecialchars($label, ENT_QUOTES, 'UTF-8');
+    }
+
+    $labelTrimmed = $label !== null ? trim($label) : '';
+    $hasCustomLabel = $labelTrimmed !== '' && $labelTrimmed !== $trimmedUrl;
+
+    $decodedUrl = html_entity_decode($trimmedUrl, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $normalizedUrl = link_preview_normalize_url($decodedUrl);
+    if ($normalizedUrl === '') {
+        $fallback = $hasCustomLabel ? ($label ?? $labelTrimmed) : $trimmedUrl;
+        return htmlspecialchars($fallback, ENT_QUOTES, 'UTF-8');
+    }
+
+    $safeUrl = htmlspecialchars($normalizedUrl, ENT_QUOTES, 'UTF-8');
+    $host = parse_url($normalizedUrl, PHP_URL_HOST) ?: $normalizedUrl;
+
+    $preview = link_preview_metadata($normalizedUrl);
+    $previewTitle = $preview['title'] ?? '';
+    $previewDescription = $preview['description'] ?? '';
+    $previewSite = $preview['site_name'] ?? '';
+
+    $displayTitleRaw = $hasCustomLabel ? ($label ?? $labelTrimmed) : ($previewTitle !== '' ? $previewTitle : $normalizedUrl);
+    $displayTitleEscaped = htmlspecialchars($displayTitleRaw, ENT_QUOTES, 'UTF-8');
+
+    $siteLabel = $previewSite !== '' ? $previewSite : ($host !== '' ? $host : $normalizedUrl);
+    $siteLabelEscaped = htmlspecialchars($siteLabel, ENT_QUOTES, 'UTF-8');
+
+    $descriptionHtml = '';
+    if ($previewDescription !== '') {
+        $descriptionHtml = '<p class="diary-link-card__description">' . htmlspecialchars($previewDescription, ENT_QUOTES, 'UTF-8') . '</p>';
+    }
+
+    $ariaText = $displayTitleRaw !== '' ? $displayTitleRaw : $normalizedUrl;
+    $ariaLabel = htmlspecialchars('新しいタブで開く: ' . $ariaText, ENT_QUOTES, 'UTF-8');
 
     $class = trim('diary-link-card ' . $extraClass);
 
@@ -941,12 +1130,12 @@ function render_link_card(string $url, ?string $label = null, string $extraClass
         . '<iframe src="' . $safeUrl . '" loading="lazy" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" referrerpolicy="no-referrer"></iframe>'
         . '</div>'
         . '<div class="diary-link-card__meta">'
-        . '<span class="diary-link-card__host">' . $hostEscaped . '</span>'
-        . '<a class="diary-link-card__link" href="' . $safeUrl . '" target="_blank" rel="noopener noreferrer">'
-        . '<span class="diary-link-card__title">' . $titleEscaped . '</span>'
+        . '<span class="diary-link-card__host">' . $siteLabelEscaped . '</span>'
+        . '<span class="diary-link-card__title">' . $displayTitleEscaped . '</span>'
         . '<span class="diary-link-card__icon" aria-hidden="true">↗</span>'
-        . '</a>'
+        . $descriptionHtml
         . '</div>'
+        . '<a class="diary-link-card__overlay" href="' . $safeUrl . '" target="_blank" rel="noopener noreferrer" aria-label="' . $ariaLabel . '"></a>'
         . '</div>';
 }
 
