@@ -21,7 +21,16 @@ const client =
       })
     : null;
 
-type DiaryCMSResponse = DiaryEntry & MicroCMSContentId & MicroCMSDate;
+type DiaryCMSResponse = {
+  title?: string;
+  slug?: string;
+  summary?: string;
+  body?: string;
+  editer?: string;
+  folder?: string;
+  tags?: string[];
+  heroImage?: DiaryEntry["heroImage"];
+} & MicroCMSContentId & MicroCMSDate;
 type ResourceCMSResponse = ResourceItem &
   MicroCMSContentId &
   MicroCMSDate & {
@@ -43,12 +52,13 @@ async function safeGet<T>(fetcher: () => Promise<T>, fallback: T): Promise<T> {
 }
 
 function normalizeDiary(entry: DiaryCMSResponse): DiaryEntry {
+  const content = entry.editer ?? entry.body ?? "";
   return {
     id: entry.id,
-    title: entry.title,
+    title: entry.title ?? "(タイトル未設定)",
     slug: entry.slug ?? entry.id,
-    summary: entry.summary || createExcerpt(entry.body ?? ""),
-    body: entry.body ?? "",
+    summary: entry.summary || createExcerpt(content),
+    body: content,
     folder: entry.folder,
     tags: entry.tags ?? [],
     heroImage: entry.heroImage,
