@@ -1,16 +1,41 @@
-# macOS
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
 .DS_Store
+*.pem
 
-# Vercel / Next.js build output
-akari-vercel/.next
-akari-vercel/.vercel
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-# Dependencies & env files
-akari-vercel/node_modules
-akari-vercel/.env.local
-akari-vercel/.env
-akari-vercel/.env.production
-akari-vercel/.env.development
+# env files (can opt-in for committing if needed)
+.env*
 
-# Logs
-akari-vercel/npm-debug.log*
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
