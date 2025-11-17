@@ -12,7 +12,8 @@ type PageProps = {
   searchParams?: Promise<{ draftKey?: string }>;
 };
 
-export const revalidate = 180;
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 export const dynamicParams = true;
 

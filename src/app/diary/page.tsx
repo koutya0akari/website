@@ -9,7 +9,8 @@ export const metadata: Metadata = {
   description: "microCMS で管理する Math Diary。フォルダやタグ、検索で学習記録を絞り込めます。",
 };
 
-export const revalidate = 180;
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 export default async function DiaryPage() {
   const diaries = await getDiaryEntries(100);
