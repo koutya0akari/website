@@ -6,9 +6,9 @@ export function SiteFooter() {
       <div className="mx-auto flex max-w-content flex-col gap-4 px-6 py-8 text-sm text-white/60 sm:flex-row sm:items-center sm:justify-between">
         <p>© {new Date().getFullYear()} Akari Math Lab. Built with Next.js + microCMS.</p>
         <div className="flex flex-wrap gap-4">
-          <Link href="/sitemap.xml" className="hover:text-white">
+          <a href="/sitemap.xml" className="hover:text-white">
             Sitemap
-          </Link>
+          </a>
           <Link href="/resources" className="hover:text-white">
             Resources
           </Link>

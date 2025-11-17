@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { SmartLink } from "@/components/smart-link";
+
 const NAV_ITEMS = [
   { label: "ホーム", href: "/" },
   { label: "研究関心", href: "/#focus" },
@@ -19,13 +21,13 @@ export function SiteHeader() {
         </Link>
         <nav className="hidden gap-5 text-sm text-white/80 md:flex">
           {NAV_ITEMS.map((item) => (
-            <Link
+            <SmartLink
               key={item.href}
               href={item.href}
               className="transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
             >
               {item.label}
-            </Link>
+            </SmartLink>
           ))}
         </nav>
         <Link

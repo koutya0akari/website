@@ -8,8 +8,8 @@ import { getDiaryBySlug, getDiaryEntries } from "@/lib/microcms";
 import { formatDate } from "@/lib/utils";
 
 type PageProps = {
-  params: { slug: string };
-  searchParams?: { draftKey?: string };
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ draftKey?: string }>;
 };
 
 export const revalidate = 180;
@@ -20,7 +20,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const entry = await getDiaryBySlug(params.slug);
+  const { slug } = await params;
+  const entry = await getDiaryBySlug(slug);
   if (!entry) {
     return { title: "Diary" };
   }
@@ -32,7 +33,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function DiaryDetailPage({ params, searchParams }: PageProps) {
-  const entry = await getDiaryBySlug(params.slug, searchParams?.draftKey);
+  const [{ slug }, resolvedSearch] = await Promise.all([
+    params,
+    searchParams ? searchParams : Promise.resolve<{ draftKey?: string } | undefined>(undefined),
+  ]);
+  const entry = await getDiaryBySlug(slug, resolvedSearch?.draftKey);
 
   if (!entry) {
     notFound();

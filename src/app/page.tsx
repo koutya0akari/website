@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { DiaryCard } from "@/components/diary/diary-card";
 import { ResourceGrid } from "@/components/resources/resource-grid";
+import { SmartLink } from "@/components/smart-link";
 import { getDiaryEntries, getResourceItems, getSiteContent } from "@/lib/microcms";
 import { formatDate } from "@/lib/utils";
 
@@ -19,19 +20,19 @@ export default async function HomePage() {
             <h1 className="font-display text-4xl leading-tight text-white sm:text-5xl">{site.heroTitle}</h1>
             <p className="text-lg text-white/80">{site.heroLead}</p>
             <div className="flex flex-wrap gap-4">
-              <Link
+              <SmartLink
                 href={site.heroPrimaryCtaUrl}
                 className="rounded-full bg-accent px-6 py-3 text-sm font-semibold text-black transition hover:bg-accent/90"
               >
                 {site.heroPrimaryCtaLabel}
-              </Link>
+              </SmartLink>
               {site.heroSecondaryCtaLabel && site.heroSecondaryCtaUrl && (
-                <Link
+                <SmartLink
                   href={site.heroSecondaryCtaUrl}
                   className="rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white hover:border-white"
                 >
                   {site.heroSecondaryCtaLabel}
-                </Link>
+                </SmartLink>
               )}
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/70">
@@ -50,9 +51,9 @@ export default async function HomePage() {
                   <p className="text-base font-semibold text-white">{item.title}</p>
                   <p className="text-sm text-white/70">{item.description}</p>
                   {item.linkUrl && (
-                    <Link href={item.linkUrl} className="text-sm text-accent underline underline-offset-4">
+                    <SmartLink href={item.linkUrl} className="text-sm text-accent underline underline-offset-4">
                       {item.linkLabel ?? "詳細"}
-                    </Link>
+                    </SmartLink>
                   )}
                 </li>
               ))}
@@ -91,9 +92,9 @@ export default async function HomePage() {
                   ))}
                 </ul>
                 {project.link && (
-                  <Link href={project.link} className="text-sm text-accent underline underline-offset-4">
+                  <SmartLink href={project.link} className="text-sm text-accent underline underline-offset-4">
                     詳細へ
-                  </Link>
+                  </SmartLink>
                 )}
               </article>
             ))}
@@ -131,13 +132,13 @@ export default async function HomePage() {
             <p className="text-white/70">コラボ・取材・登壇依頼などは下記よりお気軽にどうぞ。</p>
             <div className="flex flex-wrap gap-3">
               {site.contactLinks.map((link) => (
-                <Link
+                <SmartLink
                   key={link.id}
                   href={link.url}
                   className="rounded-full border border-white/20 px-4 py-2 text-sm text-white hover:border-accent hover:text-accent"
                 >
                   {link.label}
-                </Link>
+                </SmartLink>
               ))}
             </div>
           </div>

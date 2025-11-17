@@ -1,6 +1,5 @@
-import Link from "next/link";
-
 import type { ResourceItem } from "@/lib/types";
+import { SmartLink } from "@/components/smart-link";
 
 type ResourceGridProps = {
   resources: ResourceItem[];
@@ -20,13 +19,13 @@ export function ResourceGrid({ resources }: ResourceGridProps) {
             <h3 className="text-lg font-semibold text-white">{item.title}</h3>
             <p className="text-sm text-white/70">{item.description}</p>
           </div>
-          <Link
+          <SmartLink
             href={item.externalUrl ?? item.fileUrl}
             target="_blank"
             className="inline-flex items-center justify-center rounded-full border border-accent px-5 py-2 text-sm font-medium text-accent hover:bg-accent hover:text-black"
           >
             開く
-          </Link>
+          </SmartLink>
         </article>
       ))}
     </div>

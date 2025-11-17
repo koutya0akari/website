@@ -71,4 +71,8 @@ REVALIDATE_SECRET=任意の長い文字列
 - `src/app/diary/page.tsx` ではクライアントコンポーネント (`DiaryFilter`) を使い、検索・タグ・フォルダでフィルタリング可能です。
 - `src/app/api/revalidate/route.ts` を使っていつでも Incremental Static Regeneration を手動で呼び出せます。
 
+## ドメイン移行
+
+旧 `akari0koutya.jp` から `akari0koutya.com` への移行手順、DNS/SEO のチェックリストは `docs/migration-guide.md` に整理しました。コンテンツのエクスポート→microCMS への投入→Vercel でのドメイン切替をこのガイドに沿って進めてください。
+
 必要に応じてセクション構成やフィールドを追加しても、microCMS 側のフィールド ID を合わせれば拡張できます。

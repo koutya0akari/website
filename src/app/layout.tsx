@@ -26,7 +26,7 @@ const signika = Signika_Negative({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://akari.vercel.app"),
+  metadataBase: new URL("https://akari0koutya.com"),
   title: {
     default: "Akari Math Lab",
     template: "%s | Akari Math Lab",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     title: "Akari Math Lab",
     description:
       "数学の活動記録、研究フォーカス、発表資料をまとめたポートフォリオ。Vercel と microCMS で管理。",
-    url: "https://akari.vercel.app",
+    url: "https://akari0koutya.com",
     siteName: "Akari Math Lab",
     type: "website",
   },
