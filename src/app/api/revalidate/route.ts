@@ -8,7 +8,24 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json().catch(() => null);
-  const paths: string[] = body?.paths ?? ["/", "/diary", "/resources"];
+  const basePaths = body?.paths ?? ["/", "/diary", "/resources"];
+  const pathSet = new Set<string>(basePaths);
+
+  if (body && typeof body === "object") {
+    const apiName = body.api ?? body.endpoint;
+    const slug =
+      body.contents?.slug ??
+      body.contents?.new?.slug ??
+      body.newContents?.slug ??
+      body.id ??
+      body.contentsId;
+
+    if (apiName === "blogs" && slug) {
+      pathSet.add(`/diary/${slug}`);
+    }
+  }
+
+  const paths = Array.from(pathSet);
 
   try {
     await Promise.all(paths.map((path) => revalidatePath(path)));
