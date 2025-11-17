@@ -12,16 +12,21 @@ export async function POST(request: NextRequest) {
   const pathSet = new Set<string>(basePaths);
 
   if (body && typeof body === "object") {
-    const apiName = body.api ?? body.endpoint;
-    const slug =
-      body.contents?.slug ??
-      body.contents?.new?.slug ??
-      body.newContents?.slug ??
-      body.id ??
-      body.contentsId;
+    const diaryEndpoints = new Set(["diary", "diaries", "blogs"]);
+    const apiName = (body.api ?? body.endpoint ?? "") as string;
+    const isDiaryPayload = diaryEndpoints.has(apiName);
 
-    if (apiName === "blogs" && slug) {
-      pathSet.add(`/diary/${slug}`);
+    if (isDiaryPayload) {
+      const slug =
+        body.contents?.slug ?? body.contents?.new?.slug ?? body.newContents?.slug ?? body.slug ?? body.id ?? body.contentsId;
+      if (slug) {
+        pathSet.add(`/diary/${slug}`);
+      }
+
+      const contentId = body.id ?? body.contentsId ?? body.contents?.id ?? body.newContents?.id;
+      if (contentId) {
+        pathSet.add(`/diary/${contentId}`);
+      }
     }
   }
 
