@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { DiaryBody } from "@/components/diary/diary-body";
-import { getDiaryBySlug, getDiaryEntries } from "@/lib/microcms";
+import { getDiaryBySlug } from "@/lib/microcms";
 import { formatDate } from "@/lib/utils";
 
 type PageProps = {
@@ -14,9 +14,10 @@ type PageProps = {
 
 export const revalidate = 180;
 
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  const diaries = await getDiaryEntries(40);
-  return diaries.map((entry) => ({ slug: entry.slug }));
+  return [];
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
