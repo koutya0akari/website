@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100vh;
+  background-color: #030817;
+  background-image: radial-gradient(circle at top, rgba(100, 210, 255, 0.23), transparent 45%),
+    radial-gradient(circle at 20% 20%, rgba(247, 181, 0, 0.12), transparent 35%);
+  color: #f6fbff;
+  font-family: var(--font-inter), var(--font-noto), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+.glass-panel {
+  background: rgba(6, 22, 44, 0.85);
+  border: 1px solid rgba(148, 182, 255, 0.2);
+  backdrop-filter: blur(16px);
+}
+
+.section-card {
+  @apply glass-panel rounded-3xl p-8 shadow-card;
+}
+
+.tag-chip {
+  @apply rounded-full border border-white/20 px-4 py-1 text-sm text-white/80 transition hover:border-accent hover:text-white;
+}
+
+.prose-custom {
+  @apply prose prose-invert max-w-none;
+}
+
+.prose-custom a {
+  @apply text-accent underline-offset-4 hover:text-white;
+}
+
+.prose-custom h2,
+.prose-custom h3 {
+  @apply text-white font-semibold;
+}
+
+.prose-custom p {
+  @apply leading-relaxed text-white/90;
+}

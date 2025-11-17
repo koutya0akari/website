@@ -1,6 +1,0 @@
-SetEnv DIARY_POST_PASSWORD '@Koutya062525!akar1'
-
-<IfModule mod_headers.c>
-  Header set Content-Security-Policy "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://platform.twitter.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://abs.twimg.com data:; img-src 'self' data: https://pbs.twimg.com https://abs.twimg.com https://ton.twimg.com; connect-src 'self' https://platform.twitter.com https://syndication.twitter.com https://api.twitter.com https://cdn.syndication.twimg.com; frame-src 'self' https://platform.twitter.com https://syndication.twitter.com; frame-ancestors 'none'"
-  Header set X-Frame-Options "DENY"
-</IfModule>

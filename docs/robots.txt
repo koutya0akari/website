@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://akari0koutya.jp/sitemap.php

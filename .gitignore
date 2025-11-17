@@ -1,22 +1,16 @@
-/.bundle
-/log/*
-!/log/.keep
-/tmp/*
-!/tmp/.keep
-/storage/*
-!/storage/.keep
-/public/assets
-/docs/data/diary_entries.json
-/docs/uploads/*
-!/docs/uploads/.gitkeep
-/docs/resources/files/*
-!/docs/resources/files/.gitkeep
-/node_modules
-/yarn-error.log
-.byebug_history
-/db/*.sqlite3
-/db/*.sqlite3-journal
-/db/*.sqlite3-shm
-/db/*.sqlite3-wal
+# macOS
+.DS_Store
 
-/config/master.key
+# Vercel / Next.js build output
+akari-vercel/.next
+akari-vercel/.vercel
+
+# Dependencies & env files
+akari-vercel/node_modules
+akari-vercel/.env.local
+akari-vercel/.env
+akari-vercel/.env.production
+akari-vercel/.env.development
+
+# Logs
+akari-vercel/npm-debug.log*
