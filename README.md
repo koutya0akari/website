@@ -26,7 +26,7 @@ MICROCMS_API_KEY=your-api-key
 REVALIDATE_SECRET=任意の長い文字列
 ```
 
-`npm run dev` で [http://localhost:3000](http://localhost:3000) にアクセスすると反映を確認できます。環境変数が未設定の場合は `src/data/sample.ts` のダミーデータでプレビューされます。
+`npm run dev` で [http://localhost:3000](http://localhost:3000) にアクセスすると反映を確認できます。microCMS の API キーが未設定の場合は空の状態で表示されるため、先にエンドポイントを作成してください。
 
 ## microCMS モデル
 

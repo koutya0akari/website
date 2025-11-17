@@ -12,7 +12,7 @@ export function DiaryCard({ entry, compact = false }: DiaryCardProps) {
   return (
     <article className="flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-6 transition hover:-translate-y-0.5 hover:border-accent/80 hover:bg-white/10">
       <div className="flex items-start justify-between gap-3">
-        <span className="text-xs uppercase tracking-[0.2em] text-white/60">{entry.folder ?? "Diary"}</span>
+        <span className="text-xs uppercase tracking-[0.2em] text-white/60">{entry.folder ?? "Math Diary"}</span>
         <time className="text-sm text-white/60">{formatDate(entry.publishedAt)}</time>
       </div>
       <div>

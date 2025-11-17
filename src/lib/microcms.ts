@@ -3,12 +3,36 @@ import "server-only";
 import { createClient } from "microcms-js-sdk";
 import type { MicroCMSContentId, MicroCMSDate, MicroCMSQueries } from "microcms-js-sdk";
 
-import { sampleAbout, sampleDiaries, sampleResources, sampleSite } from "@/data/sample";
-import type { AboutContent, DiaryEntry, ResourceItem, SiteContent } from "@/lib/types";
+import type { AboutContent, CMSImage, DiaryEntry, ResourceItem, SiteContent } from "@/lib/types";
 import { createExcerpt } from "@/lib/utils";
+
+const emptySite: SiteContent = {
+  heroTitle: "",
+  heroLead: "",
+  heroPrimaryCtaLabel: "",
+  heroPrimaryCtaUrl: "/",
+  heroSecondaryCtaLabel: undefined,
+  heroSecondaryCtaUrl: undefined,
+  focuses: [],
+  projects: [],
+  timeline: [],
+  contactLinks: [],
+};
+
+const emptyAbout: AboutContent = {
+  intro: "",
+  mission: "",
+  sections: [],
+  skills: [],
+  quote: undefined,
+};
+
+const emptyDiaries: DiaryEntry[] = [];
+const emptyResources: ResourceItem[] = [];
 
 const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
 const apiKey = process.env.MICROCMS_API_KEY;
+const DIARY_ENDPOINT = "blogs";
 
 const client =
   serviceDomain && apiKey
@@ -18,7 +42,16 @@ const client =
       })
     : null;
 
-type DiaryCMSResponse = DiaryEntry & MicroCMSContentId & MicroCMSDate;
+type DiaryCMSResponse = {
+  title?: string;
+  slug?: string;
+  summary?: string;
+  body?: string;
+  editer?: string;
+  folder?: string;
+  tags?: string[];
+  heroImage?: CMSImage;
+} & MicroCMSContentId & MicroCMSDate;
 type ResourceCMSResponse = ResourceItem &
   MicroCMSContentId &
   MicroCMSDate & {
@@ -40,12 +73,13 @@ async function safeGet<T>(fetcher: () => Promise<T>, fallback: T): Promise<T> {
 }
 
 function normalizeDiary(entry: DiaryCMSResponse): DiaryEntry {
+  const body = entry.editer ?? entry.body ?? "";
   return {
     id: entry.id,
-    title: entry.title,
+    title: entry.title ?? "無題",
     slug: entry.slug ?? entry.id,
-    summary: entry.summary || createExcerpt(entry.body ?? ""),
-    body: entry.body ?? "",
+    summary: entry.summary || createExcerpt(body),
+    body,
     folder: entry.folder,
     tags: entry.tags ?? [],
     heroImage: entry.heroImage,
@@ -70,14 +104,13 @@ export async function getSiteContent(): Promise<SiteContent> {
         heroPrimaryCtaUrl: data.heroPrimaryCtaUrl,
         heroSecondaryCtaLabel: data.heroSecondaryCtaLabel,
         heroSecondaryCtaUrl: data.heroSecondaryCtaUrl,
-        profile: data.profile,
         focuses: data.focuses ?? [],
         projects: data.projects ?? [],
         timeline: data.timeline ?? [],
         contactLinks: data.contactLinks ?? [],
       };
     },
-    sampleSite,
+    emptySite,
   );
 }
 
@@ -85,7 +118,7 @@ export async function getDiaryEntries(limit = 50): Promise<DiaryEntry[]> {
   return safeGet(
     async () => {
       const list = await client!.getList<DiaryCMSResponse>({
-        endpoint: "diary",
+        endpoint: DIARY_ENDPOINT,
         queries: {
           orders: "-publishedAt",
           limit,
@@ -93,13 +126,13 @@ export async function getDiaryEntries(limit = 50): Promise<DiaryEntry[]> {
       });
       return list.contents.map(normalizeDiary);
     },
-    sampleDiaries.slice(0, limit),
+    emptyDiaries,
   );
 }
 
 export async function getDiaryBySlug(slug: string, draftKey?: string): Promise<DiaryEntry | undefined> {
   if (!client) {
-    return sampleDiaries.find((item) => item.slug === slug);
+    return undefined;
   }
 
   const queries: MicroCMSQueries = {
@@ -112,7 +145,7 @@ export async function getDiaryBySlug(slug: string, draftKey?: string): Promise<D
   }
 
   const data = await client!.getList<DiaryCMSResponse>({
-    endpoint: "diary",
+    endpoint: DIARY_ENDPOINT,
     queries,
   });
 
@@ -140,7 +173,7 @@ export async function getResourceItems(limit = 100): Promise<ResourceItem[]> {
         externalUrl: resource.externalUrl,
       }));
     },
-    sampleResources.slice(0, limit),
+    emptyResources,
   );
 }
 
@@ -159,7 +192,7 @@ export async function getAboutContent(): Promise<AboutContent> {
         quote: data.quote,
       };
     },
-    sampleAbout,
+    emptyAbout,
   );
 }
 

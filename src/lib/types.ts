@@ -5,14 +5,6 @@ export type CMSImage = {
   alt?: string;
 };
 
-export type ProfileSection = {
-  name: string;
-  role: string;
-  summary: string;
-  location?: string;
-  avatar?: CMSImage;
-};
-
 export type FocusArea = {
   id: string;
   title: string;
@@ -50,7 +42,6 @@ export type SiteContent = {
   heroPrimaryCtaUrl: string;
   heroSecondaryCtaLabel?: string;
   heroSecondaryCtaUrl?: string;
-  profile: ProfileSection;
   focuses: FocusArea[];
   projects: ProjectSummary[];
   timeline: TimelineItem[];

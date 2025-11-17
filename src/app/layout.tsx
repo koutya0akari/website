@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_JP, Signika_Negative } from "next/font/google";
 
+import { KaTeXProvider } from "@/components/math/katex-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
@@ -47,6 +48,11 @@ export const metadata: Metadata = {
     description:
       "数学科学生 Akari の活動・研究・発表資料をまとめたポートフォリオ。",
   },
+  icons: {
+    icon: "/tako.png",
+    shortcut: "/tako.png",
+    apple: "/tako.png",
+  },
 };
 
 export default function RootLayout({
@@ -58,6 +64,7 @@ export default function RootLayout({
     <html lang="ja">
       <body className={`${inter.variable} ${noto.variable} ${signika.variable}`}>
         <div className="flex min-h-screen flex-col">
+          <KaTeXProvider />
           <SiteHeader />
           <div className="flex-1 pb-16">{children}</div>
           <SiteFooter />

@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const entry = await getDiaryBySlug(slug);
   if (!entry) {
-    return { title: "Diary" };
+    return { title: "Math Diary" };
   }
 
   return {
@@ -46,10 +46,10 @@ export default async function DiaryDetailPage({ params, searchParams }: PageProp
   return (
     <article className="mx-auto max-w-3xl px-6 py-12 space-y-8">
       <Link href="/diary" className="text-sm text-accent underline-offset-4 hover:underline">
-        ← Diary 一覧へ戻る
+        ← Math Diary 一覧へ戻る
       </Link>
       <div className="rounded-[32px] border border-white/10 bg-night-soft/80 p-8">
-        <p className="text-xs uppercase tracking-[0.4em] text-white/60">{entry.folder ?? "Diary"}</p>
+        <p className="text-xs uppercase tracking-[0.4em] text-white/60">{entry.folder ?? "Math Diary"}</p>
         <h1 className="mt-3 text-4xl font-semibold text-white">{entry.title}</h1>
         <time className="mt-2 block text-sm text-white/70">
           Published {formatDate(entry.publishedAt)}{" "}

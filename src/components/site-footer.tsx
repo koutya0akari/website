@@ -13,7 +13,7 @@ export function SiteFooter() {
             Resources
           </Link>
           <Link href="/diary" className="hover:text-white">
-            Diary
+            Math Diary
           </Link>
         </div>
       </div>

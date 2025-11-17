@@ -1,6 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "katex/dist/katex.min.css";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 :root {
   color-scheme: dark;
@@ -23,26 +24,47 @@ body {
 }
 
 .section-card {
-  @apply glass-panel rounded-3xl p-8 shadow-card;
+  background: rgba(6, 22, 44, 0.85);
+  border: 1px solid rgba(148, 182, 255, 0.2);
+  backdrop-filter: blur(16px);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 20px 50px rgba(2, 6, 23, 0.4);
 }
 
 .tag-chip {
-  @apply rounded-full border border-white/20 px-4 py-1 text-sm text-white/80 transition hover:border-accent hover:text-white;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 1rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.tag-chip:hover {
+  border-color: #64d2ff;
+  color: #fff;
 }
 
 .prose-custom {
-  @apply prose prose-invert max-w-none;
+  color: #f6fbff;
+  max-width: none;
+  line-height: 1.7;
 }
 
 .prose-custom a {
-  @apply text-accent underline-offset-4 hover:text-white;
+  color: #64d2ff;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
 }
 
 .prose-custom h2,
 .prose-custom h3 {
-  @apply text-white font-semibold;
+  color: #fff;
+  font-weight: 600;
 }
 
 .prose-custom p {
-  @apply leading-relaxed text-white/90;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.7;
 }
