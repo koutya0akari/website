@@ -3,36 +3,11 @@ import "server-only";
 import { createClient } from "microcms-js-sdk";
 import type { MicroCMSContentId, MicroCMSDate, MicroCMSQueries } from "microcms-js-sdk";
 
-import type { AboutContent, CMSImage, DiaryEntry, ResourceItem, SiteContent } from "@/lib/types";
+import type { AboutContent, DiaryEntry, ResourceItem, SiteContent } from "@/lib/types";
 import { createExcerpt } from "@/lib/utils";
-
-const emptySite: SiteContent = {
-  heroTitle: "",
-  heroLead: "",
-  heroPrimaryCtaLabel: "",
-  heroPrimaryCtaUrl: "/",
-  heroSecondaryCtaLabel: undefined,
-  heroSecondaryCtaUrl: undefined,
-  focuses: [],
-  projects: [],
-  timeline: [],
-  contactLinks: [],
-};
-
-const emptyAbout: AboutContent = {
-  intro: "",
-  mission: "",
-  sections: [],
-  skills: [],
-  quote: undefined,
-};
-
-const emptyDiaries: DiaryEntry[] = [];
-const emptyResources: ResourceItem[] = [];
 
 const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
 const apiKey = process.env.MICROCMS_API_KEY;
-const DIARY_ENDPOINT = "blogs";
 
 const client =
   serviceDomain && apiKey
@@ -42,16 +17,7 @@ const client =
       })
     : null;
 
-type DiaryCMSResponse = {
-  title?: string;
-  slug?: string;
-  summary?: string;
-  body?: string;
-  editer?: string;
-  folder?: string;
-  tags?: string[];
-  heroImage?: CMSImage;
-} & MicroCMSContentId & MicroCMSDate;
+type DiaryCMSResponse = DiaryEntry & MicroCMSContentId & MicroCMSDate;
 type ResourceCMSResponse = ResourceItem &
   MicroCMSContentId &
   MicroCMSDate & {
@@ -73,13 +39,12 @@ async function safeGet<T>(fetcher: () => Promise<T>, fallback: T): Promise<T> {
 }
 
 function normalizeDiary(entry: DiaryCMSResponse): DiaryEntry {
-  const body = entry.editer ?? entry.body ?? "";
   return {
     id: entry.id,
-    title: entry.title ?? "無題",
+    title: entry.title,
     slug: entry.slug ?? entry.id,
-    summary: entry.summary || createExcerpt(body),
-    body,
+    summary: entry.summary || createExcerpt(entry.body ?? ""),
+    body: entry.body ?? "",
     folder: entry.folder,
     tags: entry.tags ?? [],
     heroImage: entry.heroImage,
@@ -110,7 +75,7 @@ export async function getSiteContent(): Promise<SiteContent> {
         contactLinks: data.contactLinks ?? [],
       };
     },
-    emptySite,
+    emptySiteContent,
   );
 }
 
@@ -118,7 +83,7 @@ export async function getDiaryEntries(limit = 50): Promise<DiaryEntry[]> {
   return safeGet(
     async () => {
       const list = await client!.getList<DiaryCMSResponse>({
-        endpoint: DIARY_ENDPOINT,
+        endpoint: "diary",
         queries: {
           orders: "-publishedAt",
           limit,
@@ -126,13 +91,15 @@ export async function getDiaryEntries(limit = 50): Promise<DiaryEntry[]> {
       });
       return list.contents.map(normalizeDiary);
     },
-    emptyDiaries,
+    emptyDiaryEntries.slice(0, limit),
   );
 }
 
 export async function getDiaryBySlug(slug: string, draftKey?: string): Promise<DiaryEntry | undefined> {
+  const fallbackEntry = emptyDiaryEntries.find((item) => item.slug === slug);
+
   if (!client) {
-    return undefined;
+    return fallbackEntry;
   }
 
   const queries: MicroCMSQueries = {
@@ -144,14 +111,43 @@ export async function getDiaryBySlug(slug: string, draftKey?: string): Promise<D
     queries.draftKey = draftKey;
   }
 
-  const data = await client!.getList<DiaryCMSResponse>({
-    endpoint: DIARY_ENDPOINT,
-    queries,
-  });
+  return safeGet(
+    async () => {
+      const data = await client!.getList<DiaryCMSResponse>({
+        endpoint: "diary",
+        queries,
+      });
+      const entry = data.contents[0];
+      if (entry) {
+        return normalizeDiary(entry);
+      }
 
-  const entry = data.contents[0];
+      try {
+        const detail = await client!.getListDetail<DiaryCMSResponse>({
+          endpoint: "diary",
+          contentId: slug,
+          queries: draftKey ? { draftKey } : undefined,
+        });
+        return normalizeDiary(detail);
+      } catch (error) {
+        if (isNotFoundError(error)) {
+          return undefined;
+        }
+        throw error;
+      }
+    },
+    fallbackEntry,
+  );
+}
 
-  return entry ? normalizeDiary(entry) : undefined;
+function isNotFoundError(error: unknown): error is { status: number } {
+  if (typeof error !== "object" || error === null) {
+    return false;
+  }
+  if (!("status" in error)) {
+    return false;
+  }
+  return (error as { status?: number }).status === 404;
 }
 
 export async function getResourceItems(limit = 100): Promise<ResourceItem[]> {
@@ -173,7 +169,7 @@ export async function getResourceItems(limit = 100): Promise<ResourceItem[]> {
         externalUrl: resource.externalUrl,
       }));
     },
-    emptyResources,
+    emptyResourceItems.slice(0, limit),
   );
 }
 
@@ -192,8 +188,32 @@ export async function getAboutContent(): Promise<AboutContent> {
         quote: data.quote,
       };
     },
-    emptyAbout,
+    emptyAboutContent,
   );
 }
 
 export const cmsReady = Boolean(client);
+const emptySiteContent: SiteContent = {
+  heroTitle: "",
+  heroLead: "",
+  heroPrimaryCtaLabel: "",
+  heroPrimaryCtaUrl: "",
+  heroSecondaryCtaLabel: undefined,
+  heroSecondaryCtaUrl: undefined,
+  focuses: [],
+  projects: [],
+  timeline: [],
+  contactLinks: [],
+};
+
+const emptyDiaryEntries: DiaryEntry[] = [];
+
+const emptyResourceItems: ResourceItem[] = [];
+
+const emptyAboutContent: AboutContent = {
+  intro: "",
+  mission: "",
+  sections: [],
+  skills: [],
+  quote: undefined,
+};
