@@ -6,8 +6,12 @@ import type { MicroCMSContentId, MicroCMSDate, MicroCMSQueries } from "microcms-
 import type { AboutContent, DiaryEntry, ResourceItem, SiteContent } from "@/lib/types";
 import { createExcerpt } from "@/lib/utils";
 
-const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN;
-const apiKey = process.env.MICROCMS_API_KEY;
+const serviceDomain = process.env.MICROCMS_SERVICE_DOMAIN ?? process.env.NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN;
+const apiKey = process.env.MICROCMS_API_KEY ?? process.env.NEXT_PUBLIC_MICROCMS_API_KEY;
+
+if (!serviceDomain || !apiKey) {
+  console.warn("[microCMS] Missing serviceDomain or apiKey. Check environment variables.");
+}
 
 const client =
   serviceDomain && apiKey
