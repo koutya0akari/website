@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { DiaryBody } from "@/components/diary/diary-body";
+import { DiaryEngagement } from "@/components/diary/diary-engagement";
 import { getDiaryBySlug } from "@/lib/microcms";
 import { formatDate } from "@/lib/utils";
 
@@ -80,6 +81,7 @@ export default async function DiaryDetailPage({ params, searchParams }: PageProp
         </div>
       )}
       <DiaryBody html={entry.body} />
+      <DiaryEngagement entryId={entry.id} title={entry.title} summary={entry.summary} />
     </article>
   );
 }
