@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import type { DiaryEntry } from "@/lib/types";
+import { stripHtml } from "@/lib/utils";
 import { DiaryCard } from "./diary-card";
 
 type DiaryFilterProps = {
@@ -24,8 +25,8 @@ export function DiaryFilter({ entries }: DiaryFilterProps) {
     const keyword = query.toLowerCase();
     return entries.filter((entry) => {
       const title = entry.title.toLowerCase();
-      const summary = entry.summary?.toLowerCase() ?? "";
-      const body = entry.body?.toLowerCase() ?? "";
+      const summary = stripHtml(entry.summary ?? "").toLowerCase();
+      const body = stripHtml(entry.body ?? "").toLowerCase();
       const matchesQuery = !query || title.includes(keyword) || summary.includes(keyword) || body.includes(keyword);
       const matchesFolder = !folder || entry.folder === folder;
       const matchesTag = !tag || entry.tags?.includes(tag);

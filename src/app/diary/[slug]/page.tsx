@@ -5,8 +5,9 @@ import { notFound } from "next/navigation";
 
 import { DiaryBody } from "@/components/diary/diary-body";
 import { DiaryEngagement } from "@/components/diary/diary-engagement";
+import { Comments } from "@/components/diary/comments";
 import { getDiaryBySlug } from "@/lib/microcms";
-import { formatDate } from "@/lib/utils";
+import { formatDate, stripHtml } from "@/lib/utils";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -29,9 +30,30 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: "Math Diary" };
   }
 
+  const description = entry.summary ? stripHtml(entry.summary) : undefined;
+  const ogImage = entry.heroImage?.url ?? "/tako.png";
+
   return {
     title: entry.title,
-    description: entry.summary,
+    description,
+    openGraph: {
+      title: entry.title,
+      description,
+      type: "article",
+      publishedTime: entry.publishedAt,
+      modifiedTime: entry.updatedAt,
+      images: [
+        {
+          url: ogImage,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: entry.title,
+      description,
+      images: [ogImage],
+    },
   };
 }
 
@@ -82,6 +104,7 @@ export default async function DiaryDetailPage({ params, searchParams }: PageProp
       )}
       <DiaryBody html={entry.body} />
       <DiaryEngagement entryId={entry.id} title={entry.title} summary={entry.summary} />
+      <Comments />
     </article>
   );
 }

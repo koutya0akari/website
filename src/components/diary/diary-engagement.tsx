@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 
+import { stripHtml } from "@/lib/utils";
+
 const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_URL ?? "https://akari0koutya.com";
 
 const likeStorageKey = (id: string) => `math-diary-like:${id}`;
@@ -59,7 +61,8 @@ export function DiaryEngagement({ entryId, title, summary }: DiaryEngagementProp
     }
   }, [shareUrl]);
 
-  const trimmedSummary = (summary ?? "Math Diary").slice(0, 50);
+  const summaryText = summary ? stripHtml(summary) : "Math Diary";
+  const trimmedSummary = summaryText.slice(0, 50);
   const shareText = encodeURIComponent(`${title}\n${trimmedSummary}`);
   const encodedUrl = encodeURIComponent(shareUrl);
 
