@@ -1,10 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_URL ?? "https://akari0koutya.com";
-const SHOW_LIKE_COUNT = process.env.NEXT_PUBLIC_SHOW_LIKE_COUNT === "true";
 
 const likeStorageKey = (id: string) => `math-diary-like:${id}`;
 const likeCountKey = (id: string) => `math-diary-like-count:${id}`;
@@ -17,7 +16,6 @@ type DiaryEngagementProps = {
 
 export function DiaryEngagement({ entryId, title, summary }: DiaryEngagementProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [liked, setLiked] = useState(false);
   const [copyMessage, setCopyMessage] = useState<string | null>(null);
   const [likeCount, setLikeCount] = useState(0);
@@ -83,11 +81,6 @@ export function DiaryEngagement({ entryId, title, summary }: DiaryEngagementProp
     navigator.share({ url: shareUrl, title, text: trimmedSummary }).catch(() => undefined);
   }, [canNativeShare, shareUrl, title, trimmedSummary]);
 
-  const showDeveloperLikeCount = useMemo(() => {
-    if (SHOW_LIKE_COUNT) return true;
-    return Boolean(searchParams?.has("devLikes"));
-  }, [searchParams]);
-
   return (
     <section className="glass-panel flex flex-col gap-4 rounded-3xl p-6">
       <div className="flex flex-wrap items-center gap-3">
@@ -100,7 +93,7 @@ export function DiaryEngagement({ entryId, title, summary }: DiaryEngagementProp
         >
           <span aria-hidden>{liked ? "❤️" : "🤍"}</span>
           いいね
-          {showDeveloperLikeCount && <span className="text-xs text-white/80">{likeCount}</span>}
+          <span className="text-xs text-white/80">{likeCount}</span>
         </button>
         {canNativeShare && (
           <button
