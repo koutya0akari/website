@@ -33,11 +33,10 @@ export const metadata: Metadata = {
     template: "%s | Akari Math Lab",
   },
   description:
-    "数学科学生 Akari のリサーチ・日記・資料をまとめるポートフォリオ。Vercel + microCMS で運用します。",
+    " Akari のリサーチ・日記・資料をまとめるポートフォリオ。Vercel + microCMS で運用します。",
   openGraph: {
     title: "Akari Math Lab",
-    description:
-      "数学の活動記録、研究フォーカス、発表資料をまとめたポートフォリオ。Vercel と microCMS で管理。",
+    description: "数学の勉強フォーカスと発表資料をまとめたポートフォリオ。Vercel と microCMS で管理。",
     url: "https://akari0koutya.com",
     siteName: "Akari Math Lab",
     type: "website",
@@ -53,8 +52,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Akari Math Lab",
-    description:
-      "数学科学生 Akari の活動・研究・発表資料をまとめたポートフォリオ。",
+    description: " Akari の研究・発表資料をまとめたポートフォリオ。",
     images: ["/tako.png"],
   },
   icons: {

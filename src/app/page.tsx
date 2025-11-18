@@ -141,7 +141,6 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="space-y-4 rounded-3xl border border-white/15 bg-black/20 p-6">
-            <h2 className="text-xl font-semibold text-white">活動記録</h2>
             <ul className="space-y-4">
               {site.timeline.slice(0, 4).map((item) => (
                 <li key={item.id} className="border-l-2 border-accent pl-4">
