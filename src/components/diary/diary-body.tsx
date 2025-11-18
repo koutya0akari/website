@@ -1,6 +1,8 @@
 import parse, { DOMNode, Element, Text } from "html-react-parser";
 import katex from "katex";
 
+import { LinkCard } from "@/components/ui/link-card";
+
 type DiaryBodyProps = {
   html: string;
 };
@@ -16,7 +18,27 @@ const renderMath = (content: string, displayMode: boolean) => {
   }
 };
 
-const replaceMath = (domNode: DOMNode) => {
+const replaceNode = (domNode: DOMNode) => {
+  // 1. リンクカードの置換処理
+  // <p><a href="...">URL</a></p> のような構造で、テキストがURLと一致する場合のみカード化する
+  if (domNode instanceof Element && domNode.name === "p") {
+    const children = domNode.children;
+    if (children.length === 1 && children[0] instanceof Element && children[0].name === "a") {
+      const anchor = children[0];
+      const href = anchor.attribs.href;
+      // アンカーの中身がテキストのみで、かつhrefと一致する場合（あるいは "http" で始まる場合など、要件に合わせて調整）
+      // ここでは「テキストがURLそのもの」である場合をカード化の条件とする
+      if (
+        anchor.children.length === 1 &&
+        anchor.children[0] instanceof Text &&
+        (anchor.children[0].data === href || anchor.children[0].data.startsWith("http"))
+      ) {
+        return <LinkCard url={href} />;
+      }
+    }
+  }
+
+  // 2. 数式の置換処理
   if (domNode instanceof Text) {
     const text = domNode.data;
     // 数式パターンがない場合は何もしない
@@ -76,7 +98,7 @@ const replaceMath = (domNode: DOMNode) => {
 export function DiaryBody({ html }: DiaryBodyProps) {
   return (
     <div className="prose prose-invert max-w-none prose-headings:font-semibold prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl">
-      {parse(html, { replace: replaceMath })}
+      {parse(html, { replace: replaceNode })}
     </div>
   );
 }
