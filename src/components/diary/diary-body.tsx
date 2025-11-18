@@ -20,8 +20,9 @@ const renderMath = (content: string, displayMode: boolean) => {
 
 const replaceNode = (domNode: DOMNode) => {
   // 1. リンクカードの置換処理
-  // <p><a href="...">URL</a></p> のような構造で、テキストがURLと一致する場合のみカード化する
-  if (domNode instanceof Element && domNode.name === "p") {
+  // <p><a href="...">URL</a></p> または <li><a href="...">URL</a></li> のような構造で、
+  // テキストがURLと一致する場合のみカード化する
+  if (domNode instanceof Element && (domNode.name === "p" || domNode.name === "li")) {
     const children = domNode.children;
     if (children.length === 1 && children[0] instanceof Element && children[0].name === "a") {
       const anchor = children[0];
@@ -33,7 +34,12 @@ const replaceNode = (domNode: DOMNode) => {
         anchor.children[0] instanceof Text &&
         (anchor.children[0].data === href || anchor.children[0].data.startsWith("http"))
       ) {
-        return <LinkCard url={href} />;
+        const card = <LinkCard url={href} />;
+        // liの場合はliでラップして返す（マーカーを消すためにlist-noneを付与）
+        if (domNode.name === "li") {
+          return <li className="list-none">{card}</li>;
+        }
+        return card;
       }
     }
   }
