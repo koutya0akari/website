@@ -41,12 +41,21 @@ export const metadata: Metadata = {
     url: "https://akari0koutya.com",
     siteName: "Akari Math Lab",
     type: "website",
+    images: [
+      {
+        url: "/tako.png",
+        width: 512,
+        height: 512,
+        alt: "Akari Math Lab logo",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Akari Math Lab",
     description:
       "数学科学生 Akari の活動・研究・発表資料をまとめたポートフォリオ。",
+    images: ["/tako.png"],
   },
   icons: {
     icon: "/tako.png",
