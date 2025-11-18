@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Noto_Sans_JP, Signika_Negative } from "next/font/google";
 
 import { KaTeXProvider } from "@/components/math/katex-provider";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
@@ -72,6 +73,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${noto.variable} ${signika.variable}`}>
         <div className="flex min-h-screen flex-col">
           <KaTeXProvider />
+          <ScrollToTop />
           <SiteHeader />
           <div className="flex-1 pb-16">{children}</div>
           <SiteFooter />

@@ -1,7 +1,8 @@
 import Link from "next/link";
 
+import { SpotlightCard } from "@/components/ui/spotlight-card";
 import type { DiaryEntry } from "@/lib/types";
-import { createExcerpt, formatDate } from "@/lib/utils";
+import { createExcerpt, escapeHtml, formatDate } from "@/lib/utils";
 
 type DiaryCardProps = {
   entry: DiaryEntry;
@@ -9,8 +10,12 @@ type DiaryCardProps = {
 };
 
 export function DiaryCard({ entry, compact = false }: DiaryCardProps) {
+  const summaryHtml = entry.summary?.trim()
+    ? entry.summary
+    : `<p>${escapeHtml(createExcerpt(entry.body))}</p>`;
+
   return (
-    <article className="flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-6 transition hover:-translate-y-0.5 hover:border-accent/80 hover:bg-white/10">
+    <SpotlightCard className="flex flex-col gap-4 p-6 transition hover:-translate-y-0.5 hover:border-accent/80">
       <div className="flex items-start justify-between gap-3">
         <span className="text-xs uppercase tracking-[0.2em] text-white/60">{entry.folder ?? "Math Diary"}</span>
         <time className="text-sm text-white/60">{formatDate(entry.publishedAt)}</time>
@@ -21,7 +26,7 @@ export function DiaryCard({ entry, compact = false }: DiaryCardProps) {
             {entry.title}
           </Link>
         </h3>
-        <p className="mt-2 text-white/70">{entry.summary || createExcerpt(entry.body)}</p>
+        <div className="prose-custom mt-2 text-white/70" dangerouslySetInnerHTML={{ __html: summaryHtml }} />
       </div>
       {!compact && entry.tags?.length > 0 && (
         <div className="flex flex-wrap gap-2 text-xs text-white/60">
@@ -32,6 +37,6 @@ export function DiaryCard({ entry, compact = false }: DiaryCardProps) {
           ))}
         </div>
       )}
-    </article>
+    </SpotlightCard>
   );
 }
