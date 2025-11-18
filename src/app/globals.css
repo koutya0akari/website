@@ -68,3 +68,15 @@ body {
   color: rgba(255, 255, 255, 0.9);
   line-height: 1.7;
 }
+
+.prose-custom .katex-display,
+.prose-custom pre,
+.prose-custom code {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.prose-custom .katex-display > .katex {
+  display: inline-block;
+  min-width: max-content;
+}

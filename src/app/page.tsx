@@ -93,20 +93,32 @@ const personalIntro = {
     { label: "最近の興味", value: "フロントエンド開発" },
     {
       label: "読書メモ",
-      value: "松村『可換環論』, Liu, SGL, 代数的サイクルとエタールコホモロジー, ASS, TeXbook など",
+      value: "松村『可換環論』, Liu, SGL, Haugseng ,Rijke, ASS, TeXbook など",
     },
   ],
 };
+
+const directContacts = [
+  { id: "github", label: "GitHub", url: "https://github.com/koutya0akari" },
+  { id: "twitter", label: "Twitter", url: "https://twitter.com/akari0koutya" },
+  { id: "instagram", label: "Instagram", url: "https://instagram.com/akari0koutya" },
+  { id: "mixi2", label: "mixi2", url: "https://mixi.jp/show_friend.pl?id=Charle__f" },
+  { id: "discord", label: "Discord", url: "https://discord.com/users/akari_koutya" },
+  { id: "gmail", label: "Gmail", url: "mailto:koutya0akari@gmail.com" },
+];
 
 export const revalidate = 300;
 
 export default async function HomePage() {
   const [site, diaries, resources] = await Promise.all([getSiteContent(), getDiaryEntries(3), getResourceItems(3)]);
+  const existingContactIds = new Set(site.contactLinks.map((link) => link.id));
+  const additionalContactLinks = directContacts.filter((contact) => !existingContactIds.has(contact.id));
+  const contactEntries = [...site.contactLinks, ...additionalContactLinks];
 
   return (
     <div className="min-h-screen">
-      <main className="mx-auto flex max-w-content flex-col gap-10 px-6 py-12">
-        <section className="grid gap-8 rounded-[32px] border border-white/15 bg-gradient-to-br from-night via-night-soft to-night-muted p-8 text-white lg:grid-cols-[1.1fr_0.9fr]">
+      <main className="mx-auto flex max-w-content flex-col gap-10 px-4 py-10 sm:px-6 sm:py-12">
+        <section className="grid gap-6 rounded-[32px] border border-white/15 bg-gradient-to-br from-night via-night-soft to-night-muted p-6 text-white sm:p-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-8">
           <div className="space-y-6">
             <p className="text-sm uppercase tracking-[0.4em] text-white/60">Akari Math Lab</p>
             <h1 className="font-display text-4xl leading-tight text-white sm:text-5xl">{site.heroTitle}</h1>
@@ -127,7 +139,7 @@ export default async function HomePage() {
                 </SmartLink>
               )}
             </div>
-            <div className="rounded-2xl border border-accent/30 bg-black/20 p-5 text-sm text-white/80">
+            <div className="rounded-2xl border border-accent/30 bg-black/20 p-5 text-sm text-white/80 sm:p-6">
               <h2 className="text-lg font-semibold text-white">自己紹介</h2>
               <p className="mt-2 text-white/80">{personalIntro.description}</p>
               <dl className="mt-4 space-y-2 text-white">
@@ -140,7 +152,7 @@ export default async function HomePage() {
               </dl>
             </div>
           </div>
-          <div className="space-y-4 rounded-3xl border border-white/15 bg-black/20 p-6">
+          <div className="space-y-4 rounded-3xl border border-white/15 bg-black/20 p-5 sm:p-6">
             <ul className="space-y-4">
               {site.timeline.slice(0, 4).map((item) => (
                 <li key={item.id} className="border-l-2 border-accent pl-4">
@@ -159,7 +171,7 @@ export default async function HomePage() {
         </section>
 
         {site.focuses.length > 0 && (
-          <section id="focus" className="grid gap-6 rounded-[32px] border border-white/10 bg-white/5 p-8 md:grid-cols-3">
+          <section id="focus" className="grid gap-6 rounded-[32px] border border-white/10 bg-white/5 p-6 sm:p-8 md:grid-cols-3">
             {site.focuses.map((focus) => (
               <article key={focus.id} className="space-y-3">
                 <p className="text-xs uppercase tracking-[0.4em] text-accent">{focus.id}</p>
@@ -170,10 +182,10 @@ export default async function HomePage() {
           </section>
         )}
 
-        <section className="space-y-6 rounded-[32px] border border-white/10 bg-night-muted/50 p-8">
+        <section className="space-y-6 rounded-[32px] border border-white/10 bg-night-muted/50 p-6 sm:p-8">
           <div className="flex flex-col gap-2">
             <p className="text-xs uppercase tracking-[0.4em] text-white/60">Learning Focus</p>
-            <h2 className="text-3xl font-semibold text-white">学習テーマ</h2>
+            <h2 className="text-2xl font-semibold text-white sm:text-3xl">学習テーマ</h2>
             <p className="text-white/70">現在集中しているトピックを、簡単なメモとして整理しました。</p>
           </div>
           <div className="grid gap-5 md:grid-cols-2">
@@ -186,10 +198,10 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="space-y-6 rounded-[32px] border border-white/10 bg-night-soft/70 p-8">
+        <section className="space-y-6 rounded-[32px] border border-white/10 bg-night-soft/70 p-6 sm:p-8">
           <div className="flex flex-col gap-2">
             <p className="text-xs uppercase tracking-[0.4em] text-white/50">Seminar Themes</p>
-            <h2 className="text-3xl font-semibold text-white">自主ゼミのテーマ</h2>
+            <h2 className="text-2xl font-semibold text-white sm:text-3xl">自主ゼミのテーマ</h2>
             <p className="text-white/70">
               研究の軸となる書籍やゼミ活動をまとめました。導来代数幾何と圏論を中心に、関連する環論・組版・表現論を往復しています。
             </p>
@@ -213,10 +225,10 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="space-y-6 rounded-[32px] border border-white/10 bg-white/5 p-8">
+        <section className="space-y-6 rounded-[32px] border border-white/10 bg-white/5 p-6 sm:p-8">
           <div className="flex flex-col gap-2">
             <p className="text-xs uppercase tracking-[0.4em] text-white/50">Activities</p>
-            <h2 className="text-3xl font-semibold text-white">近年の活動</h2>
+            <h2 className="text-2xl font-semibold text-white sm:text-3xl">近年の活動</h2>
             <p className="text-white/70">自主ゼミの運営や学会参加の記録です。学生コミュニティの現場で得た知見をサイトにも還元しています。</p>
           </div>
           <div className="grid gap-5 md:grid-cols-3">
@@ -236,10 +248,10 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section id="projects" className="space-y-6 rounded-[32px] border border-white/10 bg-night-soft/60 p-8">
+        <section id="projects" className="space-y-6 rounded-[32px] border border-white/10 bg-night-soft/60 p-6 sm:p-8">
           <div className="flex flex-col gap-2">
             <p className="text-xs uppercase tracking-[0.4em] text-white/50">Projects</p>
-            <h2 className="text-3xl font-semibold text-white">進行中のプロジェクト</h2>
+            <h2 className="text-2xl font-semibold text-white sm:text-3xl">進行中のプロジェクト</h2>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             {site.projects.map((project) => (
@@ -264,11 +276,11 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="space-y-6 rounded-[32px] border border-white/10 bg-white/5 p-8">
+        <section className="space-y-6 rounded-[32px] border border-white/10 bg-white/5 p-6 sm:p-8">
           <div className="flex flex-col gap-2">
             <p className="text-xs uppercase tracking-[0.4em] text-white/50">Math Diary</p>
-            <div className="flex items-baseline justify-between gap-4">
-              <h2 className="text-3xl font-semibold">最近の学習記録</h2>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <h2 className="text-2xl font-semibold sm:text-3xl">最近の学習記録</h2>
               <Link href="/diary" className="text-sm text-accent underline-offset-4 hover:underline">
                 全て見る
               </Link>
@@ -281,20 +293,20 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="grid gap-6 rounded-[32px] border border-white/10 bg-night-soft/50 p-8 md:grid-cols-[1fr_1fr]">
+        <section className="grid gap-6 rounded-[32px] border border-white/10 bg-night-soft/50 p-6 sm:p-8 md:grid-cols-[1fr_1fr]">
           <div className="space-y-4">
             <p className="text-xs uppercase tracking-[0.4em] text-white/50">Resources</p>
-            <h2 className="text-3xl font-semibold">公開資料</h2>
+            <h2 className="text-2xl font-semibold sm:text-3xl">公開資料</h2>
             <ResourceGrid resources={resources} />
             <Link href="/resources" className="inline-block text-sm text-accent underline underline-offset-4">
               その他の資料を見る
             </Link>
           </div>
-          <div className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-6">
+          <div className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-5 sm:p-6">
             <h3 className="text-xl font-semibold">Contact</h3>
             <p className="text-white/70">コラボ・取材・登壇依頼などは下記よりお気軽にどうぞ。</p>
             <div className="flex flex-wrap gap-3">
-              {site.contactLinks.map((link) => (
+              {contactEntries.map((link) => (
                 <SmartLink
                   key={link.id}
                   href={link.url}
