@@ -117,13 +117,13 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen">
-      <main className="mx-auto flex max-w-content flex-col gap-10 px-4 py-10 sm:px-6 sm:py-12">
-        <section className="grid gap-6 rounded-[32px] border border-white/15 bg-gradient-to-br from-night via-night-soft to-night-muted p-6 text-white sm:p-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-8">
+      <main className="mx-auto flex max-w-content flex-col gap-10 px-4 py-10 sm:gap-12 sm:px-6 sm:py-12">
+        <section className="grid gap-8 rounded-[32px] border border-white/15 bg-gradient-to-br from-night via-night-soft to-night-muted p-6 text-white sm:p-8 lg:grid-cols-[1fr_0.9fr] xl:gap-12">
           <div className="space-y-6">
             <p className="text-sm uppercase tracking-[0.4em] text-white/60">Akari Math Lab</p>
             <h1 className="font-display text-4xl leading-tight text-white sm:text-5xl">{site.heroTitle}</h1>
             <p className="text-lg text-white/80">{site.heroLead}</p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
               <SmartLink
                 href={site.heroPrimaryCtaUrl}
                 className="rounded-full bg-accent px-6 py-3 text-sm font-semibold text-black transition hover:bg-accent/90"
@@ -153,7 +153,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="space-y-4 rounded-3xl border border-white/15 bg-black/20 p-5 sm:p-6">
-            <ul className="space-y-4">
+            <ul className="grid gap-4 sm:grid-cols-2">
               {site.timeline.slice(0, 4).map((item) => (
                 <li key={item.id} className="border-l-2 border-accent pl-4">
                   <p className="text-xs uppercase tracking-[0.3em] text-white/50">{formatDate(item.date)}</p>
@@ -171,7 +171,10 @@ export default async function HomePage() {
         </section>
 
         {site.focuses.length > 0 && (
-          <section id="focus" className="grid gap-6 rounded-[32px] border border-white/10 bg-white/5 p-6 sm:p-8 md:grid-cols-3">
+          <section
+            id="focus"
+            className="grid gap-6 rounded-[32px] border border-white/10 bg-white/5 p-6 sm:p-8 sm:grid-cols-2 lg:grid-cols-3"
+          >
             {site.focuses.map((focus) => (
               <article key={focus.id} className="space-y-3">
                 <p className="text-xs uppercase tracking-[0.4em] text-accent">{focus.id}</p>
@@ -188,7 +191,7 @@ export default async function HomePage() {
             <h2 className="text-2xl font-semibold text-white sm:text-3xl">学習テーマ</h2>
             <p className="text-white/70">現在集中しているトピックを、簡単なメモとして整理しました。</p>
           </div>
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {learningThemes.map((theme) => (
               <article key={theme.title} className="rounded-2xl border border-white/15 bg-black/20 p-6">
                 <h3 className="text-xl font-semibold text-white">{theme.title}</h3>
@@ -206,7 +209,7 @@ export default async function HomePage() {
               研究の軸となる書籍やゼミ活動をまとめました。導来代数幾何と圏論を中心に、関連する環論・組版・表現論を往復しています。
             </p>
           </div>
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {seminarThemes.map((theme) => (
               <article key={theme.title} className="space-y-3 rounded-2xl border border-white/20 bg-black/20 p-6">
                 <h3 className="text-xl font-semibold text-white">{theme.title}</h3>
@@ -231,7 +234,7 @@ export default async function HomePage() {
             <h2 className="text-2xl font-semibold text-white sm:text-3xl">近年の活動</h2>
             <p className="text-white/70">自主ゼミの運営や学会参加の記録です。学生コミュニティの現場で得た知見をサイトにも還元しています。</p>
           </div>
-          <div className="grid gap-5 md:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {activityTimeline.map((activity) => (
               <article key={activity.year} className="rounded-2xl border border-white/15 bg-black/20 p-6">
                 <h3 className="text-xl font-semibold text-accent">{activity.year}</h3>
@@ -253,7 +256,7 @@ export default async function HomePage() {
             <p className="text-xs uppercase tracking-[0.4em] text-white/50">Projects</p>
             <h2 className="text-2xl font-semibold text-white sm:text-3xl">進行中のプロジェクト</h2>
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {site.projects.map((project) => (
               <article key={project.id} className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-6">
                 <div className="flex items-center justify-between text-sm text-white/60">
@@ -286,7 +289,7 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
-          <div className="grid gap-5 md:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {diaries.map((entry) => (
               <DiaryCard key={entry.id} entry={entry} compact />
             ))}
