@@ -46,37 +46,15 @@ body {
   color: #fff;
 }
 
-.prose-custom {
-  color: #f6fbff;
-  max-width: none;
-  line-height: 1.7;
-}
-
-.prose-custom a {
-  color: #64d2ff;
-  text-decoration: underline;
-  text-underline-offset: 0.25em;
-}
-
-.prose-custom h2,
-.prose-custom h3 {
-  color: #fff;
-  font-weight: 600;
-}
-
-.prose-custom p {
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.7;
-}
-
-.prose-custom .katex-display,
-.prose-custom pre,
-.prose-custom code {
+/* KaTeX & Code block overrides for Typography plugin */
+.prose .katex-display,
+.prose pre,
+.prose code {
   overflow-x: auto;
   max-width: 100%;
 }
 
-.prose-custom .katex-display > .katex {
+.prose .katex-display > .katex {
   display: inline-block;
   min-width: max-content;
 }
