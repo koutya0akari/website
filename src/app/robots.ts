@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://akari0koutya.com/sitemap.xml",
+    sitemap: "https://www.akari0koutya.com/sitemap.xml",
   };
 }

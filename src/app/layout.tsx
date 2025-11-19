@@ -28,7 +28,7 @@ const signika = Signika_Negative({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://akari0koutya.com"),
+  metadataBase: new URL("https://www.akari0koutya.com"),
   title: {
     default: "Akari Math Lab",
     template: "%s | Akari Math Lab",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Akari Math Lab",
     description: "数学の勉強フォーカスと発表資料をまとめたポートフォリオ。Vercel と microCMS で管理。",
-    url: "https://akari0koutya.com",
+    url: "https://www.akari0koutya.com",
     siteName: "Akari Math Lab",
     type: "website",
     images: [

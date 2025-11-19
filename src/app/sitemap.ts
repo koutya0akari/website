@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { getDiaryEntries } from "@/lib/microcms";
 
-const SITE_URL = "https://akari0koutya.com";
+const SITE_URL = "https://www.akari0koutya.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const diaries = await getDiaryEntries(1000);
