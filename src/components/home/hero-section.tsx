@@ -90,10 +90,10 @@ export function HeroSection({ site, diaries }: HeroSectionProps) {
           </div>
           <div className="relative flex items-baseline justify-between gap-3">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.3em] text-white/60">Timeline</p>
-              <h2 className="text-xl font-semibold">最近の足跡</h2>
+              <p className="text-[11px] uppercase tracking-[0.3em] text-white/60">Math Diary</p>
+              <h2 className="text-xl font-semibold">最近の足跡（Math Diary）</h2>
             </div>
-            <span className="rounded-full bg-highlight/20 px-3 py-1 text-xs font-semibold text-highlight">Study</span>
+            <span className="rounded-full bg-accent/20 px-3 py-1 text-xs font-semibold text-accent">Diary</span>
           </div>
           <div className="relative">
             <div className="absolute left-5 top-1 bottom-1 w-px bg-gradient-to-b from-accent/70 via-white/40 to-transparent" />
@@ -113,7 +113,12 @@ export function HeroSection({ site, diaries }: HeroSectionProps) {
                       <p className="text-sm font-semibold text-white">{entry.title}</p>
                       <p className="text-xs text-white/65">{entry.summary}</p>
                     </div>
-                    <span className="text-[11px] uppercase tracking-[0.2em] text-white/40">#{index + 1}</span>
+                    <div className="flex flex-col items-end gap-1 text-right">
+                      <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-semibold text-white/80">
+                        PV {entry.viewCount ?? 0}
+                      </span>
+                      <span className="text-[11px] uppercase tracking-[0.2em] text-white/40">#{index + 1}</span>
+                    </div>
                   </div>
                   <SmartLink
                     href={`/diary/${entry.slug}`}

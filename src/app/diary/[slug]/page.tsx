@@ -7,6 +7,7 @@ import { DiaryBody } from "@/components/diary/diary-body";
 import { DiaryEngagement } from "@/components/diary/diary-engagement";
 import { Comments } from "@/components/diary/comments";
 import { PopularDiaries } from "@/components/diary/popular-diaries";
+import { DiaryViewBadge } from "@/components/diary/view-badge";
 import { getDiaryBySlug, getPopularDiaryEntries } from "@/lib/microcms";
 import { formatDate, stripHtml } from "@/lib/utils";
 
@@ -70,10 +71,6 @@ export default async function DiaryDetailPage({ params, searchParams }: PageProp
   }
 
   const popularDiaries = await getPopularDiaryEntries(5, entry.slug);
-  const viewCountLabel =
-    typeof entry.viewCount === "number" && Number.isFinite(entry.viewCount)
-      ? `${entry.viewCount.toLocaleString("ja-JP")} PV`
-      : null;
 
   return (
     <div className="mx-auto max-w-content px-6 py-12">
@@ -90,10 +87,7 @@ export default async function DiaryDetailPage({ params, searchParams }: PageProp
                 Published {formatDate(entry.publishedAt)}{" "}
                 {entry.updatedAt && <span className="text-white/50">（更新 {formatDate(entry.updatedAt)}）</span>}
               </time>
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80">
-                <span aria-hidden>👁️</span>
-                {viewCountLabel ?? "PV集計中"}
-              </span>
+              <DiaryViewBadge slug={entry.slug} initialCount={entry.viewCount} />
             </div>
             {entry.tags?.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2 text-xs text-white/60">

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { ActivitySection } from "@/components/home/activity-section";
 import { ContactSection } from "@/components/home/contact-section";
-import { DiarySection } from "@/components/home/diary-section";
 import { FocusSection } from "@/components/home/focus-section";
 import { HeroSection } from "@/components/home/hero-section";
 import { LearningSection } from "@/components/home/learning-section";
@@ -69,9 +68,6 @@ export default async function HomePage() {
           </FadeIn>
           <FadeIn delay={0.1}>
             <ProjectSection projects={site.projects} />
-          </FadeIn>
-          <FadeIn delay={0.1}>
-            <DiarySection diaries={diaries} />
           </FadeIn>
           <FadeIn delay={0.1}>
             <ContactSection site={site} resources={resources} />

@@ -95,6 +95,68 @@ function sortByPopularity(a: DiaryEntry, b: DiaryEntry) {
   return Number.isNaN(publishedDiff) ? 0 : publishedDiff;
 }
 
+async function getDiaryMetaBySlug(slug: string): Promise<{ id: string; viewCount: number } | undefined> {
+  if (!client) return undefined;
+
+  try {
+    const list = await client.getList<DiaryCMSResponse>({
+      endpoint: "diary",
+      queries: {
+        filters: `slug[equals]${slug}`,
+        limit: 1,
+        fields: "id,viewCount,views,pageViews,pv,slug",
+      },
+    });
+
+    const entry = list.contents[0];
+
+    if (!entry) {
+      try {
+        const fallback = await client.getListDetail<DiaryCMSResponse>({
+          endpoint: "diary",
+          contentId: slug,
+          queries: {
+            fields: "id,viewCount,views,pageViews,pv,slug",
+          },
+        });
+        const count = extractViewCount(fallback) ?? 0;
+        return { id: fallback.id, viewCount: count };
+      } catch {
+        return undefined;
+      }
+    }
+
+    const count = extractViewCount(entry) ?? 0;
+    return { id: entry.id, viewCount: count };
+  } catch (error) {
+    console.warn("[microCMS] failed to load diary meta by slug", error);
+    return undefined;
+  }
+}
+
+export async function incrementDiaryView(slug: string): Promise<number | undefined> {
+  if (!client) return undefined;
+
+  const meta = await getDiaryMetaBySlug(slug);
+  if (!meta) return undefined;
+
+  const nextCount = meta.viewCount + 1;
+
+  try {
+    await client.update({
+      endpoint: "diary",
+      contentId: meta.id,
+      content: {
+        viewCount: nextCount,
+      },
+    });
+    return nextCount;
+  } catch (error) {
+    console.warn("[microCMS] failed to increment view count", error);
+    return undefined;
+  }
+}
+
 async function fetchPopularDiariesByOrder(
   order: "-viewCount" | "-views" | "-pv" | "-pageViews",
   limit: number,
