@@ -53,7 +53,7 @@ export default async function HomePage() {
         </div>
         <main className="relative mx-auto flex max-w-content flex-col gap-10 px-4 py-10 sm:gap-12 sm:px-6 sm:py-12">
           <FadeIn>
-            <HeroSection site={site} />
+            <HeroSection site={site} diaries={diaries} />
           </FadeIn>
           <FadeIn delay={0.1}>
             <FocusSection focuses={site.focuses} />

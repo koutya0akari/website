@@ -1,14 +1,15 @@
 import { SmartLink } from "@/components/smart-link";
 import { personalIntro } from "@/data/home";
-import type { SiteContent } from "@/lib/types";
+import type { SiteContent, DiaryEntry } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
 type HeroSectionProps = {
   site: SiteContent;
+  diaries: DiaryEntry[];
 };
 
-export function HeroSection({ site }: HeroSectionProps) {
-  const timelinePreview = site.timeline.slice(0, 4);
+export function HeroSection({ site, diaries }: HeroSectionProps) {
+  const timelinePreview = diaries.slice(0, 4);
 
   return (
     <section className="relative overflow-hidden rounded-[40px] border border-white/15 bg-gradient-to-br from-night via-[#0b1528] to-night-muted p-6 text-white shadow-card sm:p-8 lg:p-10">
@@ -97,9 +98,9 @@ export function HeroSection({ site }: HeroSectionProps) {
           <div className="relative">
             <div className="absolute left-5 top-1 bottom-1 w-px bg-gradient-to-b from-accent/70 via-white/40 to-transparent" />
             <ul className="space-y-4">
-              {timelinePreview.map((item, index) => (
+              {timelinePreview.map((entry, index) => (
                 <li
-                  key={item.id}
+                  key={entry.id}
                   className="relative rounded-2xl border border-white/10 bg-white/5 p-4 pl-12 shadow-[0_10px_30px_rgba(4,11,22,0.4)]"
                 >
                   <div className="absolute left-3 top-5 flex h-6 w-6 items-center justify-center rounded-full border border-white/40 bg-black/70">
@@ -108,20 +109,21 @@ export function HeroSection({ site }: HeroSectionProps) {
                   </div>
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-[11px] uppercase tracking-[0.2em] text-white/55">{formatDate(item.date)}</p>
-                      <p className="text-sm font-semibold text-white">{item.title}</p>
-                      <p className="text-xs text-white/65">{item.description}</p>
+                      <p className="text-[11px] uppercase tracking-[0.2em] text-white/55">{formatDate(entry.publishedAt)}</p>
+                      <p className="text-sm font-semibold text-white">{entry.title}</p>
+                      <p className="text-xs text-white/65">{entry.summary}</p>
                     </div>
                     <span className="text-[11px] uppercase tracking-[0.2em] text-white/40">#{index + 1}</span>
                   </div>
-                  {item.linkUrl && (
-                    <SmartLink href={item.linkUrl} className="mt-2 inline-flex text-xs text-accent underline underline-offset-4">
-                      {item.linkLabel ?? "詳細"}
-                    </SmartLink>
-                  )}
+                  <SmartLink
+                    href={`/diary/${entry.slug}`}
+                    className="mt-2 inline-flex text-xs text-accent underline underline-offset-4"
+                  >
+                    詳細
+                  </SmartLink>
                 </li>
               ))}
-              {timelinePreview.length === 0 && <p className="text-sm text-white/60">アップデートを準備中です。</p>}
+              {timelinePreview.length === 0 && <p className="text-sm text-white/60">学習記録を準備中です。</p>}
             </ul>
           </div>
         </div>
