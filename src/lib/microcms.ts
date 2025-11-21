@@ -30,6 +30,10 @@ type DiaryCMSResponse = {
   folder?: string;
   tags?: string[];
   heroImage?: DiaryEntry["heroImage"];
+  viewCount?: number;
+  views?: number;
+  pageViews?: number;
+  pv?: number;
 } & MicroCMSContentId & MicroCMSDate;
 type ResourceCMSResponse = ResourceItem &
   MicroCMSContentId &
@@ -51,6 +55,22 @@ async function safeGet<T>(fetcher: () => Promise<T>, fallback: T): Promise<T> {
   }
 }
 
+function extractViewCount(entry: DiaryCMSResponse): number | undefined {
+  const candidates = [entry.viewCount, entry.views, entry.pageViews, entry.pv];
+  for (const value of candidates) {
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return value;
+    }
+    if (typeof value === "string") {
+      const parsed = Number(value);
+      if (!Number.isNaN(parsed)) {
+        return parsed;
+      }
+    }
+  }
+  return undefined;
+}
+
 function normalizeDiary(entry: DiaryCMSResponse): DiaryEntry {
   const content = entry.editer ?? entry.body ?? "";
   return {
@@ -64,7 +84,37 @@ function normalizeDiary(entry: DiaryCMSResponse): DiaryEntry {
     heroImage: entry.heroImage,
     publishedAt: entry.publishedAt ?? entry.createdAt ?? new Date().toISOString(),
     updatedAt: entry.updatedAt ?? entry.revisedAt,
+    viewCount: extractViewCount(entry),
   };
+}
+
+function sortByPopularity(a: DiaryEntry, b: DiaryEntry) {
+  const viewDiff = (b.viewCount ?? 0) - (a.viewCount ?? 0);
+  if (viewDiff !== 0) return viewDiff;
+  const publishedDiff = new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+  return Number.isNaN(publishedDiff) ? 0 : publishedDiff;
+}
+
+async function fetchPopularDiariesByOrder(
+  order: "-viewCount" | "-views" | "-pv" | "-pageViews",
+  limit: number,
+  filters?: string,
+): Promise<DiaryEntry[]> {
+  if (!client) return [];
+  try {
+    const list = await client.getList<DiaryCMSResponse>({
+      endpoint: "diary",
+      queries: {
+        orders: order,
+        limit,
+        ...(filters ? { filters } : {}),
+      },
+    });
+    return list.contents.map(normalizeDiary);
+  } catch (error) {
+    console.warn(`[microCMS] failed to fetch diary order "${order}"`, error);
+    return [];
+  }
 }
 
 export async function getSiteContent(): Promise<SiteContent> {
@@ -107,6 +157,40 @@ export async function getDiaryEntries(limit = 50): Promise<DiaryEntry[]> {
     },
     emptyDiaryEntries.slice(0, limit),
   );
+}
+
+export async function getPopularDiaryEntries(limit = 5, excludeSlug?: string): Promise<DiaryEntry[]> {
+  const filters = excludeSlug ? `slug[not_equals]${excludeSlug}` : undefined;
+  const orderKeys: Array<"-viewCount" | "-views" | "-pv" | "-pageViews"> = ["-viewCount", "-views", "-pv", "-pageViews"];
+
+  let popular: DiaryEntry[] = [];
+
+  if (client) {
+    for (const order of orderKeys) {
+      popular = await fetchPopularDiariesByOrder(order, limit, filters);
+      if (popular.length > 0) {
+        break;
+      }
+    }
+
+    if (popular.length >= limit) {
+      return popular.slice(0, limit);
+    }
+  }
+
+  const fallbackCandidates = await getDiaryEntries(Math.max(limit * 2, 10));
+  const fallbackFiltered = fallbackCandidates.filter((entry) => entry.slug !== excludeSlug);
+
+  if (popular.length === 0) {
+    return fallbackFiltered.sort(sortByPopularity).slice(0, limit);
+  }
+
+  const merged = [
+    ...popular,
+    ...fallbackFiltered.filter((entry) => !popular.some((item) => item.id === entry.id)),
+  ].sort(sortByPopularity);
+
+  return merged.slice(0, limit);
 }
 
 export async function getDiaryBySlug(slug: string, draftKey?: string): Promise<DiaryEntry | undefined> {

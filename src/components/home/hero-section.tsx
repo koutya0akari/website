@@ -8,55 +8,101 @@ type HeroSectionProps = {
 };
 
 export function HeroSection({ site }: HeroSectionProps) {
+  const timelinePreview = site.timeline.slice(0, 4);
+
   return (
-    <section className="grid gap-8 rounded-[32px] border border-white/15 bg-gradient-to-br from-night via-night-soft to-night-muted p-6 text-white sm:p-8 lg:grid-cols-[1fr_0.9fr] xl:gap-12">
-      <div className="space-y-6">
-        <p className="text-sm uppercase tracking-[0.4em] text-white/60">Akari Math Lab</p>
-        <h1 className="font-display text-4xl leading-tight text-white sm:text-5xl">{site.heroTitle}</h1>
-        <p className="text-lg text-white/80">{site.heroLead}</p>
-        <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+    <section className="relative overflow-hidden rounded-[36px] border border-white/15 bg-gradient-to-br from-night via-[#0b1b33] to-night-muted p-6 text-white shadow-card sm:p-8 lg:grid lg:grid-cols-[1.2fr_1fr] lg:gap-10">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -right-10 -top-20 h-64 w-64 rounded-full bg-accent/20 blur-3xl" />
+        <div className="absolute bottom-0 left-8 h-32 w-32 rounded-full bg-highlight/20 blur-3xl" />
+        <div className="absolute inset-6 rounded-[28px] border border-white/5" />
+      </div>
+      <div className="relative flex flex-col gap-6">
+        <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.35em] text-white/70">
+          Math Student
+          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+        </div>
+        <div className="space-y-3">
+          <h1 className="font-display text-4xl leading-tight sm:text-5xl">
+            {site.heroTitle || "Mathematics as a daily practice"}
+          </h1>
+          <p className="max-w-2xl text-lg text-white/80">
+            {site.heroLead ||
+              "代数幾何・圏論を軸に、手を動かしながら抽象の手触りを掴むためのノートと資料を公開しています。"}
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
           <SmartLink
-            href={site.heroPrimaryCtaUrl}
-            className="rounded-full bg-accent px-6 py-3 text-center text-sm font-semibold text-black transition hover:bg-accent/90 hover:scale-105 active:scale-95"
+            href={site.heroPrimaryCtaUrl || "/diary"}
+            className="rounded-full bg-accent px-6 py-3 text-center text-sm font-semibold text-black transition hover:bg-accent/90 hover:scale-[1.02] active:scale-95"
           >
-            {site.heroPrimaryCtaLabel}
+            {site.heroPrimaryCtaLabel || "Math Diary を見る"}
           </SmartLink>
           {site.heroSecondaryCtaLabel && site.heroSecondaryCtaUrl && (
             <SmartLink
               href={site.heroSecondaryCtaUrl}
-              className="rounded-full border border-white/30 px-6 py-3 text-center text-sm font-semibold text-white transition hover:border-white hover:scale-105 active:scale-95"
+              className="rounded-full border border-white/25 px-6 py-3 text-center text-sm font-semibold text-white transition hover:border-accent hover:text-accent hover:scale-[1.02] active:scale-95"
             >
               {site.heroSecondaryCtaLabel}
             </SmartLink>
           )}
+          <div className="rounded-full border border-white/15 px-4 py-2 text-xs text-white/70 backdrop-blur">
+            学部 {personalIntro.details[0]?.value ?? "Math Major"} / {personalIntro.details[1]?.value ?? "Research Notes"}
+          </div>
         </div>
-        <div className="rounded-2xl border border-accent/30 bg-black/20 p-5 text-sm text-white/80 sm:p-6">
-          <h2 className="text-lg font-semibold text-white">自己紹介</h2>
-          <p className="mt-2 text-white/80">{personalIntro.description}</p>
-          <dl className="mt-4 space-y-2 text-white">
-            {personalIntro.details.map((detail) => (
-              <div key={detail.label} className="flex flex-col sm:flex-row sm:items-baseline sm:gap-3">
-                <dt className="text-xs uppercase tracking-[0.3em] text-white/60">{detail.label}</dt>
-                <dd className="text-sm text-white">{detail.value}</dd>
+        <div className="grid gap-4 rounded-3xl border border-white/10 bg-black/30 p-5 sm:grid-cols-[1.2fr_1fr] sm:p-6">
+          <div className="space-y-3">
+            <p className="text-[11px] uppercase tracking-[0.3em] text-white/60">About</p>
+            <p className="text-sm leading-relaxed text-white/85">{personalIntro.description}</p>
+            <div className="flex flex-wrap gap-2 text-xs text-white/70">
+              {personalIntro.details.map((detail) => (
+                <span key={detail.label} className="rounded-full border border-white/15 bg-white/5 px-3 py-1">
+                  {detail.label}: {detail.value}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <p className="text-[11px] uppercase tracking-[0.28em] text-white/50">Signal</p>
+            <div className="mt-2 space-y-2 text-sm text-white/80">
+              <div className="flex items-center justify-between">
+                <span>Weekly log</span>
+                <span className="rounded-full bg-accent/20 px-2 py-1 text-[11px] font-semibold text-accent">Math Diary</span>
               </div>
-            ))}
-          </dl>
+              <div className="flex items-center justify-between">
+                <span>Resources</span>
+                <span className="text-white/60">講義ノート・スライド</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Focus</span>
+                <span className="text-white/60">代数幾何 / 圏論</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="space-y-4 rounded-3xl border border-white/15 bg-black/20 p-5 sm:p-6">
-        <ul className="grid gap-4 sm:grid-cols-2">
-          {site.timeline.slice(0, 4).map((item) => (
-            <li key={item.id} className="border-l-2 border-accent pl-4">
-              <p className="text-xs uppercase tracking-[0.3em] text-white/50">{formatDate(item.date)}</p>
-              <p className="text-base font-semibold text-white">{item.title}</p>
-              <p className="text-sm text-white/70">{item.description}</p>
+      <div className="relative space-y-4 rounded-3xl border border-white/15 bg-black/30 p-5 backdrop-blur sm:p-6">
+        <div className="flex items-baseline justify-between gap-3">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.3em] text-white/60">Timeline</p>
+            <h2 className="text-xl font-semibold">最近の足跡</h2>
+          </div>
+          <span className="rounded-full bg-highlight/20 px-3 py-1 text-xs font-semibold text-highlight">Study</span>
+        </div>
+        <ul className="space-y-3">
+          {timelinePreview.map((item) => (
+            <li key={item.id} className="rounded-xl border border-white/10 bg-white/5 p-3">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-white/50">{formatDate(item.date)}</p>
+              <p className="text-sm font-semibold text-white">{item.title}</p>
+              <p className="text-xs text-white/65">{item.description}</p>
               {item.linkUrl && (
-                <SmartLink href={item.linkUrl} className="text-sm text-accent underline underline-offset-4">
+                <SmartLink href={item.linkUrl} className="text-xs text-accent underline underline-offset-4">
                   {item.linkLabel ?? "詳細"}
                 </SmartLink>
               )}
             </li>
           ))}
+          {timelinePreview.length === 0 && <p className="text-sm text-white/60">アップデートを準備中です。</p>}
         </ul>
       </div>
     </section>

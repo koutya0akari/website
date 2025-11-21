@@ -16,18 +16,26 @@ export function ContactSection({ site, resources }: ContactSectionProps) {
   const contactEntries = [...site.contactLinks, ...additionalContactLinks];
 
   return (
-    <section className="grid gap-6 rounded-[32px] border border-white/10 bg-night-soft/50 p-6 sm:p-8 md:grid-cols-[1fr_1fr]">
+    <section className="grid gap-6 rounded-[30px] border border-white/10 bg-white/5 p-6 sm:p-8 md:grid-cols-[1.1fr_0.9fr]">
       <div className="space-y-4">
-        <p className="text-xs uppercase tracking-[0.4em] text-white/50">Resources</p>
-        <h2 className="text-2xl font-semibold sm:text-3xl">公開資料</h2>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.35em] text-white/60">Resources</p>
+            <h2 className="text-2xl font-semibold text-white sm:text-3xl">公開資料</h2>
+            <p className="text-sm text-white/70">スライド・配布資料・メモのスナップショット。</p>
+          </div>
+          <Link href="/resources" className="text-xs text-accent underline underline-offset-4">
+            全て
+          </Link>
+        </div>
         <ResourceGrid resources={resources} />
-        <Link href="/resources" className="inline-block text-sm text-accent underline underline-offset-4">
-          その他の資料を見る
-        </Link>
       </div>
-      <div className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-5 sm:p-6">
-        <h3 className="text-xl font-semibold">Contact</h3>
-        <p className="text-white/70">連絡は下記よりお気軽にどうぞ。</p>
+      <div className="space-y-4 rounded-2xl border border-white/10 bg-gradient-to-b from-night-soft to-night p-5 sm:p-6">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-semibold text-white">Contact</h3>
+          <span className="rounded-full bg-accent/20 px-3 py-1 text-xs font-semibold text-accent">Open</span>
+        </div>
+        <p className="text-white/70">数学の勉強会・資料作成の依頼など、お気軽にどうぞ。</p>
         <div className="flex flex-wrap gap-3">
           {contactEntries.map((link) => (
             <SmartLink

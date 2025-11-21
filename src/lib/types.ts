@@ -59,6 +59,7 @@ export type DiaryEntry = {
   heroImage?: CMSImage;
   publishedAt: string;
   updatedAt?: string;
+  viewCount?: number;
 };
 
 export type ResourceItem = {
