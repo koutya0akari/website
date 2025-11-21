@@ -3,23 +3,57 @@ import { learningThemes } from "@/data/home";
 
 export function LearningSection() {
   return (
-    <section className="space-y-6 rounded-[30px] border border-white/10 bg-gradient-to-br from-night-muted/70 via-night/60 to-night-soft/80 p-6 sm:p-8">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-night-muted/70 via-night/60 to-night-soft/80 p-6 sm:p-8">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-3 rounded-[28px] border border-white/5" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(100,210,255,0.15),transparent_40%),radial-gradient(circle_at_85%_15%,rgba(247,181,0,0.12),transparent_35%)]" />
+      </div>
+      <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-[11px] uppercase tracking-[0.35em] text-white/60">Study Map</p>
           <h2 className="text-2xl font-semibold text-white sm:text-3xl">学習テーマ</h2>
-          <p className="text-sm text-white/70">今の興味と、次に繋げたい抽象のラインを週次で更新。</p>
+          <p className="text-sm text-white/70">興味の向かう先をタイル状に貼り付けて、抽象のラインを見渡す。</p>
         </div>
-        <span className="rounded-full border border-white/15 px-3 py-1 text-xs text-white/70">ノート化 → 公開を目標</span>
+        <div className="space-y-2 text-xs text-white/70">
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-accent/20 px-3 py-1 text-[11px] font-semibold text-accent">ノート化 → 公開</span>
+            <span className="rounded-full bg-white/10 px-3 py-1">週次で更新</span>
+          </div>
+          <div className="relative h-1.5 w-full rounded-full bg-white/10 sm:w-72">
+            <div className="absolute inset-y-0 left-0 w-1/2 rounded-full bg-gradient-to-r from-accent to-highlight" />
+            <div className="absolute inset-0 -translate-y-1/4 flex items-center justify-between px-1">
+              {learningThemes.map((theme) => (
+                <span key={theme.title} className="h-2 w-2 rounded-full border border-white/60 bg-night" />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {learningThemes.map((theme) => (
-          <SpotlightCard key={theme.title} className="relative overflow-hidden p-6">
-            <div className="absolute right-3 top-3 h-10 w-10 rounded-full bg-highlight/15 blur-xl" />
-            <h3 className="text-lg font-semibold text-white">{theme.title}</h3>
-            <p className="mt-2 text-sm text-white/75">{theme.summary}</p>
-          </SpotlightCard>
-        ))}
+      <div className="relative mt-4 grid auto-rows-[1fr] gap-5 lg:grid-cols-12">
+        {learningThemes.map((theme, index) => {
+          const spanClass = index % 2 === 0 ? "lg:col-span-7" : "lg:col-span-5";
+          return (
+            <SpotlightCard
+              key={theme.title}
+              className={`relative h-full overflow-hidden p-6 ${spanClass} bg-white/5`}
+              spotlightColor="rgba(100, 210, 255, 0.25)"
+            >
+              <div className="absolute -right-14 top-1/2 h-32 w-32 -translate-y-1/2 rotate-12 rounded-full bg-highlight/10 blur-3xl" />
+              <div className="flex items-start justify-between gap-3">
+                <div className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.26em] text-white/70">
+                  Theme {index + 1}
+                </div>
+                <span className="text-[11px] uppercase tracking-[0.24em] text-white/50">Study</span>
+              </div>
+              <h3 className="mt-3 text-lg font-semibold text-white">{theme.title}</h3>
+              <p className="mt-2 text-sm text-white/75">{theme.summary}</p>
+              <div className="mt-4 flex items-center gap-2 text-xs text-white/50">
+                <span className="h-px flex-1 bg-gradient-to-r from-accent/60 via-white/40 to-transparent" />
+                <span>Draft → Publish</span>
+              </div>
+            </SpotlightCard>
+          );
+        })}
       </div>
     </section>
   );
