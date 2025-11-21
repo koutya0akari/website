@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { PopularDiaries } from "@/components/diary/popular-diaries";
 import { DiaryFilter } from "@/components/diary/diary-filter";
-import { getDiaryEntries } from "@/lib/microcms";
+import { getDiaryEntries, getPopularDiaryEntries } from "@/lib/microcms";
 
 export const metadata: Metadata = {
   title: "Math Diary",
@@ -13,7 +14,7 @@ export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
 export default async function DiaryPage() {
-  const diaries = await getDiaryEntries(100);
+  const [diaries, popularDiaries] = await Promise.all([getDiaryEntries(100), getPopularDiaryEntries(6)]);
 
   return (
     <div className="mx-auto max-w-content px-6 py-12 space-y-10">
@@ -27,7 +28,12 @@ export default async function DiaryPage() {
           公開資料を見る
         </Link>
       </section>
-      <DiaryFilter entries={diaries} />
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="lg:order-1">
+          <DiaryFilter entries={diaries} />
+        </div>
+        <PopularDiaries entries={popularDiaries} />
+      </div>
     </div>
   );
 }

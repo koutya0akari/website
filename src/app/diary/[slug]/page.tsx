@@ -70,6 +70,10 @@ export default async function DiaryDetailPage({ params, searchParams }: PageProp
   }
 
   const popularDiaries = await getPopularDiaryEntries(5, entry.slug);
+  const viewCountLabel =
+    typeof entry.viewCount === "number" && Number.isFinite(entry.viewCount)
+      ? `${entry.viewCount.toLocaleString("ja-JP")} PV`
+      : null;
 
   return (
     <div className="mx-auto max-w-content px-6 py-12">
@@ -81,10 +85,16 @@ export default async function DiaryDetailPage({ params, searchParams }: PageProp
           <div className="rounded-[32px] border border-white/10 bg-night-soft/80 p-8">
             <p className="text-xs uppercase tracking-[0.4em] text-white/60">{entry.folder ?? "Math Diary"}</p>
             <h1 className="mt-3 text-4xl font-semibold text-white">{entry.title}</h1>
-            <time className="mt-2 block text-sm text-white/70">
-              Published {formatDate(entry.publishedAt)}{" "}
-              {entry.updatedAt && <span className="text-white/50">（更新 {formatDate(entry.updatedAt)}）</span>}
-            </time>
+            <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-white/70">
+              <time>
+                Published {formatDate(entry.publishedAt)}{" "}
+                {entry.updatedAt && <span className="text-white/50">（更新 {formatDate(entry.updatedAt)}）</span>}
+              </time>
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80">
+                <span aria-hidden>👁️</span>
+                {viewCountLabel ?? "PV集計中"}
+              </span>
+            </div>
             {entry.tags?.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2 text-xs text-white/60">
                 {entry.tags.map((tag) => (

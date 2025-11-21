@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 
 import { stripHtml } from "@/lib/utils";
@@ -18,18 +18,19 @@ type DiaryEngagementProps = {
 
 export function DiaryEngagement({ entryId, title, summary }: DiaryEngagementProps) {
   const pathname = usePathname();
-  const [liked, setLiked] = useState(false);
-  const [copyMessage, setCopyMessage] = useState<string | null>(null);
-  const [likeCount, setLikeCount] = useState(0);
-
-  useEffect(() => {
+  const initialSnapshot = (() => {
+    if (typeof window === "undefined") {
+      return { liked: false, likeCount: 0 };
+    }
     const stored = window.localStorage.getItem(likeStorageKey(entryId));
-    setLiked(stored === "true");
-
     const storedCountRaw = window.localStorage.getItem(likeCountKey(entryId));
     const parsed = storedCountRaw ? Number(storedCountRaw) : 0;
-    setLikeCount(Number.isNaN(parsed) ? 0 : parsed);
-  }, [entryId]);
+    return { liked: stored === "true", likeCount: Number.isNaN(parsed) ? 0 : parsed };
+  })();
+
+  const [liked, setLiked] = useState(initialSnapshot.liked);
+  const [copyMessage, setCopyMessage] = useState<string | null>(null);
+  const [likeCount, setLikeCount] = useState(initialSnapshot.likeCount);
 
   const shareUrl = useMemo(() => {
     const url = new URL(pathname ?? "/", SITE_ORIGIN);
@@ -55,7 +56,7 @@ export function DiaryEngagement({ entryId, title, summary }: DiaryEngagementProp
       await navigator.clipboard.writeText(shareUrl);
       setCopyMessage("リンクをコピーしました");
       setTimeout(() => setCopyMessage(null), 2000);
-    } catch (error) {
+    } catch {
       setCopyMessage("コピーに失敗しました");
       setTimeout(() => setCopyMessage(null), 2000);
     }

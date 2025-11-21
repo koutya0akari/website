@@ -13,7 +13,7 @@ const renderMath = (content: string, displayMode: boolean) => {
       displayMode,
       throwOnError: false,
     });
-  } catch (e) {
+  } catch {
     return content;
   }
 };
@@ -64,7 +64,7 @@ const replaceNode = (domNode: DOMNode) => {
 
     return (
       <>
-        {parts.map((part, index) => {
+        {parts.map((part) => {
           // splitの結果、キャプチャグループも配列に含まれるため、環境名などはスキップする必要があるかもしれないが
           // 今回の正規表現だと、環境名 (\2) が配列に入ってくる可能性がある。
           // 単純な split だと挙動が難しいので、matchAll を使うか、あるいは単純に判定する。
