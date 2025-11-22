@@ -13,12 +13,21 @@ export function DiaryCard({ entry, compact = false }: DiaryCardProps) {
   const summaryHtml = entry.summary?.trim()
     ? entry.summary
     : `<p>${escapeHtml(createExcerpt(entry.body))}</p>`;
+  const viewCountLabel =
+    typeof entry.viewCount === "number" && Number.isFinite(entry.viewCount)
+      ? `${entry.viewCount.toLocaleString("ja-JP")} PV`
+      : null;
 
   return (
     <SpotlightCard className="flex flex-col gap-4 p-6 transition hover:-translate-y-0.5 hover:border-accent/80">
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <span className="text-xs uppercase tracking-[0.2em] text-white/60">{entry.folder ?? "Math Diary"}</span>
-        <time className="text-sm text-white/60">{formatDate(entry.publishedAt)}</time>
+        <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
+          <time className="text-sm text-white/60">{formatDate(entry.publishedAt)}</time>
+          <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70">
+            {viewCountLabel ?? "PV集計中"}
+          </span>
+        </div>
       </div>
       <div>
         <h3 className="text-xl font-semibold text-white">

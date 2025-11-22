@@ -56,19 +56,29 @@ async function safeGet<T>(fetcher: () => Promise<T>, fallback: T): Promise<T> {
 }
 
 function extractViewCount(entry: DiaryCMSResponse): number | undefined {
-  const candidates = [entry.viewCount, entry.views, entry.pageViews, entry.pv];
-  for (const value of candidates) {
-    if (typeof value === "number" && Number.isFinite(value)) {
-      return value;
+  const { count } = extractViewCountWithField(entry);
+  return count > 0 ? count : undefined;
+}
+
+function extractViewCountWithField(entry: DiaryCMSResponse): { count: number; field: string } {
+  const candidates = [
+    { key: "viewCount", val: entry.viewCount },
+    { key: "views", val: entry.views },
+    { key: "pageViews", val: entry.pageViews },
+    { key: "pv", val: entry.pv },
+  ];
+  for (const { key, val } of candidates) {
+    if (typeof val === "number" && Number.isFinite(val)) {
+      return { count: val, field: key };
     }
-    if (typeof value === "string") {
-      const parsed = Number(value);
+    if (typeof val === "string") {
+      const parsed = Number(val);
       if (!Number.isNaN(parsed)) {
-        return parsed;
+        return { count: parsed, field: key };
       }
     }
   }
-  return undefined;
+  return { count: 0, field: "viewCount" };
 }
 
 function normalizeDiary(entry: DiaryCMSResponse): DiaryEntry {
@@ -95,7 +105,9 @@ function sortByPopularity(a: DiaryEntry, b: DiaryEntry) {
   return Number.isNaN(publishedDiff) ? 0 : publishedDiff;
 }
 
-async function getDiaryMetaBySlug(slug: string): Promise<{ id: string; viewCount: number } | undefined> {
+async function getDiaryMetaBySlug(
+  slug: string,
+): Promise<{ id: string; viewCount: number; field: string } | undefined> {
   if (!client) return undefined;
 
   try {
@@ -119,15 +131,15 @@ async function getDiaryMetaBySlug(slug: string): Promise<{ id: string; viewCount
             fields: "id,viewCount,views,pageViews,pv,slug",
           },
         });
-        const count = extractViewCount(fallback) ?? 0;
-        return { id: fallback.id, viewCount: count };
+        const { count, field } = extractViewCountWithField(fallback);
+        return { id: fallback.id, viewCount: count, field };
       } catch {
         return undefined;
       }
     }
 
-    const count = extractViewCount(entry) ?? 0;
-    return { id: entry.id, viewCount: count };
+    const { count, field } = extractViewCountWithField(entry);
+    return { id: entry.id, viewCount: count, field };
   } catch (error) {
     console.warn("[microCMS] failed to load diary meta by slug", error);
     return undefined;
@@ -147,7 +159,7 @@ export async function incrementDiaryView(slug: string): Promise<number | undefin
       endpoint: "diary",
       contentId: meta.id,
       content: {
-        viewCount: nextCount,
+        [meta.field]: nextCount,
       },
     });
     return nextCount;

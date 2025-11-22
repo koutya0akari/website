@@ -1,0 +1,7 @@
+packages:
+  - "**"
+
+# Allow build scripts for native deps to avoid approve-builds prompts.
+onlyBuiltDependencies:
+  - sharp
+  - unrs-resolver
