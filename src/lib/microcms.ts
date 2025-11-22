@@ -67,17 +67,31 @@ function extractViewCountWithField(entry: DiaryCMSResponse): { count: number; fi
     { key: "pageViews", val: entry.pageViews },
     { key: "pv", val: entry.pv },
   ];
+
+  let maxCount = -1;
+  let maxField = "viewCount";
+
   for (const { key, val } of candidates) {
+    let currentVal = -1;
     if (typeof val === "number" && Number.isFinite(val)) {
-      return { count: val, field: key };
-    }
-    if (typeof val === "string") {
+      currentVal = val;
+    } else if (typeof val === "string") {
       const parsed = Number(val);
       if (!Number.isNaN(parsed)) {
-        return { count: parsed, field: key };
+        currentVal = parsed;
       }
     }
+
+    if (currentVal > maxCount) {
+      maxCount = currentVal;
+      maxField = key;
+    }
   }
+
+  if (maxCount > -1) {
+    return { count: maxCount, field: maxField };
+  }
+
   return { count: 0, field: "viewCount" };
 }
 
