@@ -1,17 +1,19 @@
 import type { NextConfig } from "next";
 
 const cspHeader = `
-    default-src 'self';
-    script-src 'self' 'unsafe-eval' 'unsafe-inline' https://giscus.app https://platform.twitter.com;
-    style-src 'self' 'unsafe-inline';
-    img-src 'self' blob: data: https://images.microcms-assets.io https://*.githubusercontent.com https://abs.twimg.com https://pbs.twimg.com;
-    font-src 'self';
-    object-src 'none';
-    base-uri 'self';
-    form-action 'self';
-    frame-ancestors 'none';
-    frame-src 'self' https://giscus.app https://platform.twitter.com;
-    upgrade-insecure-requests;
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' https://giscus.app https://platform.twitter.com;
+  style-src 'self' 'unsafe-inline';
+  img-src 'self' blob: data: https://images.microcms-assets.io https://*.githubusercontent.com https://abs.twimg.com https://pbs.twimg.com;
+  font-src 'self';
+  connect-src 'self' https://giscus.app https://api.github.com https://vitals.vercel-insights.com;
+  object-src 'none';
+  base-uri 'self';
+  form-action 'self';
+  frame-ancestors 'none';
+  frame-src 'self' https://giscus.app https://platform.twitter.com;
+  manifest-src 'self';
+  upgrade-insecure-requests;
 `;
 
 const nextConfig: NextConfig = {
@@ -51,11 +53,19 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Referrer-Policy",
-            value: "origin-when-cross-origin",
+            value: "strict-origin-when-cross-origin",
           },
           {
             key: "Content-Security-Policy",
             value: cspHeader.replace(/\n/g, "").trim(),
+          },
+          {
+            key: "Permissions-Policy",
+            value: "geolocation=(), microphone=(), camera=(), payment=()",
+          },
+          {
+            key: "X-Permitted-Cross-Domain-Policies",
+            value: "none",
           },
         ],
       },
