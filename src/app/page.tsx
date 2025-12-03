@@ -44,12 +44,7 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <div className="relative">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-[-10%] top-[-10%] h-64 w-64 rounded-full bg-accent/15 blur-3xl" />
-          <div className="absolute right-[-5%] bottom-[-10%] h-72 w-72 rounded-full bg-highlight/15 blur-3xl" />
-          <div className="absolute inset-x-0 top-24 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-        </div>
+      <div className="relative"> 
         <main className="relative mx-auto flex max-w-content flex-col gap-10 px-4 py-10 sm:gap-12 sm:px-6 sm:py-12">
           <FadeIn>
             <HeroSection site={site} diaries={diaries} />
