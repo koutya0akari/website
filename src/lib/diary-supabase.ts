@@ -94,14 +94,14 @@ export async function getDiaryBySlug(slug: string): Promise<DiaryEntry | undefin
     .select("*")
     .eq("slug", slug)
     .eq("status", "published")
-    .single();
+    .maybeSingle();
 
   if (error) {
-    if (error.code === "PGRST116") {
-      // No rows returned
-      return undefined;
-    }
     console.error("[Supabase] Failed to fetch diary by slug:", error);
+    return undefined;
+  }
+
+  if (!data) {
     return undefined;
   }
 
@@ -117,7 +117,7 @@ export async function incrementDiaryView(slug: string): Promise<number | undefin
     .select("id, view_count")
     .eq("slug", slug)
     .eq("status", "published")
-    .single();
+    .maybeSingle();
 
   if (fetchError || !diary) {
     console.error("[Supabase] Failed to fetch diary for view increment:", fetchError);
