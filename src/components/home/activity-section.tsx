@@ -14,11 +14,10 @@ export function ActivitySection() {
           <div>
             <p className="text-[11px] uppercase tracking-[0.35em] text-white/55">Activities</p>
             <h2 className="text-2xl font-semibold text-white sm:text-3xl">近年の活動</h2>
-            <p className="text-sm text-white/70">自主ゼミ、カンファレンス、コミュニティ運営のログ。</p>
           </div>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs text-white/70">
             <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_0_4px_rgba(100,210,255,0.2)]" />
-            更新頻度: 学期ごと
+            更新頻度: 徒然なるままに
           </div>
         </div>
         <div className="relative space-y-8">

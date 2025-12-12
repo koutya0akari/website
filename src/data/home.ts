@@ -2,7 +2,7 @@ export const seminarThemes = [
   {
     title: "スキーム論",
     summary:
-      "Liu『Algebraic Geometry and Arithmetic Curves』を自主ゼミで輪読し、基礎的なスキーム論を定着させながら、Huybrechts『Fourier-Mukai Transforms in Algebraic Geometry』で応用を個人学習。導来代数幾何に到達することを目標に据えています。",
+      "Liu ``Algebraic Geometry and Arithmetic Curves''を自主ゼミで輪読し、基礎的なスキーム論を定着させながら、Huybrechts『Fourier-Mukai Transforms in Algebraic Geometry』で応用を個人学習。導来代数幾何に到達することを目標に据えています。",
   },
   {
     title: "可換環論",
@@ -44,7 +44,7 @@ export const learningThemes = [
     summary: "表現論と数論を結ぶ橋として、幾何学的ラングランズ対応に興味があります。",
   },
   {
-    title: "凝縮数学",
+    title: "Condensed Mathematics",
     summary: "Clausen–Scholze の研究から位相的な視点を使った代数である凝縮数学の基礎を学習したいです。",
   },
   {
@@ -57,10 +57,11 @@ export const activityTimeline = [
   {
     year: "2025",
     items: [
+      "東京大学数理科学研究科 2025年度公開講座「D加群」参加",
       "第8回すうがく徒のつどい 参加・運営",
       "第7回すうがく徒のつどい 参加・運営",
-      "spm29th 参加・運営",
-      "spmAdv7th 参加",
+      "spm29th [SGL] 参加・運営",
+      "spmAdv7th [Cisinski] 参加",
     ],
   },
   {
@@ -68,7 +69,7 @@ export const activityTimeline = [
     items: [
       "第6回すうがく徒のつどい 参加・運営",
       "第5回すうがく徒のつどい 参加・運営",
-      "spm28th 参加",
+      "spm28th 後半 [ハーツホーン] 参加",
     ],
   },
   {
@@ -79,13 +80,13 @@ export const activityTimeline = [
 
 export const personalIntro = {
   description:
-    "徳島大学 理工学部 理工学科 数理科学コース B2。代数幾何を軸に、圏論など抽象的な視点で代数と幾何を結び直すことを目標にしています。「すうがく徒のつどい」や「数物セミナー」の運営にも携わり、数学の魅力を共有する場づくりにも注力中です。",
+    "・徳島大学 理工学部 理工学科 数理科学コース B2。\n・代数幾何を軸に、圏論など抽象的な視点で代数と幾何を結び直すことを目標にしています。\n・「すうがく徒のつどい」や「数物セミナー」の運営にも携わり、数学の魅力を共有する場づくりにも注力中です。",
   details: [
     { label: "推し", value: "結月ゆかりさん❤️" },
     { label: "最近の興味", value: "フロントエンド開発" },
     {
       label: "読書メモ",
-      value: "松村『可換環論』, Liu, SGL, Haugseng ,Rijke, ASS, TeXbook など",
+      value: "松村『可換環論』, Liu, SGL, Haugseng ,Rijke, TeXbook など",
     },
   ],
 };

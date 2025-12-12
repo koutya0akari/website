@@ -13,9 +13,6 @@ export function SeminarSection() {
         <div>
           <p className="text-[11px] uppercase tracking-[0.35em] text-white/55">Seminars</p>
           <h2 className="text-2xl font-semibold text-white sm:text-3xl">自主ゼミのテーマ</h2>
-          <p className="text-sm text-white/70">
-            書籍を読み抜き、ノートを公開するためのテーマ群。圏論から組版まで横断でメモしています。
-          </p>
         </div>
         <div className="flex flex-wrap gap-2 text-xs text-white/70">
           <span className="rounded-full bg-white/10 px-3 py-1">Reading / Drafting</span>

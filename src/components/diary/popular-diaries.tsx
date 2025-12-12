@@ -18,7 +18,7 @@ export function PopularDiaries({ entries }: PopularDiariesProps) {
   if (entries.length === 0) return null;
 
   return (
-    <aside className="lg:sticky lg:top-24">
+    <aside>
       <div className="overflow-hidden rounded-[24px] border border-white/10 bg-gradient-to-b from-white/10 via-night-soft/60 to-night-soft/90 p-5 shadow-card">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="space-y-1">

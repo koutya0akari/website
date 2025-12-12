@@ -26,7 +26,7 @@ export function ContactSection({ site, resources }: ContactSectionProps) {
           <div>
             <p className="text-[11px] uppercase tracking-[0.35em] text-white/60">Resources</p>
             <h2 className="text-2xl font-semibold text-white sm:text-3xl">公開資料</h2>
-            <p className="text-sm text-white/70">スライド・配布資料・メモのスナップショット。</p>
+            <p className="text-sm text-white/70">スライド・配布資料・メモ。</p>
           </div>
           <Link href="/resources" className="rounded-full bg-white/10 px-3 py-1 text-xs text-accent underline-offset-4 hover:underline">
             全て
@@ -43,7 +43,6 @@ export function ContactSection({ site, resources }: ContactSectionProps) {
           <h3 className="text-xl font-semibold text-white">Contact</h3>
           <span className="rounded-full bg-accent/20 px-3 py-1 text-xs font-semibold text-accent">Open</span>
         </div>
-        <p className="relative text-white/70">数学の勉強会・資料作成の依頼など、お気軽にどうぞ。</p>
         <div className="relative flex flex-wrap gap-3">
           {contactEntries.map((link) => (
             <SmartLink

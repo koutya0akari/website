@@ -54,7 +54,9 @@ CREATE POLICY "Public read for published" ON diary
 
 -- ポリシー: 認証ユーザーはフルアクセス
 CREATE POLICY "Authenticated users full access" ON diary
-  FOR ALL USING (auth.role() = 'authenticated');
+  FOR ALL 
+  USING (auth.role() = 'authenticated')
+  WITH CHECK (auth.role() = 'authenticated');
 ```
 
 ### 2.2 Site テーブル（サイト設定）
@@ -79,7 +81,9 @@ CREATE TABLE site (
 ALTER TABLE site ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public read site" ON site FOR SELECT USING (true);
 CREATE POLICY "Authenticated users full access site" ON site
-  FOR ALL USING (auth.role() = 'authenticated');
+  FOR ALL 
+  USING (auth.role() = 'authenticated')
+  WITH CHECK (auth.role() = 'authenticated');
 
 -- 初期データ挿入
 INSERT INTO site (key, hero_title, hero_lead, hero_primary_cta_label, hero_primary_cta_url)
@@ -103,7 +107,9 @@ CREATE TABLE about (
 ALTER TABLE about ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public read about" ON about FOR SELECT USING (true);
 CREATE POLICY "Authenticated users full access about" ON about
-  FOR ALL USING (auth.role() = 'authenticated');
+  FOR ALL 
+  USING (auth.role() = 'authenticated')
+  WITH CHECK (auth.role() = 'authenticated');
 
 -- 初期データ挿入
 INSERT INTO about (key, intro, mission, skills)
@@ -127,7 +133,9 @@ CREATE TABLE resources (
 ALTER TABLE resources ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public read resources" ON resources FOR SELECT USING (true);
 CREATE POLICY "Authenticated users full access resources" ON resources
-  FOR ALL USING (auth.role() = 'authenticated');
+  FOR ALL 
+  USING (auth.role() = 'authenticated')
+  WITH CHECK (auth.role() = 'authenticated');
 ```
 
 ### 2.5 自動更新トリガー
@@ -241,6 +249,25 @@ pnpm dev
 
 - `public/ace-builds/` にファイルがあるか確認
 - ブラウザの開発者ツールで CSP エラーを確認
+
+### Site/About 設定の保存でエラー
+
+RLS ポリシーに `WITH CHECK` 句が不足している可能性があります：
+
+```sql
+-- 既存ポリシーを修正
+DROP POLICY IF EXISTS "Authenticated users full access site" ON site;
+CREATE POLICY "Authenticated users full access site" ON site
+  FOR ALL 
+  USING (auth.role() = 'authenticated')
+  WITH CHECK (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Authenticated users full access about" ON about;
+CREATE POLICY "Authenticated users full access about" ON about
+  FOR ALL 
+  USING (auth.role() = 'authenticated')
+  WITH CHECK (auth.role() = 'authenticated');
+```
 
 ## 8. 本番デプロイ
 

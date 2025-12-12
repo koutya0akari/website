@@ -1,10 +1,11 @@
 import Link from "next/link";
+// eslint-disable-next-line @typescript-eslint/no-deprecated
 import { Github, Twitter, Mail, Heart, BookOpen, FolderOpen, User } from "lucide-react";
 
 const SOCIAL_LINKS = [
-  { icon: Github, href: "https://github.com", label: "GitHub" },
-  { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
-  { icon: Mail, href: "mailto:contact@example.com", label: "Email" },
+  { icon: Github, href: "https://github.com/koutya0akari", label: "GitHub" },
+  { icon: Twitter, href: "https://x.com/akari0koutya", label: "Twitter" },
+  { icon: Mail, href: "mailto:koutya0akari@gmail.com", label: "Email" },
 ];
 
 const NAV_LINKS = [
@@ -82,9 +83,6 @@ export function SiteFooter() {
                 );
               })}
             </div>
-            <p className="text-xs text-white/40">
-              質問やコラボレーションのご連絡をお待ちしています。
-            </p>
           </div>
         </div>
 

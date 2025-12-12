@@ -18,7 +18,6 @@ export function DiarySection({ diaries }: DiarySectionProps) {
         <div>
           <p className="text-[11px] uppercase tracking-[0.32em] text-white/60">Math Diary</p>
           <h2 className="text-2xl font-semibold text-white sm:text-3xl">最近の学習記録</h2>
-          <p className="text-sm text-white/70">証明のメモ、読書記録、ゼミの下書きを早めに公開。</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">Draft → Clean copy</span>

@@ -31,7 +31,7 @@ export function HeroSection({ site, diaries }: HeroSectionProps) {
                 <span className="absolute inset-0 rounded-full bg-accent/40 blur-[2px]" />
                 <span className="relative h-2 w-2 rounded-full bg-accent" />
               </span>
-              <span>Tokushima University / Algebraic Geometry &amp; Category</span>
+              <span>Tokushima University / Algebraic Geometry &amp; Category Theory</span>
             </div>
           </div>
           <div className="space-y-3">
@@ -70,16 +70,15 @@ export function HeroSection({ site, diaries }: HeroSectionProps) {
             <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black/30 p-5 sm:p-6">
               <div className="absolute right-4 top-4 h-16 w-16 rounded-full bg-accent/10 blur-2xl" />
               <p className="text-[11px] uppercase tracking-[0.3em] text-white/60">Profile</p>
-              <p className="mt-3 text-sm leading-relaxed text-white/85">{personalIntro.description}</p>
-              <p className="mt-4 text-xs text-white/75">
-                {personalIntro.details.map((detail, index) => (
-                  <span key={detail.label} className="inline-flex items-center gap-1">
-                    <span className="text-white/60">{detail.label}:</span>
-                    <span className="text-white">{detail.value}</span>
-                    {index < personalIntro.details.length - 1 && <span className="mx-2 text-white/35">/</span>}
+              <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-white/85">{personalIntro.description}</p>
+              <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                {personalIntro.details.map((detail) => (
+                  <span key={detail.label} className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                    <span className="rounded-full bg-accent/20 px-1.5 py-0.5 text-[10px] font-medium text-accent">{detail.label}</span>
+                    <span className="text-white/90">{detail.value}</span>
                   </span>
                 ))}
-              </p>
+              </div>
             </div>
           </div>
         </div>

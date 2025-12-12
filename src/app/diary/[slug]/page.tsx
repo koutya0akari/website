@@ -116,10 +116,16 @@ export default async function DiaryDetailPage({ params }: PageProps) {
           <DiaryEngagement entryId={entry.id} title={entry.title} summary={entry.summary} />
           <Comments />
         </article>
-        <aside className="space-y-6">
+        {/* Desktop Sidebar */}
+        <aside className="hidden space-y-6 lg:block">
           <TableOfContents html={entry.body} />
           <PopularDiaries entries={popularDiaries} />
         </aside>
+        
+        {/* Mobile Popular Section */}
+        <div className="lg:hidden">
+          <PopularDiaries entries={popularDiaries} />
+        </div>
       </div>
     </div>
   );

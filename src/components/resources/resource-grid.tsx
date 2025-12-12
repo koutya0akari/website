@@ -7,7 +7,7 @@ type ResourceGridProps = {
 
 export function ResourceGrid({ resources }: ResourceGridProps) {
   if (resources.length === 0) {
-    return <p className="text-white/70">まだ公開中の資料がありません。microCMS にファイルを追加するとここに表示されます。</p>;
+    return <p className="text-white/70">まだ公開中の資料がありません。。。</p>;
   }
 
   return (

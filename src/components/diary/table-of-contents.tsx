@@ -76,7 +76,7 @@ export function TableOfContents({ html }: TableOfContentsProps) {
   if (items.length < 2) return null;
 
   return (
-    <div className="sticky top-24">
+    <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto">
       <div className="rounded-2xl border border-white/10 bg-night-soft/80 backdrop-blur-sm">
         {/* Header */}
         <button
