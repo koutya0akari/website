@@ -32,7 +32,9 @@ export function DiaryForm({ initialData, onSubmit, onDelete, isNew = true }: Dia
     folder: initialData?.folder || "",
     tags: initialData?.tags || [],
     status: initialData?.status || "draft",
-    publishedAt: initialData?.publishedAt || new Date().toISOString().slice(0, 16),
+    publishedAt:
+      initialData?.publishedAt ||
+      (initialData?.status === "published" ? new Date().toISOString().slice(0, 16) : ""),
     heroImageUrl: initialData?.heroImageUrl || "",
   });
 

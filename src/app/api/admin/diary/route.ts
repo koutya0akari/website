@@ -63,7 +63,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if slug already exists
-    const { data: existing } = await supabase.from("diary").select("id").eq("slug", slug).single();
+    const { data: existing } = await supabase
+      .from("diary")
+      .select("id")
+      .eq("slug", slug)
+      .maybeSingle();
 
     if (existing) {
       return NextResponse.json({ error: "Slug already exists" }, { status: 400 });

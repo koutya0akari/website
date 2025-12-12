@@ -66,7 +66,7 @@ export async function PUT(
       .select("id")
       .eq("slug", slug)
       .neq("id", id)
-      .single();
+      .maybeSingle();
 
     if (existing) {
       return NextResponse.json({ error: "Slug already exists" }, { status: 400 });

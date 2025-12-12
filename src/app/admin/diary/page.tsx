@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { DiaryList } from "@/components/admin/DiaryList";
+import { useToast } from "@/components/admin/ToastProvider";
 import { FilePlus } from "lucide-react";
 import Link from "next/link";
 
@@ -18,12 +19,14 @@ interface DiaryItem {
 }
 
 export default function DiaryListPage() {
+  const { showError } = useToast();
   const [items, setItems] = useState<DiaryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchItems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchItems = async () => {
@@ -35,7 +38,9 @@ export default function DiaryListPage() {
       const result = await response.json();
       setItems(result.data || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      const errorMsg = err instanceof Error ? err.message : "An error occurred";
+      setError(errorMsg);
+      showError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -54,7 +59,7 @@ export default function DiaryListPage() {
       // Refresh the list
       await fetchItems();
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to delete entry");
+      showError(err instanceof Error ? err.message : "Failed to delete entry");
     }
   };
 

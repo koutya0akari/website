@@ -2,11 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { DiaryForm, DiaryFormData } from "@/components/admin/DiaryForm";
+import { useToast } from "@/components/admin/ToastProvider";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function NewDiaryPage() {
   const router = useRouter();
+  const { showSuccess, showError } = useToast();
 
   const handleSubmit = async (data: DiaryFormData) => {
     try {
@@ -34,10 +36,10 @@ export default function NewDiaryPage() {
       }
 
       const result = await response.json();
-      alert("Post created successfully!");
+      showSuccess("Post created successfully!");
       router.push(`/admin/diary/${result.data.id}/edit`);
     } catch (error) {
-      alert(error instanceof Error ? error.message : "Failed to create post");
+      showError(error instanceof Error ? error.message : "Failed to create post");
       throw error;
     }
   };

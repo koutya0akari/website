@@ -3,6 +3,7 @@
 import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { DiaryForm, DiaryFormData } from "@/components/admin/DiaryForm";
+import { useToast } from "@/components/admin/ToastProvider";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -10,6 +11,7 @@ export default function EditDiaryPage() {
   const router = useRouter();
   const params = useParams();
   const id = params?.id as string;
+  const { showSuccess, showError } = useToast();
 
   const [initialData, setInitialData] = useState<Partial<DiaryFormData> | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,7 +43,9 @@ export default function EditDiaryPage() {
         status: data.status,
         publishedAt: data.published_at
           ? new Date(data.published_at).toISOString().slice(0, 16)
-          : new Date().toISOString().slice(0, 16),
+          : data.status === "published"
+            ? new Date().toISOString().slice(0, 16)
+            : "",
         heroImageUrl: data.hero_image_url || "",
       });
     } catch (err) {
@@ -76,10 +80,10 @@ export default function EditDiaryPage() {
         throw new Error(error.error || "Failed to update post");
       }
 
-      alert("Post updated successfully!");
+      showSuccess("Post updated successfully!");
       await fetchDiary();
     } catch (error) {
-      alert(error instanceof Error ? error.message : "Failed to update post");
+      showError(error instanceof Error ? error.message : "Failed to update post");
       throw error;
     }
   };
@@ -94,10 +98,10 @@ export default function EditDiaryPage() {
         throw new Error("Failed to delete post");
       }
 
-      alert("Post deleted successfully!");
+      showSuccess("Post deleted successfully!");
       router.push("/admin/diary");
     } catch (error) {
-      alert(error instanceof Error ? error.message : "Failed to delete post");
+      showError(error instanceof Error ? error.message : "Failed to delete post");
       throw error;
     }
   };
