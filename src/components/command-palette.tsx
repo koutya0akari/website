@@ -152,7 +152,8 @@ export function CommandPalette() {
       case "Enter":
         e.preventDefault();
         if (results[selectedIndex]) {
-          router.push(results[selectedIndex].href);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          router.push(results[selectedIndex].href as any);
           close();
         }
         break;
@@ -161,7 +162,8 @@ export function CommandPalette() {
 
   // Navigate to result
   const navigateTo = (result: SearchResult) => {
-    router.push(result.href);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    router.push(result.href as any);
     close();
   };
 

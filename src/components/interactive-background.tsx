@@ -22,7 +22,7 @@ export function InteractiveBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const mouseRef = useRef<MousePosition>({ x: 0, y: 0 });
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
   const isReducedMotionRef = useRef(false);
 
   const PARTICLE_COUNT = 50;

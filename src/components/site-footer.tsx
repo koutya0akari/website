@@ -8,9 +8,9 @@ const SOCIAL_LINKS = [
 ];
 
 const NAV_LINKS = [
-  { icon: BookOpen, href: "/diary", label: "Math Diary" },
-  { icon: FolderOpen, href: "/resources", label: "Resources" },
-  { icon: User, href: "/about", label: "About" },
+  { icon: BookOpen, href: "/diary" as const, label: "Math Diary" },
+  { icon: FolderOpen, href: "/resources" as const, label: "Resources" },
+  { icon: User, href: "/about" as const, label: "About" },
 ];
 
 export function SiteFooter() {

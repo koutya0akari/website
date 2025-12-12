@@ -15,7 +15,6 @@ import { formatDate, stripHtml } from "@/lib/utils";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
-  searchParams?: Promise<{ draftKey?: string }>;
 };
 
 export const revalidate = 0;
@@ -61,12 +60,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function DiaryDetailPage({ params, searchParams }: PageProps) {
-  const [{ slug }, resolvedSearch] = await Promise.all([
-    params,
-    searchParams ? searchParams : Promise.resolve<{ draftKey?: string } | undefined>(undefined),
-  ]);
-  const entry = await getDiaryBySlug(slug, resolvedSearch?.draftKey);
+export default async function DiaryDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const entry = await getDiaryBySlug(slug);
 
   if (!entry) {
     notFound();
