@@ -7,8 +7,10 @@ import { DiaryBody } from "@/components/diary/diary-body";
 import { DiaryEngagement } from "@/components/diary/diary-engagement";
 import { Comments } from "@/components/diary/comments";
 import { PopularDiaries } from "@/components/diary/popular-diaries";
+import { TableOfContents } from "@/components/diary/table-of-contents";
 import { DiaryViewBadge } from "@/components/diary/view-badge";
-import { getDiaryBySlug, getPopularDiaryEntries } from "@/lib/microcms";
+import { ReadingTime } from "@/components/reading-time";
+import { getDiaryBySlug, getPopularDiaryEntries } from "@/lib/diary";
 import { formatDate, stripHtml } from "@/lib/utils";
 
 type PageProps = {
@@ -87,6 +89,9 @@ export default async function DiaryDetailPage({ params, searchParams }: PageProp
                 Published {formatDate(entry.publishedAt)}{" "}
                 {entry.updatedAt && <span className="text-white/50">（更新 {formatDate(entry.updatedAt)}）</span>}
               </time>
+              <span className="text-white/30">•</span>
+              <ReadingTime content={entry.body} />
+              <span className="text-white/30">•</span>
               <DiaryViewBadge slug={entry.slug} initialCount={entry.viewCount} />
             </div>
             {entry.tags?.length > 0 && (
@@ -115,7 +120,10 @@ export default async function DiaryDetailPage({ params, searchParams }: PageProp
           <DiaryEngagement entryId={entry.id} title={entry.title} summary={entry.summary} />
           <Comments />
         </article>
-        <PopularDiaries entries={popularDiaries} />
+        <aside className="space-y-6">
+          <TableOfContents html={entry.body} />
+          <PopularDiaries entries={popularDiaries} />
+        </aside>
       </div>
     </div>
   );

@@ -5,10 +5,19 @@ export async function updateSession(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+  // セキュリティ: 環境変数がない場合は /admin/* へのアクセスを拒否
   if (!supabaseUrl || !supabaseAnonKey) {
     console.error(
       "Missing Supabase environment variables. Authentication middleware will not work.",
     );
+    
+    // /admin/* ルートへのアクセスはブロック（環境変数がないと認証できないため）
+    if (request.nextUrl.pathname.startsWith("/admin")) {
+      return new NextResponse("Service Unavailable - Authentication not configured", { 
+        status: 503 
+      });
+    }
+    
     return NextResponse.next({ request });
   }
 
@@ -39,24 +48,26 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protected routes: /admin/* except /admin/login
-  if (request.nextUrl.pathname.startsWith("/admin")) {
-    if (request.nextUrl.pathname === "/admin/login") {
-      // If user is authenticated and trying to access login page, redirect to dashboard
-      if (user) {
-        const url = request.nextUrl.clone();
-        url.pathname = "/admin/dashboard";
-        return NextResponse.redirect(url);
-      }
-    } else {
-      // For all other /admin/* routes, require authentication
-      if (!user) {
-        const url = request.nextUrl.clone();
-        url.pathname = "/admin/login";
-        return NextResponse.redirect(url);
-      }
+  // ログインページ: 認証済みユーザーはダッシュボードにリダイレクト
+  if (request.nextUrl.pathname === "/login") {
+    if (user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin/dashboard";
+      return NextResponse.redirect(url);
     }
   }
+
+  // Protected routes: /admin/* は全て認証必須
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+  }
+
+  // パス情報をヘッダーに追加（サーバーコンポーネントで使用するため）
+  supabaseResponse.headers.set("x-pathname", request.nextUrl.pathname);
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:

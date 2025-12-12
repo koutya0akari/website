@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Settings } from "lucide-react";
+import { LayoutDashboard, FileText, FolderOpen, Globe, User, Settings } from "lucide-react";
 import { clsx } from "clsx";
 
 const navigation = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Diary", href: "/admin/diary", icon: FileText },
+  { name: "Resources", href: "/admin/resources", icon: FolderOpen },
+  { name: "Site Settings", href: "/admin/site", icon: Globe },
+  { name: "About Settings", href: "/admin/about", icon: User },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 

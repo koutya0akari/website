@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { ResourceGrid } from "@/components/resources/resource-grid";
-import { getResourceItems } from "@/lib/microcms";
+import { getResourceItems } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Resources",
@@ -19,7 +19,7 @@ export default async function ResourcesPage() {
         <p className="text-xs uppercase tracking-[0.4em] text-white/60">Resources</p>
         <h1 className="mt-3 text-4xl font-semibold">公開資料</h1>
         <p className="mt-3 text-lg text-white/70">
-          microCMS の「resources」コレクションから自動で同期しています。資料を追加すると自動で Vercel の ISR が再生成します。
+          コンテンツは `USE_SUPABASE` 設定に応じて Supabase または microCMS から取得します。資料を追加すると ISR が再生成します。
         </p>
       </section>
       <ResourceGrid resources={resources} />

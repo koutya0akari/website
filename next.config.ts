@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const cspHeader = `
   default-src 'self';
@@ -6,7 +7,7 @@ const cspHeader = `
   style-src 'self' 'unsafe-inline';
   img-src 'self' blob: data: https://images.microcms-assets.io https://*.githubusercontent.com https://abs.twimg.com https://pbs.twimg.com;
   font-src 'self';
-  connect-src 'self' https://giscus.app https://api.github.com https://vitals.vercel-insights.com;
+  connect-src 'self' https://giscus.app https://api.github.com https://vitals.vercel-insights.com https://*.supabase.co;
   worker-src 'self' blob:;
   object-src 'none';
   base-uri 'self';
@@ -18,6 +19,11 @@ const cspHeader = `
 `;
 
 const nextConfig: NextConfig = {
+  // Prevent Next.js from inferring an incorrect workspace root when multiple lockfiles exist.
+  // This affects which `.env.*` files are loaded and can lead to mismatched Supabase URL/key.
+  turbopack: {
+    root: path.join(__dirname),
+  },
   images: {
     remotePatterns: [
       {

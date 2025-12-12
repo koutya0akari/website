@@ -3,11 +3,11 @@ import Link from "next/link";
 
 import { PopularDiaries } from "@/components/diary/popular-diaries";
 import { DiaryFilter } from "@/components/diary/diary-filter";
-import { getDiaryEntries, getPopularDiaryEntries } from "@/lib/microcms";
+import { getDiaryEntries, getPopularDiaryEntries } from "@/lib/diary";
 
 export const metadata: Metadata = {
   title: "Math Diary",
-  description: "microCMS で管理する Math Diary。フォルダやタグ、検索で学習記録を絞り込めます。",
+  description: "Math Diary。フォルダやタグ、検索で学習記録を絞り込めます。",
 };
 
 export const revalidate = 0;
@@ -22,7 +22,7 @@ export default async function DiaryPage() {
         <p className="text-xs uppercase tracking-[0.4em] text-white/60">Math Diary</p>
         <h1 className="mt-3 text-4xl font-semibold">Math Diary</h1>
         <p className="mt-3 text-lg text-white/70">
-          microCMS のヘッドレス CMS で作成した Math Diary を自動で取得しています。検索ボックスで本文内も検索でき、フォルダやタグで絞り込み可能です。
+          記事は環境設定に応じて Supabase または microCMS から取得します。検索ボックスで本文内も検索でき、フォルダやタグで絞り込み可能です。
         </p>
         <Link href="/resources" className="mt-5 inline-flex text-sm text-accent underline underline-offset-4">
           公開資料を見る

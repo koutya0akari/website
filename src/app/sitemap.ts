@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { getDiaryEntries } from "@/lib/microcms";
+import { getDiaryEntries } from "@/lib/diary";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.akari0koutya.com";
 

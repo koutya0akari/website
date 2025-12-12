@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Search, Command } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { SmartLink } from "@/components/smart-link";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV_ITEMS = [
   { label: "ホーム", href: "/" },
@@ -28,7 +29,7 @@ export function SiteHeader() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-4 md:flex">
           <div className="flex gap-5 text-sm text-white/80">
             {NAV_ITEMS.map((item) => (
               <SmartLink
@@ -40,9 +41,34 @@ export function SiteHeader() {
               </SmartLink>
             ))}
           </div>
+
+          {/* Search Button */}
+          <button
+            onClick={() => {
+              // Trigger Cmd+K
+              const event = new KeyboardEvent("keydown", {
+                key: "k",
+                metaKey: true,
+                bubbles: true,
+              });
+              window.dispatchEvent(event);
+            }}
+            className="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/60 transition hover:border-white/25 hover:bg-white/10 hover:text-white/80"
+            aria-label="検索を開く"
+          >
+            <Search className="h-3.5 w-3.5" />
+            <span className="hidden lg:inline">検索</span>
+            <kbd className="ml-1 hidden items-center gap-0.5 rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-[10px] font-medium lg:flex">
+              <Command className="h-2.5 w-2.5" />K
+            </kbd>
+          </button>
+
+          {/* Theme Toggle */}
+          <ThemeToggle />
+
           <Link
             href="/diary"
-            className="rounded-full border border-white/20 px-4 py-1 text-sm font-medium text-white transition hover:border-accent hover:text-accent"
+            className="rounded-full border border-white/20 px-4 py-1.5 text-sm font-medium text-white transition hover:border-accent hover:text-accent"
           >
             Updates
           </Link>

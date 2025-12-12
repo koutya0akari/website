@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { incrementDiaryView } from "@/lib/microcms";
+import { incrementDiaryView } from "@/lib/diary";
 
 export const dynamic = "force-dynamic";
 

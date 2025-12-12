@@ -9,7 +9,8 @@ import { ProjectSection } from "@/components/home/project-section";
 import { SeminarSection } from "@/components/home/seminar-section";
 import { FadeIn } from "@/components/motion/fade-in";
 import { directContacts, personalIntro } from "@/data/home";
-import { getDiaryEntries, getResourceItems, getSiteContent } from "@/lib/microcms";
+import { getResourceItems, getSiteContent } from "@/lib/content";
+import { getDiaryEntries } from "@/lib/diary";
 
 export const revalidate = 300;
 

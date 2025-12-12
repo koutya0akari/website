@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_JP, Signika_Negative } from "next/font/google";
 
+import { CommandPalette } from "@/components/command-palette";
+import { InteractiveBackground } from "@/components/interactive-background";
 import { KaTeXProvider } from "@/components/math/katex-provider";
+import { ScrollProgress } from "@/components/scroll-progress";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { ThemeProvider } from "@/components/theme-provider";
 
 import "./globals.css";
 
@@ -69,15 +73,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja">
+    <html lang="ja" className="dark" suppressHydrationWarning>
       <body className={`${inter.variable} ${noto.variable} ${signika.variable}`}>
-        <div className="flex min-h-screen flex-col">
-          <KaTeXProvider />
-          <ScrollToTop />
-          <SiteHeader />
-          <div className="flex-1 pb-16">{children}</div>
-          <SiteFooter />
-        </div>
+        <ThemeProvider defaultTheme="dark">
+          <div className="flex min-h-screen flex-col">
+            <KaTeXProvider />
+            <InteractiveBackground />
+            <ScrollProgress />
+            <ScrollToTop />
+            <SiteHeader />
+            <div className="flex-1 pb-16">{children}</div>
+            <SiteFooter />
+          </div>
+          <CommandPalette />
+        </ThemeProvider>
       </body>
     </html>
   );

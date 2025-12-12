@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { AceEditor } from "./AceEditor";
+import { useState, useCallback } from "react";
+import { RichEditor } from "./editor";
 import { Save, Eye, Trash2 } from "lucide-react";
 
 export interface DiaryFormData {
@@ -41,6 +41,9 @@ export function DiaryForm({ initialData, onSubmit, onDelete, isNew = true }: Dia
   const [tagInput, setTagInput] = useState("");
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const formRef = useCallback((node: HTMLFormElement | null) => {
+    if (node) node.dataset.form = "diary";
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +54,14 @@ export function DiaryForm({ initialData, onSubmit, onDelete, isNew = true }: Dia
       setSaving(false);
     }
   };
+
+  const handleEditorSave = useCallback(() => {
+    // Trigger form submission programmatically
+    const form = document.querySelector('form[data-form="diary"]') as HTMLFormElement;
+    if (form) {
+      form.requestSubmit();
+    }
+  }, []);
 
   const handleDelete = async () => {
     if (!onDelete) return;
@@ -90,7 +101,7 @@ export function DiaryForm({ initialData, onSubmit, onDelete, isNew = true }: Dia
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" data-form="diary">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div>
           <label className="mb-2 block text-sm font-medium text-gray-300">
@@ -131,12 +142,14 @@ export function DiaryForm({ initialData, onSubmit, onDelete, isNew = true }: Dia
       </div>
 
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-300">Body (Markdown)</label>
-        <AceEditor
+        <label className="mb-2 block text-sm font-medium text-gray-300">Body (Markdown / HTML)</label>
+        <RichEditor
           value={formData.body}
           onChange={(value) => setFormData({ ...formData, body: value })}
-          placeholder="Write your post content in Markdown..."
-          minHeight={400}
+          onSave={handleEditorSave}
+          placeholder="記事の本文を入力してください..."
+          minHeight={500}
+          initialMode="markdown"
         />
       </div>
 

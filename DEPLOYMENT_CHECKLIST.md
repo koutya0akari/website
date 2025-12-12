@@ -1,67 +1,143 @@
 # デプロイチェックリスト
 
-Supabase管理パネルをデプロイするための手順：
+Akari Math Lab を本番環境にデプロイするための手順です。
+
+## デプロイ戦略
+
+このプロジェクトは **特定ブランチへのマージ時のみ** デプロイされます：
+
+| ブランチ | デプロイ | 環境 |
+|----------|----------|------|
+| `main` | ✅ 自動 | 本番 |
+| `production` | ✅ 自動 | 本番 |
+| その他 | ❌ スキップ | - |
+| Pull Request | 🔄 プレビュー | プレビュー |
+
+### 開発フロー
+
+```
+1. feature ブランチで開発
+2. Pull Request を作成 → プレビューデプロイ（オプション）
+3. レビュー後、main にマージ → 本番デプロイ
+```
 
 ## 前提条件
-- [ ] Supabaseアカウント作成済み
-- [ ] Node.jsとnpmがインストール済み
-- [ ] デプロイプラットフォーム（Vercelなど）へのアクセス
 
-## Supabaseセットアップ
-- [ ] 新しいSupabaseプロジェクトを作成
-- [ ] `docs/SUPABASE_SETUP.md`からSQLスキーマを実行
-- [ ] Authentication > Usersで管理者ユーザーを作成
-- [ ] プロジェクトURLとキーをコピー
+- [ ] Supabase アカウント作成済み
+- [ ] Node.js 18+ インストール済み
+- [ ] pnpm インストール済み（推奨）
+- [ ] Vercel アカウント（または他のホスティング）
 
-## ローカルテスト
-- [ ] `.env.example`を`.env.local`にコピー
-- [ ] Supabaseの認証情報を入力
-- [ ] `npm install`を実行
-- [ ] ace-buildsをコピー: `mkdir -p public/ace-builds && cp -r node_modules/ace-builds/src-noconflict public/ace-builds/`
-- [ ] 開発サーバーを起動: `npm run dev`
-- [ ] `http://localhost:3000/admin/login`でログインテスト
-- [ ] テスト投稿を作成
-- [ ] CRUD操作が動作することを確認
+## 1. Supabase セットアップ
 
-## 本番デプロイ
-- [ ] ホスティングプラットフォームで環境変数を設定:
-  - `NEXT_PUBLIC_SUPABASE_URL`
-  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-  - `SUPABASE_SERVICE_ROLE_KEY`
-  - `USE_SUPABASE=false` (初期はmicroCMSを使用し続ける)
-- [ ] ace-buildsをpublicディレクトリにコピーするビルドスクリプトを追加
-- [ ] ホスティングプラットフォームにデプロイ
-- [ ] ビルドが成功することを確認
-- [ ] 本番環境でログインをテスト
-- [ ] 投稿の作成/編集をテスト
+- [ ] Supabase プロジェクトを作成
+- [ ] `docs/SUPABASE_SETUP.md` の SQL スキーマを実行
+- [ ] Authentication → Users で管理者ユーザーを作成
+- [ ] プロジェクト URL と API キーをコピー
 
-## 移行（オプション）
-- [ ] microCMSから既存データをエクスポート（移行する場合）
-- [ ] Supabaseにデータをインポート
-- [ ] すべての投稿が正しく移行されたことを確認
-- [ ] 環境変数で`USE_SUPABASE=true`に設定
-- [ ] 公開されたブログ投稿が正しく表示されることをテスト
-- [ ] 問題がないか監視
-- [ ] microCMSの認証情報をバックアップとして保持（素早くロールバックするため）
+## 2. ローカル環境での確認
 
-## デプロイ後
-- [ ] 認証フローをテスト
-- [ ] CRUD操作をテスト
-- [ ] RLSポリシーが機能していることを確認
-- [ ] CSPヘッダーがace-buildsをブロックしていないか確認
-- [ ] Supabaseログを監視
-- [ ] アプリケーションエラーを監視
-- [ ] チームドキュメントを更新
+```bash
+# 環境変数ファイルを作成
+cp .env.example .env.local
 
-## ロールバックプラン
-問題が発生した場合：
-1. 環境変数で`USE_SUPABASE=false`に設定
-2. アプリケーションを再起動
-3. システムがmicroCMSに戻る
-4. 問題を調査して修正
-5. `USE_SUPABASE=true`で再試行
+# 依存関係をインストール
+pnpm install
+
+# Ace Editor のファイルをコピー
+mkdir -p public/ace-builds
+cp -r node_modules/ace-builds/src-noconflict public/ace-builds/
+
+# 開発サーバーを起動
+pnpm dev
+```
+
+- [ ] http://localhost:3000 でサイトが表示される
+- [ ] http://localhost:3000/login でログインできる
+- [ ] 日記の作成・編集・削除が動作する
+
+## 3. 本番デプロイ（Vercel）
+
+### 方法 A: Vercel Git 連携（推奨）
+
+`vercel.json` の設定により、`main` / `production` ブランチのみデプロイされます。
+
+1. Vercel Dashboard でプロジェクトを作成
+2. GitHub リポジトリを連携
+3. 環境変数を設定
+4. `main` ブランチにマージすると自動デプロイ
+
+### 方法 B: GitHub Actions 経由
+
+より細かい制御が必要な場合は、GitHub Actions を使用できます。
+
+**必要な Secrets（GitHub リポジトリ Settings → Secrets）:**
+- `VERCEL_TOKEN` - Vercel のアクセストークン（Vercel Settings → Tokens）
+- `VERCEL_ORG_ID` - Vercel の組織 ID（Vercel Project Settings → General）
+- `VERCEL_PROJECT_ID` - Vercel のプロジェクト ID（同上）
+
+### 環境変数の設定
+
+Vercel Dashboard → Project → Settings → Environment Variables:
+
+- [ ] `NEXT_PUBLIC_SUPABASE_URL` - Supabase プロジェクト URL
+- [ ] `NEXT_PUBLIC_SUPABASE_ANON_KEY` - anon public キー
+- [ ] `SUPABASE_SERVICE_ROLE_KEY` - service_role キー
+- [ ] `REVALIDATE_SECRET` - Webhook 用のシークレット
+
+### デプロイ
+
+- [ ] GitHub リポジトリを Vercel に接続
+- [ ] デプロイが成功することを確認
+- [ ] カスタムドメインを設定（オプション）
+
+## 4. デプロイ後の確認
+
+- [ ] トップページが正常に表示される
+- [ ] `/diary` で記事一覧が表示される
+- [ ] `/login` でログインできる
+- [ ] 管理画面で記事を作成/編集できる
+- [ ] 公開した記事がサイトに反映される
+
+## 5. オプション設定
+
+### Webhook（コンテンツ更新時の自動再生成）
+
+```
+POST https://your-domain.com/api/revalidate?secret=REVALIDATE_SECRET
+Content-Type: application/json
+
+{
+  "paths": ["/", "/diary", "/resources"]
+}
+```
+
+### Google Analytics / Search Console
+
+- [ ] GA タグを追加（必要に応じて）
+- [ ] Search Console にサイトを登録
+- [ ] sitemap.xml を送信
+
+## トラブルシューティング
+
+### ビルドエラー
+
+```bash
+# ローカルでビルドをテスト
+pnpm build
+```
+
+### 認証エラー
+
+- 環境変数が正しく設定されているか確認
+- Supabase でユーザーが「Confirmed」か確認
+
+### 500 エラー
+
+- Vercel のログを確認
+- Supabase の RLS ポリシーを確認
 
 ## サポート
-- ドキュメント: `docs/SUPABASE_SETUP.md`
+
+- セットアップ詳細: `docs/SUPABASE_SETUP.md`
 - 実装詳細: `docs/IMPLEMENTATION_SUMMARY.md`
-- トラブルシューティング: docs/SUPABASE_SETUP.mdを参照

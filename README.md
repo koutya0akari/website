@@ -1,78 +1,114 @@
-# Akari Math Lab (Next.js + microCMS)
+# Akari Math Lab
 
-Vercel でホスティングし、microCMS をヘッドレス CMS として使うために再構築したポートフォリオです。トップ、Diary、About、Resources の各ページが microCMS の API を通じて同期され、ISR（Incremental Static Regeneration）と手動 Revalidate API で常に最新の内容を配信します。
+数学学習のためのポートフォリオサイト。Next.js 16 と Supabase で構築されています。
 
-## Stack
+![Next.js](https://img.shields.io/badge/Next.js-16-black)
+![Supabase](https://img.shields.io/badge/Supabase-Database%20%2B%20Auth-3ECF8E)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC)
 
-- **Next.js 16 / App Router** – server components + ISR、`app/` ディレクトリ構成。
-- **Tailwind CSS** – カスタムダークテーマ＋タイポグラフィプラグイン。
-- **microCMS** – 4 つのエンドポイント（`site`, `about`, `diary`, `resources`）でコンテンツを管理。
-- **Vercel** – Preview/Production を自動ビルド。microCMS webhook から再検証 API を呼び出し。
+## ✨ 特徴
 
-## セットアップ
+- 📝 **Math Diary** - 数学の学習記録をブログ形式で公開
+- 📚 **Resources** - PDF や外部リンクを整理して公開
+- 🎨 **モダンな UI** - ダークテーマ、アニメーション、レスポンシブ
+- 🔐 **管理パネル** - 日記・リソース・サイト設定を GUI で管理
+- ⚡ **高速** - ISR による高速なページ配信
+- 🔍 **コマンドパレット** - `⌘+K` でサイト内検索
+
+## 🚀 クイックスタート
+
+### 1. リポジトリをクローン
 
 ```bash
-cd akari-vercel
-npm install
+git clone https://github.com/your-username/website.git
+cd website
+```
+
+### 2. 依存関係をインストール
+
+```bash
+pnpm install
+```
+
+### 3. 環境変数を設定
+
+```bash
 cp .env.example .env.local
-npm run dev
 ```
 
-`.env.local` に以下を記入します（microCMS の「設定 > サービス情報」で確認できます）。
+`.env.local` を編集して Supabase の認証情報を入力：
 
 ```bash
-MICROCMS_SERVICE_DOMAIN=your-service-id
-MICROCMS_API_KEY=your-api-key
-REVALIDATE_SECRET=任意の長い文字列
+NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
 ```
 
-`npm run dev` で [http://localhost:3000](http://localhost:3000) にアクセスすると反映を確認できます。microCMS の API キーが未設定の場合は空の状態で表示されるため、先にエンドポイントを作成してください。
+### 4. Supabase でテーブルを作成
 
-## microCMS モデル
+`docs/SUPABASE_SETUP.md` の SQL スキーマを実行
 
-下記のフィールド ID で作成すると、コードからそのまま取得できます。
+### 5. 開発サーバーを起動
 
-| エンドポイント | 種別 | 推奨フィールド |
-| --- | --- | --- |
-| `site` | シングル | `heroTitle (テキスト)`, `heroLead (テキストエリア)`, `heroPrimaryCtaLabel (テキスト)`, `heroPrimaryCtaUrl (テキスト)`, `heroSecondaryCtaLabel (テキスト, 任意)`, `heroSecondaryCtaUrl (テキスト, 任意)`, `profile (オブジェクト: name, role, summary, location, avatar)` , `focuses (リスト: id, title, description)`, `projects (リスト: title, summary, highlights[複数テキスト], link, status)`, `timeline (リスト: title, date, description, linkLabel, linkUrl)`, `contactLinks (リスト: label, url)` |
-| `about` | シングル | `intro (テキスト)`, `mission (テキスト)`, `quote (テキスト, 任意)`, `sections (リスト: heading, body)`, `skills (複数テキスト)` |
-| `diary` | リスト | `title (テキスト)`, `slug (テキスト, unique)`, `summary (テキスト)`, `body (リッチエディタ or Markdown)`, `folder (テキスト)`, `tags (複数選択)`, `heroImage (画像, 任意)` |
-| `resources` | リスト | `title (テキスト)`, `description (テキスト)`, `category (テキスト)`, `fileUrl (メディアまたは外部URL)`, `externalUrl (テキスト, 任意)` |
+```bash
+pnpm dev
+```
 
-- `slug` は日記のパーマリンクに使用するため、microCMS 側でユニークにしてください。
-- リッチエディタに数式を貼る場合は MathJax 形式をそのまま保存できます。Next.js 側では html を `dangerouslySetInnerHTML` で表示しています。
+http://localhost:3000 でサイトが表示されます。
 
-## Revalidate API / Webhook
+## 📁 プロジェクト構成
 
-`src/app/api/revalidate/route.ts` が microCMS からの再生成フックを受け取ります。
+```
+src/
+├── app/                # Next.js App Router
+│   ├── admin/          # 管理パネル
+│   ├── api/            # API ルート
+│   ├── diary/          # 日記ページ
+│   ├── resources/      # リソースページ
+│   └── about/          # About ページ
+├── components/         # React コンポーネント
+├── lib/                # ユーティリティ・データ取得
+└── types/              # TypeScript 型定義
+```
 
-1. Vercel で `REVALIDATE_SECRET` を Production/Preview どちらにも設定。
-2. microCMS の「Webhook」を作成し、URL を `https://<vercel-domain>/api/revalidate?secret=REVALIDATE_SECRET` に設定。
-3. Payload 例:
-   ```json
-   {
-     "paths": ["/", "/diary", "/resources"]
-   }
-   ```
+## 🔧 管理パネル
 
-送信後、Next.js が該当パスを再生成します（未指定の場合は `/`, `/diary`, `/resources` を再検証）。
+| ページ | URL | 機能 |
+|--------|-----|------|
+| ログイン | `/login` | 認証 |
+| ダッシュボード | `/admin/dashboard` | 統計・概要 |
+| 日記管理 | `/admin/diary` | 記事の CRUD |
+| リソース管理 | `/admin/resources` | 資料の管理 |
+| サイト設定 | `/admin/site` | トップページ設定 |
+| About 設定 | `/admin/about` | プロフィール編集 |
 
-## デプロイ手順（Vercel）
+## 🌐 デプロイ
 
-1. GitHub / GitLab / Bitbucket いずれかに `akari-vercel` ディレクトリをプロジェクトとして登録。
-2. Vercel で「Add New... > Project」を選び、リポジトリをインポート。
-3. Build & Output 設定はデフォルト（`npm run build`, `./`）。
-4. Environment Variables に `MICROCMS_SERVICE_DOMAIN`, `MICROCMS_API_KEY`, `REVALIDATE_SECRET` を登録。
-5. デプロイすると `/` と `/diary`, `/resources`, `/about` が ISR で公開されます。
+### Vercel（推奨）
 
-## 構成メモ
+1. GitHub リポジトリを Vercel に接続
+2. 環境変数を設定
+3. デプロイ
 
-- `src/lib/microcms.ts` に API クライアントとフォールバックがまとまっています。CMS が落ちてもサンプルデータで描画が継続します。
-- `src/app/diary/page.tsx` ではクライアントコンポーネント (`DiaryFilter`) を使い、検索・タグ・フォルダでフィルタリング可能です。
-- `src/app/api/revalidate/route.ts` を使っていつでも Incremental Static Regeneration を手動で呼び出せます。
+詳細は `DEPLOYMENT_CHECKLIST.md` を参照
 
-## ドメイン移行
+## 📖 ドキュメント
 
-旧 `akari0koutya.jp` から `akari0koutya.com` への移行手順、DNS/SEO のチェックリストは `docs/migration-guide.md` に整理しました。コンテンツのエクスポート→microCMS への投入→Vercel でのドメイン切替をこのガイドに沿って進めてください。
+- [Supabase セットアップ](docs/SUPABASE_SETUP.md)
+- [実装サマリー](docs/IMPLEMENTATION_SUMMARY.md)
+- [デプロイチェックリスト](DEPLOYMENT_CHECKLIST.md)
 
-必要に応じてセクション構成やフィールドを追加しても、microCMS 側のフィールド ID を合わせれば拡張できます。
+## 🛠️ 技術スタック
+
+- **フレームワーク**: Next.js 16 (App Router)
+- **データベース**: Supabase (PostgreSQL)
+- **認証**: Supabase Auth
+- **スタイリング**: Tailwind CSS
+- **アニメーション**: Framer Motion
+- **数式**: KaTeX
+- **エディタ**: Ace Editor
+
+## 📄 ライセンス
+
+MIT
