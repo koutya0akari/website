@@ -1,67 +1,67 @@
-# Deployment Checklist
+# デプロイチェックリスト
 
-Follow these steps to deploy the Supabase admin panel:
+Supabase管理パネルをデプロイするための手順：
 
-## Prerequisites
-- [ ] Supabase account created
-- [ ] Node.js and npm installed
-- [ ] Access to deployment platform (Vercel, etc.)
+## 前提条件
+- [ ] Supabaseアカウント作成済み
+- [ ] Node.jsとnpmがインストール済み
+- [ ] デプロイプラットフォーム（Vercelなど）へのアクセス
 
-## Supabase Setup
-- [ ] Create new Supabase project
-- [ ] Run SQL schema from `docs/SUPABASE_SETUP.md`
-- [ ] Create admin user in Authentication > Users
-- [ ] Copy project URL and keys
+## Supabaseセットアップ
+- [ ] 新しいSupabaseプロジェクトを作成
+- [ ] `docs/SUPABASE_SETUP.md`からSQLスキーマを実行
+- [ ] Authentication > Usersで管理者ユーザーを作成
+- [ ] プロジェクトURLとキーをコピー
 
-## Local Testing
-- [ ] Copy `.env.example` to `.env.local`
-- [ ] Fill in Supabase credentials
-- [ ] Run `npm install`
-- [ ] Copy ace-builds: `mkdir -p public/ace-builds && cp -r node_modules/ace-builds/src-noconflict public/ace-builds/`
-- [ ] Start dev server: `npm run dev`
-- [ ] Test login at `http://localhost:3000/admin/login`
-- [ ] Create a test post
-- [ ] Verify CRUD operations work
+## ローカルテスト
+- [ ] `.env.example`を`.env.local`にコピー
+- [ ] Supabaseの認証情報を入力
+- [ ] `npm install`を実行
+- [ ] ace-buildsをコピー: `mkdir -p public/ace-builds && cp -r node_modules/ace-builds/src-noconflict public/ace-builds/`
+- [ ] 開発サーバーを起動: `npm run dev`
+- [ ] `http://localhost:3000/admin/login`でログインテスト
+- [ ] テスト投稿を作成
+- [ ] CRUD操作が動作することを確認
 
-## Production Deployment
-- [ ] Set environment variables in hosting platform:
+## 本番デプロイ
+- [ ] ホスティングプラットフォームで環境変数を設定:
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
   - `SUPABASE_SERVICE_ROLE_KEY`
-  - `USE_SUPABASE=false` (initially, keep using microCMS)
-- [ ] Add build script to copy ace-builds to public directory
-- [ ] Deploy to hosting platform
-- [ ] Verify build succeeds
-- [ ] Test login in production
-- [ ] Test creating/editing posts
+  - `USE_SUPABASE=false` (初期はmicroCMSを使用し続ける)
+- [ ] ace-buildsをpublicディレクトリにコピーするビルドスクリプトを追加
+- [ ] ホスティングプラットフォームにデプロイ
+- [ ] ビルドが成功することを確認
+- [ ] 本番環境でログインをテスト
+- [ ] 投稿の作成/編集をテスト
 
-## Migration (Optional)
-- [ ] Export existing data from microCMS (if migrating)
-- [ ] Import data to Supabase
-- [ ] Verify all posts migrated correctly
-- [ ] Set `USE_SUPABASE=true` in environment
-- [ ] Test public blog posts display correctly
-- [ ] Monitor for any issues
-- [ ] Keep microCMS credentials as backup (for quick rollback)
+## 移行（オプション）
+- [ ] microCMSから既存データをエクスポート（移行する場合）
+- [ ] Supabaseにデータをインポート
+- [ ] すべての投稿が正しく移行されたことを確認
+- [ ] 環境変数で`USE_SUPABASE=true`に設定
+- [ ] 公開されたブログ投稿が正しく表示されることをテスト
+- [ ] 問題がないか監視
+- [ ] microCMSの認証情報をバックアップとして保持（素早くロールバックするため）
 
-## Post-Deployment
-- [ ] Test authentication flow
-- [ ] Test CRUD operations
-- [ ] Verify RLS policies working
-- [ ] Check CSP headers not blocking ace-builds
-- [ ] Monitor Supabase logs
-- [ ] Monitor application errors
-- [ ] Update team documentation
+## デプロイ後
+- [ ] 認証フローをテスト
+- [ ] CRUD操作をテスト
+- [ ] RLSポリシーが機能していることを確認
+- [ ] CSPヘッダーがace-buildsをブロックしていないか確認
+- [ ] Supabaseログを監視
+- [ ] アプリケーションエラーを監視
+- [ ] チームドキュメントを更新
 
-## Rollback Plan
-If issues occur:
-1. Set `USE_SUPABASE=false` in environment
-2. Restart application
-3. System will revert to microCMS
-4. Investigate and fix issues
-5. Retry with `USE_SUPABASE=true`
+## ロールバックプラン
+問題が発生した場合：
+1. 環境変数で`USE_SUPABASE=false`に設定
+2. アプリケーションを再起動
+3. システムがmicroCMSに戻る
+4. 問題を調査して修正
+5. `USE_SUPABASE=true`で再試行
 
-## Support
-- Documentation: `docs/SUPABASE_SETUP.md`
-- Implementation details: `docs/IMPLEMENTATION_SUMMARY.md`
-- Troubleshooting: See docs/SUPABASE_SETUP.md
+## サポート
+- ドキュメント: `docs/SUPABASE_SETUP.md`
+- 実装詳細: `docs/IMPLEMENTATION_SUMMARY.md`
+- トラブルシューティング: docs/SUPABASE_SETUP.mdを参照

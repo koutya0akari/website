@@ -1,6 +1,6 @@
 # akari0koutya.jp → akari0koutya.com 移行手順
 
-`akari0koutya.com` では Next.js + microCMS + Vercel を正式構成とし、旧 `akari0koutya.jp` の静的/ PHP サイトを段階的に置き換えます。以下の手順でコンテンツとドメインを移行してください。
+`akari0koutya.com` では Next.js + microCMS + Vercel を正式構成とし、旧 `akari0koutya.jp` の静的/PHPサイトを段階的に置き換えます。以下の手順でコンテンツとドメインを移行してください。
 
 ## 1. 旧サイトのデータをエクスポート
 

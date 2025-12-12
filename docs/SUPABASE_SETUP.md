@@ -1,12 +1,12 @@
-# Supabase Setup Guide
+# Supabaseセットアップガイド
 
-This document describes the Supabase database schema and setup required for the admin panel.
+このドキュメントでは、管理パネルに必要なSupabaseデータベーススキーマとセットアップについて説明します。
 
-## Database Schema
+## データベーススキーマ
 
-### Diary Table
+### Diaryテーブル
 
-Create the following table in your Supabase project:
+Supabaseプロジェクトで以下のテーブルを作成してください：
 
 ```sql
 -- Create diary table
@@ -44,7 +44,7 @@ CREATE POLICY "Authenticated users full access" ON diary
   FOR ALL USING (auth.role() = 'authenticated');
 ```
 
-### Auto-update timestamp trigger
+### タイムスタンプ自動更新トリガー
 
 ```sql
 -- Create function to update updated_at timestamp
@@ -63,106 +63,106 @@ CREATE TRIGGER update_diary_updated_at
   EXECUTE FUNCTION update_updated_at_column();
 ```
 
-## Environment Variables
+## 環境変数
 
-Copy `.env.example` to `.env.local` and fill in your Supabase credentials:
+`.env.example`を`.env.local`にコピーして、Supabaseの認証情報を入力してください：
 
 ```bash
 cp .env.example .env.local
 ```
 
-Required variables:
-- `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase project URL
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase anon/public key
-- `SUPABASE_SERVICE_ROLE_KEY`: Your Supabase service role key (server-side only)
-- `USE_SUPABASE`: Set to `true` to use Supabase instead of microCMS
+必要な変数：
+- `NEXT_PUBLIC_SUPABASE_URL`: SupabaseプロジェクトのURL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabaseの匿名/公開キー
+- `SUPABASE_SERVICE_ROLE_KEY`: Supabaseのサービスロールキー（サーバーサイドのみ）
+- `USE_SUPABASE`: microCMSの代わりにSupabaseを使用する場合は`true`に設定
 
-## Authentication Setup
+## 認証のセットアップ
 
-1. Go to your Supabase project dashboard
-2. Navigate to Authentication > Providers
-3. Enable Email provider
-4. Create a user account in Authentication > Users
-5. Use this account to log in to `/admin/login`
+1. Supabaseプロジェクトダッシュボードにアクセス
+2. Authentication > Providersに移動
+3. Emailプロバイダーを有効化
+4. Authentication > Usersでユーザーアカウントを作成
+5. このアカウントを使用して`/admin/login`にログイン
 
-## Migration from microCMS
+## microCMSからの移行
 
-The application supports both microCMS and Supabase through a feature flag (`USE_SUPABASE`).
+アプリケーションは、フィーチャーフラグ（`USE_SUPABASE`）を通じてmicroCMSとSupabaseの両方をサポートします。
 
-- When `USE_SUPABASE=false` (default): Uses microCMS
-- When `USE_SUPABASE=true`: Uses Supabase
+- `USE_SUPABASE=false`（デフォルト）の場合: microCMSを使用
+- `USE_SUPABASE=true`の場合: Supabaseを使用
 
-This allows for gradual migration:
+これにより段階的な移行が可能です：
 
-1. Set up Supabase database and authentication
-2. Optionally migrate existing data from microCMS to Supabase
-3. Toggle `USE_SUPABASE=true` to switch to Supabase
-4. Test thoroughly before deploying
+1. Supabaseデータベースと認証をセットアップ
+2. オプションでmicroCMSからSupabaseに既存データを移行
+3. `USE_SUPABASE=true`に切り替えてSupabaseに切り替え
+4. デプロイ前に十分にテスト
 
-## Security Considerations
+## セキュリティに関する考慮事項
 
-1. **Row Level Security (RLS)**: Enabled on the diary table with policies
-2. **API Authentication**: All admin API routes check for authenticated users
-3. **Input Validation**: Slug uniqueness and required fields are validated
-4. **XSS Protection**: Content should be sanitized when displayed
-5. **CSP Headers**: Updated to allow ace-builds web workers
+1. **行レベルセキュリティ（RLS）**: diaryテーブルでポリシー付きで有効化
+2. **API認証**: すべての管理APIルートで認証済みユーザーをチェック
+3. **入力バリデーション**: スラッグの一意性と必須フィールドをバリデーション
+4. **XSS保護**: コンテンツは表示時にサニタイズが必要
+5. **CSPヘッダー**: ace-builds Webワーカーを許可するよう更新
 
-## Admin Panel Features
+## 管理パネルの機能
 
-- **Dashboard**: View statistics (total posts, drafts, published, views)
-- **Diary Management**: Create, read, update, delete posts
-- **Markdown Editor**: Ace editor with syntax highlighting
-- **Auto-save**: Editor content auto-saved to localStorage every 5 seconds
-- **Search & Filter**: Search by title/slug, filter by status, sort by various fields
-- **Tags**: Multiple tags support
-- **Status**: Draft or published
-- **Hero Images**: URL-based images (future: upload support)
+- **ダッシュボード**: 統計情報を表示（投稿総数、下書き、公開済み、閲覧数）
+- **日記管理**: 投稿の作成、読み取り、更新、削除
+- **Markdownエディタ**: シンタックスハイライト付きAceエディタ
+- **自動保存**: エディタのコンテンツは5秒ごとにlocalStorageに自動保存
+- **検索＆フィルター**: タイトル/スラッグで検索、ステータスでフィルター、さまざまなフィールドでソート
+- **タグ**: 複数タグのサポート
+- **ステータス**: 下書きまたは公開済み
+- **ヒーロー画像**: URLベースの画像（将来：アップロードサポート）
 
-## Development
+## 開発
 
-1. Install dependencies:
+1. 依存関係をインストール：
 ```bash
 npm install
 ```
 
-2. Copy ace-builds to public directory:
+2. ace-buildsをpublicディレクトリにコピー：
 ```bash
 mkdir -p public/ace-builds
 cp -r node_modules/ace-builds/src-noconflict public/ace-builds/
 ```
 
-Note: This step is automated in the build process but needed for local development.
+注意: この手順はビルドプロセスで自動化されていますが、ローカル開発には必要です。
 
-3. Start development server:
+3. 開発サーバーを起動：
 ```bash
 npm run dev
 ```
 
-4. Access admin panel at:
+4. 管理パネルにアクセス：
 ```
 http://localhost:3000/admin/login
 ```
 
-## Production Deployment
+## 本番デプロイ
 
-1. Set environment variables in your hosting platform (Vercel, etc.)
-2. Ensure ace-builds are copied to public directory during build
-3. Test authentication and CRUD operations
-4. Monitor Supabase logs and usage
+1. ホスティングプラットフォーム（Vercelなど）で環境変数を設定
+2. ビルド時にace-buildsがpublicディレクトリにコピーされることを確認
+3. 認証とCRUD操作をテスト
+4. Supabaseのログと使用状況を監視
 
-## Troubleshooting
+## トラブルシューティング
 
-### Ace Editor not loading
-- Check that ace-builds are in `public/ace-builds/src-noconflict/`
-- Check browser console for CSP errors
-- Verify CSP headers in `next.config.ts` include `worker-src 'self' blob:` and `script-src 'unsafe-eval'`
+### Aceエディタが読み込まれない
+- ace-buildsが`public/ace-builds/src-noconflict/`にあることを確認
+- ブラウザコンソールでCSPエラーを確認
+- `next.config.ts`のCSPヘッダーに`worker-src 'self' blob:`と`script-src 'unsafe-eval'`が含まれていることを確認
 
-### Authentication issues
-- Verify Supabase credentials in environment variables
-- Check Supabase dashboard for user accounts
-- Ensure middleware is not blocking the login route
+### 認証の問題
+- 環境変数のSupabase認証情報を確認
+- Supabaseダッシュボードでユーザーアカウントを確認
+- ミドルウェアがログインルートをブロックしていないことを確認
 
-### API errors
-- Check Supabase RLS policies
-- Verify user is authenticated
-- Check browser network tab for detailed error messages
+### APIエラー
+- SupabaseのRLSポリシーを確認
+- ユーザーが認証済みであることを確認
+- 詳細なエラーメッセージについてブラウザのネットワークタブを確認

@@ -1,168 +1,168 @@
-# Implementation Summary
+# 実装サマリー
 
-## Overview
-This PR successfully addresses CVE-2025-66478 and implements a complete Supabase-based admin panel for the koutya0akari/website repository.
+## 概要
+このPRはCVE-2025-66478に対処し、koutya0akari/websiteリポジトリ向けの完全なSupabaseベースの管理パネルを実装します。
 
-## What Was Done
+## 実施内容
 
-### 1. Security Updates (Part 1 - Highest Priority) ✅
-- **Next.js**: Updated from 16.0.3 to 16.0.10
-  - Fixes CVE-2025-66478 and related security vulnerabilities
-  - All security advisories cleared
-- **React**: Updated from 19.2.0 to 19.2.1
-- **react-dom**: Updated from 19.2.0 to 19.2.1
-- **New dependencies**: @supabase/supabase-js, @supabase/ssr, ace-builds, bcryptjs
-- **Security check**: All dependencies verified against GitHub Advisory Database - no vulnerabilities found
+### 1. セキュリティアップデート（パート1 - 最優先事項）✅
+- **Next.js**: 16.0.3から16.0.10にアップデート
+  - CVE-2025-66478および関連するセキュリティ脆弱性を修正
+  - すべてのセキュリティアドバイザリをクリア
+- **React**: 19.2.0から19.2.1にアップデート
+- **react-dom**: 19.2.0から19.2.1にアップデート
+- **新規依存関係**: @supabase/supabase-js、@supabase/ssr、ace-builds、bcryptjs
+- **セキュリティチェック**: すべての依存関係をGitHub Advisory Databaseで検証済み - 脆弱性なし
 
-### 2. Supabase Integration (Parts 2, 7) ✅
-Created complete Supabase infrastructure:
-- `src/lib/supabase/client.ts` - Browser client with environment validation
-- `src/lib/supabase/server.ts` - Server client with cookie management
-- `src/lib/supabase/middleware.ts` - Session refresh logic
-- `src/types/supabase.ts` - TypeScript types for database schema
-- `src/lib/diary-supabase.ts` - Data access layer for Supabase
-- `src/lib/diary.ts` - Unified interface supporting both microCMS and Supabase via feature flag
+### 2. Supabase統合（パート2、7）✅
+完全なSupabaseインフラストラクチャを作成：
+- `src/lib/supabase/client.ts` - 環境バリデーション付きブラウザクライアント
+- `src/lib/supabase/server.ts` - Cookie管理付きサーバークライアント
+- `src/lib/supabase/middleware.ts` - セッションリフレッシュロジック
+- `src/types/supabase.ts` - データベーススキーマのTypeScript型定義
+- `src/lib/diary-supabase.ts` - Supabase用データアクセス層
+- `src/lib/diary.ts` - フィーチャーフラグによりmicroCMSとSupabaseの両方をサポートする統一インターフェース
 
-### 3. Authentication System (Part 3) ✅
-- `middleware.ts` - Route protection for /admin/*
-  - Unauthenticated users redirected to /admin/login
-  - Authenticated users at /admin/login redirected to /admin/dashboard
-- `/admin/login` page with email/password authentication
-- `LoginForm` component with error handling
-- Logout functionality in admin header
+### 3. 認証システム（パート3）✅
+- `middleware.ts` - /admin/*のルート保護
+  - 未認証ユーザーは/admin/loginにリダイレクト
+  - /admin/loginの認証済みユーザーは/admin/dashboardにリダイレクト
+- メール/パスワード認証を備えた`/admin/login`ページ
+- エラーハンドリング付き`LoginForm`コンポーネント
+- 管理画面ヘッダーのログアウト機能
 
-### 4. Admin Dashboard (Part 4) ✅
-- **Layout**: Full-screen admin interface with sidebar navigation
-- **Sidebar**: Navigation to Dashboard, Diary, Settings
-- **Header**: User email display and logout button
-- **Dashboard**: Statistics cards showing:
-  - Total posts count
-  - Published posts count
-  - Draft posts count
-  - Total views across all posts
-  - Recent posts list with quick edit links
+### 4. 管理ダッシュボード（パート4）✅
+- **レイアウト**: サイドバーナビゲーション付きフルスクリーン管理インターフェース
+- **サイドバー**: ダッシュボード、日記、設定へのナビゲーション
+- **ヘッダー**: ユーザーメール表示とログアウトボタン
+- **ダッシュボード**: 統計カードに表示される内容：
+  - 投稿総数
+  - 公開済み投稿数
+  - 下書き投稿数
+  - すべての投稿の総閲覧数
+  - クイック編集リンク付き最近の投稿リスト
 
-### 5. Diary Management (Part 5) ✅
-Complete CRUD interface for diary posts:
+### 5. 日記管理（パート5）✅
+日記投稿の完全なCRUDインターフェース：
 
-**DiaryList Component:**
-- Search by title/slug
-- Filter by status (all/draft/published)
-- Sort by created date, published date, title, or views
-- Quick actions: Edit, View (published only), Delete
-- Visual status indicators
+**DiaryListコンポーネント:**
+- タイトル/スラッグで検索
+- ステータスでフィルター（すべて/下書き/公開済み）
+- 作成日、公開日、タイトル、閲覧数でソート
+- クイックアクション: 編集、表示（公開済みのみ）、削除
+- ビジュアルステータスインジケーター
 
-**DiaryForm Component:**
-- Title and slug fields (with auto-generate slug button)
-- Markdown editor using Ace Editor:
-  - Syntax highlighting
-  - Line numbers
-  - Monokai theme
-  - Auto-save to localStorage every 5 seconds
-  - Configurable height (400px minimum)
-- Summary textarea
-- Folder selection
-- Tag management (add/remove multiple tags)
-- Hero image URL input
-- Status selection (draft/published)
-- Published date picker
-- Preview link for published posts
+**DiaryFormコンポーネント:**
+- タイトルとスラッグフィールド（スラッグ自動生成ボタン付き）
+- Ace Editorを使用したMarkdownエディタ：
+  - シンタックスハイライト
+  - 行番号
+  - Monokaiテーマ
+  - 5秒ごとにlocalStorageへ自動保存
+  - 設定可能な高さ（最小400px）
+- サマリーテキストエリア
+- フォルダー選択
+- タグ管理（複数タグの追加/削除）
+- ヒーロー画像URL入力
+- ステータス選択（下書き/公開済み）
+- 公開日ピッカー
+- 公開済み投稿のプレビューリンク
 
-**Pages:**
-- `/admin/diary` - List view with search/filter
-- `/admin/diary/new` - Create new post
-- `/admin/diary/[id]/edit` - Edit existing post
+**ページ:**
+- `/admin/diary` - 検索/フィルター付きリストビュー
+- `/admin/diary/new` - 新規投稿作成
+- `/admin/diary/[id]/edit` - 既存投稿の編集
 
-### 6. API Routes (Part 6) ✅
-RESTful API with authentication:
-- `GET /api/admin/diary` - List all entries (with pagination)
-- `POST /api/admin/diary` - Create new entry
-- `GET /api/admin/diary/[id]` - Get single entry
-- `PUT /api/admin/diary/[id]` - Update entry
-- `DELETE /api/admin/diary/[id]` - Delete entry
+### 6. APIルート（パート6）✅
+認証付きRESTful API：
+- `GET /api/admin/diary` - すべてのエントリーをリスト（ページネーション付き）
+- `POST /api/admin/diary` - 新規エントリー作成
+- `GET /api/admin/diary/[id]` - 単一エントリー取得
+- `PUT /api/admin/diary/[id]` - エントリー更新
+- `DELETE /api/admin/diary/[id]` - エントリー削除
 
-All routes:
-- Verify user authentication via Supabase
-- Return 401 if unauthenticated
-- Validate required fields
-- Check slug uniqueness
-- Use .maybeSingle() to avoid errors on missing data
-- Proper error handling and logging
+すべてのルートで：
+- Supabaseを介してユーザー認証を確認
+- 未認証の場合は401を返す
+- 必須フィールドをバリデーション
+- スラッグの一意性をチェック
+- データが見つからない場合のエラーを避けるため.maybeSingle()を使用
+- 適切なエラーハンドリングとログ出力
 
-### 7. User Experience Enhancements ✅
-- **Toast Notifications**: Custom toast system replacing alert() calls
-  - Success messages (green)
-  - Error messages (red)
-  - Auto-dismiss after 5 seconds
-  - Manual dismiss option
-- **Dark Theme**: Consistent with existing site design
-  - night, night-soft, night-muted colors
-  - accent color for highlights
-  - Proper contrast for readability
-- **Responsive Design**: Works on desktop and tablet sizes
-- **Loading States**: Proper loading indicators
-- **Error States**: Meaningful error messages
+### 7. ユーザーエクスペリエンス向上 ✅
+- **トースト通知**: alert()呼び出しを置き換えるカスタムトーストシステム
+  - 成功メッセージ（緑）
+  - エラーメッセージ（赤）
+  - 5秒後に自動消去
+  - 手動消去オプション
+- **ダークテーマ**: 既存サイトデザインと一貫性あり
+  - night、night-soft、night-muted カラー
+  - ハイライト用のアクセントカラー
+  - 読みやすさのための適切なコントラスト
+- **レスポンシブデザイン**: デスクトップとタブレットサイズで動作
+- **ロード状態**: 適切なロードインジケーター
+- **エラー状態**: 意味のあるエラーメッセージ
 
-### 8. Documentation (Part 9) ✅
-- `.env.example` - Template for environment variables
-- `docs/SUPABASE_SETUP.md` - Comprehensive setup guide:
-  - SQL schema with RLS policies
-  - Environment variable configuration
-  - Authentication setup instructions
-  - Migration guide from microCMS
-  - Security considerations
-  - Development and deployment instructions
-  - Troubleshooting section
+### 8. ドキュメント（パート9）✅
+- `.env.example` - 環境変数のテンプレート
+- `docs/SUPABASE_SETUP.md` - 包括的なセットアップガイド：
+  - RLSポリシー付きSQLスキーマ
+  - 環境変数の設定
+  - 認証セットアップ手順
+  - microCMSからの移行ガイド
+  - セキュリティに関する考慮事項
+  - 開発とデプロイの手順
+  - トラブルシューティングセクション
 
-### 9. Code Quality (Part 8) ✅
-- All ESLint rules passing
-- Environment variables properly validated
-- No use of non-null assertion operators on env vars
-- Proper TypeScript typing throughout
-- Error handling at all integration points
-- Security best practices followed
-- Minimal changes to existing codebase
+### 9. コード品質（パート8）✅
+- すべてのESLintルールがパス
+- 環境変数が適切にバリデーション済み
+- 環境変数でnon-nullアサーション演算子を使用しない
+- 全体を通じて適切なTypeScript型付け
+- すべての統合ポイントでエラーハンドリング
+- セキュリティベストプラクティスに従う
+- 既存コードベースへの変更を最小限に
 
-## File Structure Added
+## 追加されたファイル構造
 
 ```
 src/
 ├── app/
 │   ├── admin/
-│   │   ├── layout.tsx              # Admin panel layout with ToastProvider
-│   │   ├── login/page.tsx          # Login page
-│   │   ├── dashboard/page.tsx      # Dashboard with stats
+│   │   ├── layout.tsx              # ToastProvider付き管理パネルレイアウト
+│   │   ├── login/page.tsx          # ログインページ
+│   │   ├── dashboard/page.tsx      # 統計付きダッシュボード
 │   │   └── diary/
-│   │       ├── page.tsx            # List view
-│   │       ├── new/page.tsx        # Create new
-│   │       └── [id]/edit/page.tsx  # Edit existing
+│   │       ├── page.tsx            # リストビュー
+│   │       ├── new/page.tsx        # 新規作成
+│   │       └── [id]/edit/page.tsx  # 既存編集
 │   └── api/admin/diary/
-│       ├── route.ts                # GET (list), POST (create)
-│       └── [id]/route.ts           # GET, PUT, DELETE
+│       ├── route.ts                # GET（リスト）、POST（作成）
+│       └── [id]/route.ts           # GET、PUT、DELETE
 ├── components/admin/
-│   ├── AdminHeader.tsx             # Header with user/logout
-│   ├── AdminSidebar.tsx            # Navigation sidebar
-│   ├── LoginForm.tsx               # Login form
-│   ├── DiaryForm.tsx               # Create/edit form
-│   ├── DiaryList.tsx               # List with search/filter
-│   ├── AceEditor.tsx               # Markdown editor
-│   └── ToastProvider.tsx           # Toast notifications
+│   ├── AdminHeader.tsx             # ユーザー/ログアウト付きヘッダー
+│   ├── AdminSidebar.tsx            # ナビゲーションサイドバー
+│   ├── LoginForm.tsx               # ログインフォーム
+│   ├── DiaryForm.tsx               # 作成/編集フォーム
+│   ├── DiaryList.tsx               # 検索/フィルター付きリスト
+│   ├── AceEditor.tsx               # Markdownエディタ
+│   └── ToastProvider.tsx           # トースト通知
 ├── lib/
 │   ├── supabase/
-│   │   ├── client.ts               # Browser client
-│   │   ├── server.ts               # Server client
-│   │   └── middleware.ts           # Session management
-│   ├── diary-supabase.ts           # Supabase data access
-│   └── diary.ts                    # Unified data access
+│   │   ├── client.ts               # ブラウザクライアント
+│   │   ├── server.ts               # サーバークライアント
+│   │   └── middleware.ts           # セッション管理
+│   ├── diary-supabase.ts           # Supabaseデータアクセス
+│   └── diary.ts                    # 統一データアクセス
 ├── types/
-│   └── supabase.ts                 # Database types
-├── middleware.ts                   # Route protection
-├── .env.example                    # Env template
+│   └── supabase.ts                 # データベース型定義
+├── middleware.ts                   # ルート保護
+├── .env.example                    # 環境変数テンプレート
 └── docs/
-    └── SUPABASE_SETUP.md           # Setup guide
+    └── SUPABASE_SETUP.md           # セットアップガイド
 ```
 
-## Environment Variables Required
+## 必要な環境変数
 
 ```bash
 # Supabase
@@ -170,82 +170,82 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# Feature Flag
-USE_SUPABASE=false  # Set to true to use Supabase instead of microCMS
+# フィーチャーフラグ
+USE_SUPABASE=false  # microCMSの代わりにSupabaseを使用する場合はtrueに設定
 
-# Legacy (optional if using Supabase)
+# レガシー（Supabaseを使用する場合はオプション）
 MICROCMS_SERVICE_DOMAIN=your-domain
 MICROCMS_API_KEY=your-key
 ```
 
-## Database Schema
+## データベーススキーマ
 
-The Supabase database requires a `diary` table with:
-- UUID primary key
-- title, slug (unique), body, summary
-- folder, tags (array)
-- status (draft/published)
+Supabaseデータベースには以下の`diary`テーブルが必要：
+- UUID主キー
+- title、slug（ユニーク）、body、summary
+- folder、tags（配列）
+- status（draft/published）
 - hero_image_url
-- view_count (default 0)
-- published_at, created_at, updated_at timestamps
-- RLS policies for public read (published only) and authenticated full access
+- view_count（デフォルト0）
+- published_at、created_at、updated_at タイムスタンプ
+- 公開読み取り（公開済みのみ）と認証済みフルアクセス用のRLSポリシー
 
-Full SQL schema available in `docs/SUPABASE_SETUP.md`.
+完全なSQLスキーマは`docs/SUPABASE_SETUP.md`で確認できます。
 
-## Next Steps for Deployment
+## デプロイのための次のステップ
 
-1. **Set up Supabase project:**
-   - Create project at supabase.com
-   - Run SQL schema from docs/SUPABASE_SETUP.md
-   - Create user account in Authentication > Users
+1. **Supabaseプロジェクトのセットアップ:**
+   - supabase.comでプロジェクトを作成
+   - docs/SUPABASE_SETUP.mdからSQLスキーマを実行
+   - Authentication > Usersでユーザーアカウントを作成
 
-2. **Configure environment variables:**
-   - Copy .env.example to .env.local
-   - Fill in Supabase credentials
-   - Set USE_SUPABASE=true when ready to switch
+2. **環境変数の設定:**
+   - .env.exampleを.env.localにコピー
+   - Supabaseの認証情報を入力
+   - 切り替える準備ができたらUSE_SUPABASE=trueに設定
 
-3. **Copy ace-builds to public directory:**
+3. **ace-buildsをpublicディレクトリにコピー:**
    ```bash
    mkdir -p public/ace-builds
    cp -r node_modules/ace-builds/src-noconflict public/ace-builds/
    ```
-   Note: Add this to your build script if deploying to Vercel/similar
+   注意: Vercel等にデプロイする場合は、これをビルドスクリプトに追加してください
 
-4. **Deploy:**
-   - Set environment variables in hosting platform
-   - Deploy normally
-   - Test authentication at /admin/login
-   - Create first post at /admin/diary/new
+4. **デプロイ:**
+   - ホスティングプラットフォームで環境変数を設定
+   - 通常通りデプロイ
+   - /admin/loginで認証をテスト
+   - /admin/diary/newで最初の投稿を作成
 
-## Security Notes
+## セキュリティに関する注意事項
 
-- ✅ Row Level Security enabled on database
-- ✅ All API routes require authentication
-- ✅ Environment variables validated at runtime
-- ✅ CSP headers updated for ace-builds workers
-- ✅ Input validation on critical fields
-- ✅ Slug uniqueness enforced
-- ✅ No sensitive data in client-side code
+- ✅ データベースで行レベルセキュリティが有効
+- ✅ すべてのAPIルートで認証が必要
+- ✅ 実行時に環境変数をバリデーション
+- ✅ ace-buildsワーカー用にCSPヘッダーを更新
+- ✅ 重要なフィールドで入力バリデーション
+- ✅ スラッグの一意性を強制
+- ✅ クライアントサイドコードに機密データなし
 
-## Testing Notes
+## テストに関する注意事項
 
-- Lint: All checks pass ✅
-- Code review: All feedback addressed ✅
-- Build: Cannot test fully due to Google Fonts network restrictions in sandbox
-- Runtime testing: Requires live Supabase instance
+- Lint: すべてのチェックがパス ✅
+- コードレビュー: すべてのフィードバックに対処済み ✅
+- ビルド: サンドボックスのGoogle Fontsネットワーク制限により完全なテストは不可
+- ランタイムテスト: 稼働中のSupabaseインスタンスが必要
 
-## Migration Strategy
+## 移行戦略
 
-The implementation supports gradual migration from microCMS:
+この実装はmicroCMSからの段階的な移行をサポートします：
 
-1. **Phase 1 (Current)**: USE_SUPABASE=false, system uses microCMS
-2. **Phase 2**: Set up Supabase, create admin user, test admin panel
-3. **Phase 3**: Optionally migrate existing data
-4. **Phase 4**: Toggle USE_SUPABASE=true in production
-5. **Phase 5**: Monitor and verify everything works
+1. **フェーズ1（現在）**: USE_SUPABASE=false、システムはmicroCMSを使用
+2. **フェーズ2**: Supabaseをセットアップ、管理ユーザーを作成、管理パネルをテスト
+3. **フェーズ3**: オプションで既存データを移行
+4. **フェーズ4**: 本番環境でUSE_SUPABASE=trueに切り替え
+5. **フェーズ5**: すべてが正常に動作することを監視・検証
 
-This allows risk-free rollout with quick rollback capability.
+これにより、迅速なロールバック機能を備えたリスクフリーなロールアウトが可能です。
 
-## Conclusion
+## 結論
 
-This implementation provides a production-ready, secure admin panel for managing diary posts using Supabase, while maintaining backward compatibility with microCMS through feature flags. All security vulnerabilities have been addressed, and the code follows best practices with comprehensive documentation.
+この実装は、フィーチャーフラグを通じてmicroCMSとの後方互換性を維持しながら、Supabaseを使用して日記投稿を管理するための本番環境対応の安全な管理パネルを提供します。すべてのセキュリティ脆弱性は対処済みで、コードは包括的なドキュメントとともにベストプラクティスに従っています。
