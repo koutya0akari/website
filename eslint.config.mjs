@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Ignore ace-builds in public directory
+    "public/ace-builds/**",
   ]),
 ]);
 
