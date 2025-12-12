@@ -61,6 +61,8 @@ export function AceEditor({ value, onChange, placeholder, minHeight = 400 }: Ace
         aceEditorRef.current = null;
       }
     };
+    // onChange is intentionally not in deps to avoid recreating the editor
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

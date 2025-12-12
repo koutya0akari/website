@@ -19,6 +19,7 @@ export default function EditDiaryPage() {
     if (id) {
       fetchDiary();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchDiary = async () => {

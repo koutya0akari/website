@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AceEditor } from "./AceEditor";
 import { Save, Eye, Trash2 } from "lucide-react";
 

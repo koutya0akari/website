@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { DiaryList } from "@/components/admin/DiaryList";
 import { FilePlus } from "lucide-react";
 import Link from "next/link";
@@ -19,7 +18,6 @@ interface DiaryItem {
 }
 
 export default function DiaryListPage() {
-  const router = useRouter();
   const [items, setItems] = useState<DiaryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
