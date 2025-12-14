@@ -10,6 +10,7 @@
 ## ✨ 特徴
 
 - 📝 **Math Diary** - 数学の学習記録をブログ形式で公開
+- 📅 **Weekly Diary** - 週間日記（1週間のまとめ）を公開
 - 📚 **Resources** - PDF や外部リンクを整理して公開
 - 🎨 **モダンな UI** - ダークテーマ、アニメーション、レスポンシブ
 - 🔐 **管理パネル** - 日記・リソース・サイト設定を GUI で管理
@@ -79,6 +80,7 @@ src/
 | ログイン | `/login` | 認証 |
 | ダッシュボード | `/admin/dashboard` | 統計・概要 |
 | 日記管理 | `/admin/diary` | 記事の CRUD |
+| 週間日記管理 | `/admin/weekly-diary` | 週間日記の CRUD |
 | リソース管理 | `/admin/resources` | 資料の管理 |
 | サイト設定 | `/admin/site` | トップページ設定 |
 | About 設定 | `/admin/about` | プロフィール編集 |

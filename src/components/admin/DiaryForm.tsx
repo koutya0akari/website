@@ -21,9 +21,18 @@ interface DiaryFormProps {
   onSubmit: (data: DiaryFormData) => Promise<void>;
   onDelete?: () => Promise<void>;
   isNew?: boolean;
+  previewBasePath?: string;
+  formKey?: string;
 }
 
-export function DiaryForm({ initialData, onSubmit, onDelete, isNew = true }: DiaryFormProps) {
+export function DiaryForm({
+  initialData,
+  onSubmit,
+  onDelete,
+  isNew = true,
+  previewBasePath = "/diary",
+  formKey = "diary",
+}: DiaryFormProps) {
   const [formData, setFormData] = useState<DiaryFormData>({
     title: initialData?.title || "",
     slug: initialData?.slug || "",
@@ -42,8 +51,8 @@ export function DiaryForm({ initialData, onSubmit, onDelete, isNew = true }: Dia
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const formRef = useCallback((node: HTMLFormElement | null) => {
-    if (node) node.dataset.form = "diary";
-  }, []);
+    if (node) node.dataset.form = formKey;
+  }, [formKey]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,11 +66,11 @@ export function DiaryForm({ initialData, onSubmit, onDelete, isNew = true }: Dia
 
   const handleEditorSave = useCallback(() => {
     // Trigger form submission programmatically
-    const form = document.querySelector('form[data-form="diary"]') as HTMLFormElement;
+    const form = document.querySelector(`form[data-form="${formKey}"]`) as HTMLFormElement | null;
     if (form) {
       form.requestSubmit();
     }
-  }, []);
+  }, [formKey]);
 
   const handleDelete = async () => {
     if (!onDelete) return;
@@ -299,7 +308,7 @@ export function DiaryForm({ initialData, onSubmit, onDelete, isNew = true }: Dia
 
         {formData.slug && (
           <a
-            href={`/diary/${formData.slug}`}
+            href={`${previewBasePath}/${formData.slug}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-sm text-gray-400 hover:text-accent"

@@ -1,6 +1,6 @@
 import Link from "next/link";
 // eslint-disable-next-line @typescript-eslint/no-deprecated
-import { Github, Twitter, Mail, Heart, BookOpen, FolderOpen, User } from "lucide-react";
+import { Github, Twitter, Mail, Heart, BookOpen, FolderOpen, User, CalendarDays } from "lucide-react";
 
 const SOCIAL_LINKS = [
   { icon: Github, href: "https://github.com/koutya0akari", label: "GitHub" },
@@ -10,6 +10,7 @@ const SOCIAL_LINKS = [
 
 const NAV_LINKS = [
   { icon: BookOpen, href: "/diary" as const, label: "Math Diary" },
+  { icon: CalendarDays, href: "/weekly-diary" as const, label: "Weekly Diary" },
   { icon: FolderOpen, href: "/resources" as const, label: "Resources" },
   { icon: User, href: "/about" as const, label: "About" },
 ];

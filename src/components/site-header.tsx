@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { label: "研究関心", href: "/#focus" },
   { label: "プロジェクト", href: "/#projects" },
   { label: "Math Diary", href: "/diary" },
+  { label: "Weekly Diary", href: "/weekly-diary" },
   { label: "Resources", href: "/resources" },
   { label: "About", href: "/about" },
 ];

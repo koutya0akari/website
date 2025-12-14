@@ -24,6 +24,7 @@ src/
 │   ├── admin/              # 管理パネル
 │   │   ├── dashboard/      # ダッシュボード
 │   │   ├── diary/          # 日記管理
+│   │   ├── weekly-diary/   # 週間日記管理
 │   │   ├── resources/      # リソース管理
 │   │   ├── site/           # サイト設定
 │   │   ├── about/          # About 設定
@@ -32,6 +33,7 @@ src/
 │   ├── api/                # API ルート
 │   │   └── admin/          # 管理 API
 │   ├── diary/              # 公開日記ページ
+│   ├── weekly-diary/       # 公開週間日記ページ
 │   ├── resources/          # 公開リソースページ
 │   ├── about/              # About ページ
 │   └── page.tsx            # トップページ
@@ -62,6 +64,7 @@ src/
 |------|------|
 | ダッシュボード | 統計情報（記事数、閲覧数）、最近の投稿 |
 | 日記管理 | CRUD、検索、フィルター、リッチエディタ |
+| 週間日記管理 | CRUD、リッチエディタ |
 | リソース管理 | PDF/外部リンクの管理 |
 | サイト設定 | ヒーロー、プロジェクト、タイムライン |
 | About 設定 | プロフィール、スキル、セクション |
@@ -86,6 +89,12 @@ GET    /api/admin/diary/[id]     # 日記詳細
 PUT    /api/admin/diary/[id]     # 日記更新
 DELETE /api/admin/diary/[id]     # 日記削除
 
+GET    /api/admin/weekly-diary          # 週間日記一覧
+POST   /api/admin/weekly-diary          # 週間日記作成
+GET    /api/admin/weekly-diary/[id]     # 週間日記詳細
+PUT    /api/admin/weekly-diary/[id]     # 週間日記更新
+DELETE /api/admin/weekly-diary/[id]     # 週間日記削除
+
 GET    /api/admin/resources      # リソース一覧
 POST   /api/admin/resources      # リソース作成
 GET    /api/admin/resources/[id] # リソース詳細
@@ -105,6 +114,24 @@ POST   /api/diary/view           # 閲覧数カウント
 ## データベーススキーマ
 
 ### diary テーブル
+
+| カラム | 型 | 説明 |
+|--------|------|------|
+| id | UUID | 主キー |
+| title | TEXT | タイトル |
+| slug | TEXT | URL スラッグ（ユニーク） |
+| body | TEXT | 本文（HTML/Markdown） |
+| summary | TEXT | 要約 |
+| folder | TEXT | フォルダ分類 |
+| tags | TEXT[] | タグ配列 |
+| status | TEXT | draft / published |
+| hero_image_url | TEXT | ヒーロー画像 URL |
+| view_count | INTEGER | 閲覧数 |
+| published_at | TIMESTAMPTZ | 公開日時 |
+| created_at | TIMESTAMPTZ | 作成日時 |
+| updated_at | TIMESTAMPTZ | 更新日時 |
+
+### weekly_diary テーブル
 
 | カラム | 型 | 説明 |
 |--------|------|------|

@@ -59,7 +59,47 @@ CREATE POLICY "Authenticated users full access" ON diary
   WITH CHECK (auth.role() = 'authenticated');
 ```
 
-### 2.2 Site テーブル（サイト設定）
+### 2.2 Weekly Diary テーブル（週間日記）
+
+```sql
+-- Weekly Diary テーブル
+CREATE TABLE weekly_diary (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  body TEXT,
+  summary TEXT,
+  folder TEXT,
+  tags TEXT[],
+  status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'published')),
+  hero_image_url TEXT,
+  view_count INTEGER DEFAULT 0,
+  published_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- インデックス
+CREATE INDEX idx_weekly_diary_status ON weekly_diary(status);
+CREATE INDEX idx_weekly_diary_slug ON weekly_diary(slug);
+CREATE INDEX idx_weekly_diary_published_at ON weekly_diary(published_at DESC);
+CREATE INDEX idx_weekly_diary_created_at ON weekly_diary(created_at DESC);
+
+-- Row Level Security を有効化
+ALTER TABLE weekly_diary ENABLE ROW LEVEL SECURITY;
+
+-- ポリシー: 公開記事は誰でも読める
+CREATE POLICY "Public read for published weekly diary" ON weekly_diary
+  FOR SELECT USING (status = 'published');
+
+-- ポリシー: 認証ユーザーはフルアクセス
+CREATE POLICY "Authenticated users full access weekly diary" ON weekly_diary
+  FOR ALL 
+  USING (auth.role() = 'authenticated')
+  WITH CHECK (auth.role() = 'authenticated');
+```
+
+### 2.3 Site テーブル（サイト設定）
 
 ```sql
 -- Site テーブル（シングルトン）
@@ -90,7 +130,7 @@ INSERT INTO site (key, hero_title, hero_lead, hero_primary_cta_label, hero_prima
 VALUES ('default', 'Mathematics as a daily practice', '代数幾何・圏論を軸に学習しています。数学ノートやメモなどの保管場所。', 'Math Diary を見る', '/diary');
 ```
 
-### 2.3 About テーブル（プロフィール）
+### 2.4 About テーブル（プロフィール）
 
 ```sql
 -- About テーブル（シングルトン）
@@ -116,7 +156,7 @@ INSERT INTO about (key, intro, mission, skills)
 VALUES ('default', 'Akari Math Lab へようこそ', '数学の美しさを探求し、学びを共有することを目指しています。', ARRAY['代数幾何', '圏論', 'LaTeX', 'プログラミング']);
 ```
 
-### 2.4 Resources テーブル（公開資料）
+### 2.5 Resources テーブル（公開資料）
 
 ```sql
 -- Resources テーブル
@@ -138,7 +178,7 @@ CREATE POLICY "Authenticated users full access resources" ON resources
   WITH CHECK (auth.role() = 'authenticated');
 ```
 
-### 2.5 自動更新トリガー
+### 2.6 自動更新トリガー
 
 ```sql
 -- updated_at 自動更新関数
@@ -153,6 +193,11 @@ $$ LANGUAGE plpgsql;
 -- 各テーブルにトリガーを設定
 CREATE TRIGGER update_diary_updated_at
   BEFORE UPDATE ON diary
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_weekly_diary_updated_at
+  BEFORE UPDATE ON weekly_diary
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
@@ -221,6 +266,7 @@ pnpm dev
 |------|------|------|
 | ダッシュボード | `/admin/dashboard` | 統計情報、最近の投稿 |
 | 日記管理 | `/admin/diary` | 記事の CRUD |
+| 週間日記管理 | `/admin/weekly-diary` | 週間日記の CRUD |
 | リソース管理 | `/admin/resources` | 公開資料の管理 |
 | サイト設定 | `/admin/site` | ヒーロー、プロジェクト等 |
 | About 設定 | `/admin/about` | プロフィール編集 |
