@@ -1,8 +1,9 @@
 import "server-only";
 
 import type { DiaryEntry } from "@/lib/types";
+import { normalizeRichTextToHtml } from "@/lib/markdown";
 import { createClient } from "@/lib/supabase/server";
-import { createExcerpt } from "@/lib/utils";
+import { createExcerpt, escapeHtml } from "@/lib/utils";
 
 const WEEKLY_DIARY_FOLDER = "Weekly Diary";
 
@@ -23,12 +24,16 @@ type SupabaseWeeklyDiaryRow = {
 };
 
 function normalizeWeeklyDiary(row: SupabaseWeeklyDiaryRow): DiaryEntry {
+  const bodyHtml = normalizeRichTextToHtml(row.body || "");
+  const summaryHtml = normalizeRichTextToHtml(row.summary || "");
+  const fallbackSummaryHtml = `<p>${escapeHtml(createExcerpt(bodyHtml))}</p>`;
+
   return {
     id: row.id,
     title: row.title,
     slug: row.slug,
-    summary: row.summary || createExcerpt(row.body || ""),
-    body: row.body || "",
+    summary: summaryHtml || fallbackSummaryHtml,
+    body: bodyHtml,
     folder: WEEKLY_DIARY_FOLDER,
     tags: row.tags || [],
     heroImage: row.hero_image_url

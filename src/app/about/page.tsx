@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { ActivityHeatmap } from "@/components/activity-heatmap";
 import { GitHubStats } from "@/components/github-stats";
 import { FadeIn } from "@/components/motion/fade-in";
+import { RichText } from "@/components/rich-text";
 import { SkillRadar } from "@/components/skill-radar";
 import { getAboutContent } from "@/lib/content";
 import { getDiaryEntries } from "@/lib/diary";
@@ -54,11 +55,11 @@ export default async function AboutPage() {
         <section className="rounded-[32px] border border-white/10 bg-gradient-to-br from-night-soft to-night p-8">
           <p className="text-xs uppercase tracking-[0.4em] text-white/60">About</p>
           <h1 className="mt-3 text-4xl font-semibold">Akari Math Lab</h1>
-          <p className="mt-5 text-lg text-white/80">{about.intro}</p>
-          <p className="mt-4 text-white/70">{about.mission}</p>
+          <RichText content={about.intro} className="mt-5 text-lg text-white/80" prose={false} />
+          <RichText content={about.mission} className="mt-4 text-white/70" prose={false} />
           {about.quote && (
             <blockquote className="mt-6 border-l-2 border-accent/70 pl-4 text-accent italic">
-              &ldquo;{about.quote}&rdquo;
+              <RichText content={about.quote} as="span" inline prose={false} />
             </blockquote>
           )}
         </section>
@@ -96,7 +97,7 @@ export default async function AboutPage() {
           {about.sections.map((section) => (
             <article key={section.heading} className="space-y-2">
               <h2 className="text-2xl font-semibold">{section.heading}</h2>
-              <p className="text-white/70">{section.body}</p>
+              <RichText content={section.body} className="text-white/70" prose />
             </article>
           ))}
         </section>

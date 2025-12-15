@@ -1,5 +1,6 @@
 import type { ResourceItem } from "@/lib/types";
 import { SmartLink } from "@/components/smart-link";
+import { RichText } from "@/components/rich-text";
 
 type ResourceGridProps = {
   resources: ResourceItem[];
@@ -17,7 +18,7 @@ export function ResourceGrid({ resources }: ResourceGridProps) {
           <div>
             <div className="text-xs uppercase tracking-[0.2em] text-white/50">{item.category}</div>
             <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-            <p className="text-sm text-white/70">{item.description}</p>
+            <RichText content={item.description} className="prose-sm text-white/70" />
           </div>
           <SmartLink
             href={item.externalUrl ?? item.fileUrl}

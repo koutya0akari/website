@@ -1,4 +1,5 @@
 import type { SiteContent } from "@/lib/types";
+import { RichText } from "@/components/rich-text";
 
 type FocusSectionProps = {
   focuses: SiteContent["focuses"];
@@ -55,7 +56,7 @@ export function FocusSection({ focuses }: FocusSectionProps) {
                 <span className="text-[11px] uppercase tracking-[0.25em] text-white/40">Track {index + 1}</span>
               </div>
               <h3 className="mt-3 text-xl font-semibold text-white">{focus.title}</h3>
-              <p className="mt-2 text-sm text-white/75">{focus.description}</p>
+              <RichText content={focus.description} className="mt-2 prose-sm text-white/75" />
               <div className="mt-4 flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-white/50">
                 <span className="h-px flex-1 bg-gradient-to-r from-accent/60 via-white/30 to-transparent" />
                 <span>Notes ready</span>

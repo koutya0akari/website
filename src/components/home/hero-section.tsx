@@ -1,4 +1,5 @@
 import { SmartLink } from "@/components/smart-link";
+import { RichText } from "@/components/rich-text";
 import { personalIntro } from "@/data/home";
 import type { SiteContent, DiaryEntry } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
@@ -42,10 +43,14 @@ export function HeroSection({ site, diaries }: HeroSectionProps) {
             <h1 className="font-display text-4xl leading-tight sm:text-5xl">
               {site.heroTitle || "Mathematics as a daily practice"}
             </h1>
-            <p className="max-w-2xl text-lg text-white/80">
-              {site.heroLead ||
-                "代数幾何・圏論を軸に学習しています。数学ノートやメモなどの保管場所。"}
-            </p>
+            <RichText
+              content={
+                site.heroLead ||
+                "代数幾何・圏論を軸に学習しています。数学ノートやメモなどの保管場所。"
+              }
+              className="max-w-2xl text-lg text-white/80"
+              prose={false}
+            />
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <SmartLink

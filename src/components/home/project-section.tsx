@@ -1,5 +1,6 @@
 import { SmartLink } from "@/components/smart-link";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
+import { RichText } from "@/components/rich-text";
 import type { SiteContent } from "@/lib/types";
 
 type ProjectSectionProps = {
@@ -37,12 +38,18 @@ export function ProjectSection({ projects }: ProjectSectionProps) {
               <span className="rounded-full bg-accent/15 px-2 py-1 text-[11px] font-semibold text-accent">Lab {index + 1}</span>
             </div>
             <h3 className="text-lg font-semibold text-white">{project.title}</h3>
-            <p className="text-sm text-white/75">{project.summary}</p>
+            <RichText content={project.summary} className="prose-sm text-white/75" />
             <div className="space-y-2 text-sm text-white/70">
               {project.highlights.map((item) => (
                 <div key={item} className="flex items-start gap-2">
                   <span className="mt-1 h-1.5 w-1.5 rounded-full bg-highlight" />
-                  <span className="rounded-2xl bg-black/20 px-2 py-1">{item}</span>
+                  <RichText
+                    content={item}
+                    as="span"
+                    inline
+                    className="rounded-2xl bg-black/20 px-2 py-1"
+                    prose={false}
+                  />
                 </div>
               ))}
             </div>
