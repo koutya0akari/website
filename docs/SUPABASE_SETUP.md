@@ -59,45 +59,9 @@ CREATE POLICY "Authenticated users full access" ON diary
   WITH CHECK (auth.role() = 'authenticated');
 ```
 
-### 2.2 Weekly Diary テーブル（週間日記）
+### 2.2 Weekly Diary（週間日記）
 
-```sql
--- Weekly Diary テーブル
-CREATE TABLE weekly_diary (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title TEXT NOT NULL,
-  slug TEXT UNIQUE NOT NULL,
-  body TEXT,
-  summary TEXT,
-  folder TEXT,
-  tags TEXT[],
-  status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'published')),
-  hero_image_url TEXT,
-  view_count INTEGER DEFAULT 0,
-  published_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- インデックス
-CREATE INDEX idx_weekly_diary_status ON weekly_diary(status);
-CREATE INDEX idx_weekly_diary_slug ON weekly_diary(slug);
-CREATE INDEX idx_weekly_diary_published_at ON weekly_diary(published_at DESC);
-CREATE INDEX idx_weekly_diary_created_at ON weekly_diary(created_at DESC);
-
--- Row Level Security を有効化
-ALTER TABLE weekly_diary ENABLE ROW LEVEL SECURITY;
-
--- ポリシー: 公開記事は誰でも読める
-CREATE POLICY "Public read for published weekly diary" ON weekly_diary
-  FOR SELECT USING (status = 'published');
-
--- ポリシー: 認証ユーザーはフルアクセス
-CREATE POLICY "Authenticated users full access weekly diary" ON weekly_diary
-  FOR ALL 
-  USING (auth.role() = 'authenticated')
-  WITH CHECK (auth.role() = 'authenticated');
-```
+Weekly Diary は `diary` テーブルの `folder` を `Weekly Diary` に固定して区別します（追加テーブル不要）。
 
 ### 2.3 Site テーブル（サイト設定）
 
@@ -193,11 +157,6 @@ $$ LANGUAGE plpgsql;
 -- 各テーブルにトリガーを設定
 CREATE TRIGGER update_diary_updated_at
   BEFORE UPDATE ON diary
-  FOR EACH ROW
-  EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_weekly_diary_updated_at
-  BEFORE UPDATE ON weekly_diary
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 

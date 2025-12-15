@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
+const WEEKLY_DIARY_FOLDER = "Weekly Diary";
+
 // GET /api/admin/weekly-diary - List all weekly diary entries
 export async function GET(request: NextRequest) {
   try {
@@ -19,7 +21,11 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "100");
     const offset = parseInt(searchParams.get("offset") || "0");
 
-    let query = supabase.from("weekly_diary").select("*").order("created_at", { ascending: false });
+    let query = supabase
+      .from("diary")
+      .select("*")
+      .eq("folder", WEEKLY_DIARY_FOLDER)
+      .order("created_at", { ascending: false });
 
     if (status && (status === "draft" || status === "published")) {
       query = query.eq("status", status);
@@ -55,7 +61,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, slug, body: content, summary, folder, tags, status, publishedAt, heroImageUrl } = body;
+    const { title, slug, body: content, summary, tags, status, publishedAt, heroImageUrl } = body;
 
     // Validate required fields
     if (!title || !slug) {
@@ -64,7 +70,7 @@ export async function POST(request: NextRequest) {
 
     // Check if slug already exists
     const { data: existing } = await supabase
-      .from("weekly_diary")
+      .from("diary")
       .select("id")
       .eq("slug", slug)
       .maybeSingle();
@@ -74,13 +80,13 @@ export async function POST(request: NextRequest) {
     }
 
     const { data, error } = await supabase
-      .from("weekly_diary")
+      .from("diary")
       .insert({
         title,
         slug,
         body: content || null,
         summary: summary || null,
-        folder: folder || null,
+        folder: WEEKLY_DIARY_FOLDER,
         tags: tags || null,
         status: status || "draft",
         published_at: publishedAt || null,
@@ -100,4 +106,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-

@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
+const WEEKLY_DIARY_FOLDER = "Weekly Diary";
+
 // GET /api/admin/diary - List all diary entries
 export async function GET(request: NextRequest) {
   try {
@@ -19,7 +21,11 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "100");
     const offset = parseInt(searchParams.get("offset") || "0");
 
-    let query = supabase.from("diary").select("*").order("created_at", { ascending: false });
+    let query = supabase
+      .from("diary")
+      .select("*")
+      .or(`folder.is.null,folder.neq."${WEEKLY_DIARY_FOLDER}"`)
+      .order("created_at", { ascending: false });
 
     if (status && (status === "draft" || status === "published")) {
       query = query.eq("status", status);
@@ -60,6 +66,13 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!title || !slug) {
       return NextResponse.json({ error: "Title and slug are required" }, { status: 400 });
+    }
+
+    if (String(folder ?? "") === WEEKLY_DIARY_FOLDER) {
+      return NextResponse.json(
+        { error: `Folder "${WEEKLY_DIARY_FOLDER}" is reserved. Use Weekly Diary admin instead.` },
+        { status: 400 },
+      );
     }
 
     // Check if slug already exists

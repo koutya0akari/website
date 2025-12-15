@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
+const WEEKLY_DIARY_FOLDER = "Weekly Diary";
+
 // GET /api/admin/weekly-diary/[id] - Get single weekly diary entry
 export async function GET(
   request: NextRequest,
@@ -18,7 +20,12 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data, error } = await supabase.from("weekly_diary").select("*").eq("id", id).single();
+    const { data, error } = await supabase
+      .from("diary")
+      .select("*")
+      .eq("id", id)
+      .eq("folder", WEEKLY_DIARY_FOLDER)
+      .single();
 
     if (error) {
       if (error.code === "PGRST116") {
@@ -53,7 +60,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { title, slug, body: content, summary, folder, tags, status, publishedAt, heroImageUrl } = body;
+    const { title, slug, body: content, summary, tags, status, publishedAt, heroImageUrl } = body;
 
     // Validate required fields
     if (!title || !slug) {
@@ -62,7 +69,7 @@ export async function PUT(
 
     // Check if slug exists on another entry
     const { data: existing } = await supabase
-      .from("weekly_diary")
+      .from("diary")
       .select("id")
       .eq("slug", slug)
       .neq("id", id)
@@ -73,13 +80,13 @@ export async function PUT(
     }
 
     const { data, error } = await supabase
-      .from("weekly_diary")
+      .from("diary")
       .update({
         title,
         slug,
         body: content || null,
         summary: summary || null,
-        folder: folder || null,
+        folder: WEEKLY_DIARY_FOLDER,
         tags: tags || null,
         status: status || "draft",
         published_at: publishedAt || null,
@@ -87,6 +94,7 @@ export async function PUT(
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)
+      .eq("folder", WEEKLY_DIARY_FOLDER)
       .select()
       .single();
 
@@ -119,7 +127,11 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { error } = await supabase.from("weekly_diary").delete().eq("id", id);
+    const { error } = await supabase
+      .from("diary")
+      .delete()
+      .eq("id", id)
+      .eq("folder", WEEKLY_DIARY_FOLDER);
 
     if (error) {
       console.error("[API] Failed to delete weekly diary entry:", error);
@@ -132,4 +144,3 @@ export async function DELETE(
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-

@@ -152,9 +152,9 @@ export default function EditWeeklyDiaryPage() {
           isNew={false}
           previewBasePath="/weekly-diary"
           formKey="weekly-diary"
+          folderDisabled
         />
       </div>
     </div>
   );
 }
-

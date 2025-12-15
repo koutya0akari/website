@@ -131,23 +131,9 @@ POST   /api/diary/view           # 閲覧数カウント
 | created_at | TIMESTAMPTZ | 作成日時 |
 | updated_at | TIMESTAMPTZ | 更新日時 |
 
-### weekly_diary テーブル
+### Weekly Diary
 
-| カラム | 型 | 説明 |
-|--------|------|------|
-| id | UUID | 主キー |
-| title | TEXT | タイトル |
-| slug | TEXT | URL スラッグ（ユニーク） |
-| body | TEXT | 本文（HTML/Markdown） |
-| summary | TEXT | 要約 |
-| folder | TEXT | フォルダ分類 |
-| tags | TEXT[] | タグ配列 |
-| status | TEXT | draft / published |
-| hero_image_url | TEXT | ヒーロー画像 URL |
-| view_count | INTEGER | 閲覧数 |
-| published_at | TIMESTAMPTZ | 公開日時 |
-| created_at | TIMESTAMPTZ | 作成日時 |
-| updated_at | TIMESTAMPTZ | 更新日時 |
+Weekly Diary は `diary` テーブルの `folder` を `Weekly Diary` に固定して区別します。
 
 ### site テーブル（シングルトン）
 

@@ -58,9 +58,15 @@ export default function NewWeeklyDiaryPage() {
       </div>
 
       <div className="rounded-lg border border-night-muted bg-night-soft p-6">
-        <DiaryForm onSubmit={handleSubmit} isNew={true} previewBasePath="/weekly-diary" formKey="weekly-diary" />
+        <DiaryForm
+          initialData={{ folder: "Weekly Diary" }}
+          onSubmit={handleSubmit}
+          isNew={true}
+          previewBasePath="/weekly-diary"
+          formKey="weekly-diary"
+          folderDisabled
+        />
       </div>
     </div>
   );
 }
-

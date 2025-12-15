@@ -23,6 +23,7 @@ interface DiaryFormProps {
   isNew?: boolean;
   previewBasePath?: string;
   formKey?: string;
+  folderDisabled?: boolean;
 }
 
 export function DiaryForm({
@@ -32,6 +33,7 @@ export function DiaryForm({
   isNew = true,
   previewBasePath = "/diary",
   formKey = "diary",
+  folderDisabled = false,
 }: DiaryFormProps) {
   const [formData, setFormData] = useState<DiaryFormData>({
     title: initialData?.title || "",
@@ -180,6 +182,7 @@ export function DiaryForm({
             type="text"
             value={formData.folder}
             onChange={(e) => setFormData({ ...formData, folder: e.target.value })}
+            disabled={folderDisabled}
             className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 placeholder-gray-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
             placeholder="e.g., tutorial, article"
           />

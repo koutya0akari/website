@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
+const WEEKLY_DIARY_FOLDER = "Weekly Diary";
+
 // GET /api/admin/diary/[id] - Get single diary entry
 export async function GET(
   request: NextRequest,
@@ -18,7 +20,12 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data, error } = await supabase.from("diary").select("*").eq("id", id).single();
+    const { data, error } = await supabase
+      .from("diary")
+      .select("*")
+      .eq("id", id)
+      .or(`folder.is.null,folder.neq."${WEEKLY_DIARY_FOLDER}"`)
+      .single();
 
     if (error) {
       if (error.code === "PGRST116") {
@@ -60,6 +67,13 @@ export async function PUT(
       return NextResponse.json({ error: "Title and slug are required" }, { status: 400 });
     }
 
+    if (String(folder ?? "") === WEEKLY_DIARY_FOLDER) {
+      return NextResponse.json(
+        { error: `Folder "${WEEKLY_DIARY_FOLDER}" is reserved. Use Weekly Diary admin instead.` },
+        { status: 400 },
+      );
+    }
+
     // Check if slug exists on another entry
     const { data: existing } = await supabase
       .from("diary")
@@ -87,6 +101,7 @@ export async function PUT(
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)
+      .or(`folder.is.null,folder.neq."${WEEKLY_DIARY_FOLDER}"`)
       .select()
       .single();
 
@@ -119,7 +134,11 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { error } = await supabase.from("diary").delete().eq("id", id);
+    const { error } = await supabase
+      .from("diary")
+      .delete()
+      .eq("id", id)
+      .or(`folder.is.null,folder.neq."${WEEKLY_DIARY_FOLDER}"`);
 
     if (error) {
       console.error("[API] Failed to delete diary entry:", error);

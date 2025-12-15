@@ -4,6 +4,8 @@ import type { DiaryEntry } from "@/lib/types";
 import { createClient } from "@/lib/supabase/server";
 import { createExcerpt } from "@/lib/utils";
 
+const WEEKLY_DIARY_FOLDER = "Weekly Diary";
+
 type SupabaseDiaryRow = {
   id: string;
   title: string;
@@ -47,6 +49,7 @@ export async function getDiaryEntries(limit = 50): Promise<DiaryEntry[]> {
     .from("diary")
     .select("*")
     .eq("status", "published")
+    .or(`folder.is.null,folder.neq."${WEEKLY_DIARY_FOLDER}"`)
     .order("published_at", { ascending: false })
     .limit(limit);
 
@@ -68,6 +71,7 @@ export async function getPopularDiaryEntries(
     .from("diary")
     .select("*")
     .eq("status", "published")
+    .or(`folder.is.null,folder.neq."${WEEKLY_DIARY_FOLDER}"`)
     .order("view_count", { ascending: false })
     .order("published_at", { ascending: false })
     .limit(limit);
@@ -94,6 +98,7 @@ export async function getDiaryBySlug(slug: string): Promise<DiaryEntry | undefin
     .select("*")
     .eq("slug", slug)
     .eq("status", "published")
+    .or(`folder.is.null,folder.neq."${WEEKLY_DIARY_FOLDER}"`)
     .maybeSingle();
 
   if (error) {
@@ -117,6 +122,7 @@ export async function incrementDiaryView(slug: string): Promise<number | undefin
     .select("id, view_count")
     .eq("slug", slug)
     .eq("status", "published")
+    .or(`folder.is.null,folder.neq."${WEEKLY_DIARY_FOLDER}"`)
     .maybeSingle();
 
   if (fetchError || !diary) {

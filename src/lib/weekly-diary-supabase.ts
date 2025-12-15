@@ -4,6 +4,8 @@ import type { DiaryEntry } from "@/lib/types";
 import { createClient } from "@/lib/supabase/server";
 import { createExcerpt } from "@/lib/utils";
 
+const WEEKLY_DIARY_FOLDER = "Weekly Diary";
+
 type SupabaseWeeklyDiaryRow = {
   id: string;
   title: string;
@@ -27,7 +29,7 @@ function normalizeWeeklyDiary(row: SupabaseWeeklyDiaryRow): DiaryEntry {
     slug: row.slug,
     summary: row.summary || createExcerpt(row.body || ""),
     body: row.body || "",
-    folder: row.folder || "Weekly Diary",
+    folder: WEEKLY_DIARY_FOLDER,
     tags: row.tags || [],
     heroImage: row.hero_image_url
       ? {
@@ -44,9 +46,10 @@ export async function getWeeklyDiaryEntries(limit = 50): Promise<DiaryEntry[]> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from("weekly_diary")
+    .from("diary")
     .select("*")
     .eq("status", "published")
+    .eq("folder", WEEKLY_DIARY_FOLDER)
     .order("published_at", { ascending: false })
     .limit(limit);
 
@@ -62,10 +65,11 @@ export async function getWeeklyDiaryBySlug(slug: string): Promise<DiaryEntry | u
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from("weekly_diary")
+    .from("diary")
     .select("*")
     .eq("slug", slug)
     .eq("status", "published")
+    .eq("folder", WEEKLY_DIARY_FOLDER)
     .maybeSingle();
 
   if (error) {
@@ -79,4 +83,3 @@ export async function getWeeklyDiaryBySlug(slug: string): Promise<DiaryEntry | u
 
   return normalizeWeeklyDiary(data as SupabaseWeeklyDiaryRow);
 }
-
