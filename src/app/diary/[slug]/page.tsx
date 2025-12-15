@@ -10,12 +10,15 @@ import { PopularDiaries } from "@/components/diary/popular-diaries";
 import { TableOfContents } from "@/components/diary/table-of-contents";
 import { DiaryViewBadge } from "@/components/diary/view-badge";
 import { ReadingTime } from "@/components/reading-time";
+import { ShareToX } from "@/components/share-to-x";
 import { getDiaryBySlug, getPopularDiaryEntries } from "@/lib/diary";
 import { formatDate, stripHtml } from "@/lib/utils";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.akari0koutya.com";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -69,6 +72,9 @@ export default async function DiaryDetailPage({ params }: PageProps) {
   }
 
   const popularDiaries = await getPopularDiaryEntries(5, entry.slug);
+  const shareUrl = `${SITE_URL}/diary/${entry.slug}`;
+  const tagText = entry.tags?.slice(0, 3).map((tag) => `#${tag.replace(/^#/, "")}`).join(" ") ?? "";
+  const shareText = [entry.title, tagText].filter(Boolean).join(" ");
 
   return (
     <div className="mx-auto max-w-content px-6 py-12">
@@ -89,6 +95,7 @@ export default async function DiaryDetailPage({ params }: PageProps) {
               <ReadingTime content={entry.body} />
               <span className="text-white/30">•</span>
               <DiaryViewBadge slug={entry.slug} initialCount={entry.viewCount} />
+              <ShareToX url={shareUrl} text={shareText} />
             </div>
             {entry.tags?.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2 text-xs text-white/60">

@@ -4,12 +4,15 @@ import { notFound } from "next/navigation";
 
 import { DiaryBody } from "@/components/diary/diary-body";
 import { ReadingTime } from "@/components/reading-time";
+import { ShareToX } from "@/components/share-to-x";
 import { getWeeklyDiaryBySlug } from "@/lib/weekly-diary";
 import { formatDate, stripHtml } from "@/lib/utils";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.akari0koutya.com";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -61,6 +64,10 @@ export default async function WeeklyDiaryDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const shareUrl = `${SITE_URL}/weekly-diary/${entry.slug}`;
+  const tagText = entry.tags?.slice(0, 3).map((tag) => `#${tag.replace(/^#/, "")}`).join(" ") ?? "";
+  const shareText = [entry.title, tagText].filter(Boolean).join(" ");
+
   return (
     <div className="mx-auto max-w-content px-6 py-12">
       <Link href="/weekly-diary" className="text-sm text-accent underline-offset-4 hover:underline">
@@ -78,6 +85,7 @@ export default async function WeeklyDiaryDetailPage({ params }: PageProps) {
             </time>
             <span className="text-white/30">•</span>
             <ReadingTime content={entry.body} />
+            <ShareToX url={shareUrl} text={shareText} />
           </div>
           {entry.tags?.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2 text-xs text-white/60">
@@ -95,4 +103,3 @@ export default async function WeeklyDiaryDetailPage({ params }: PageProps) {
     </div>
   );
 }
-
