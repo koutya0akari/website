@@ -6,7 +6,7 @@ import { DiaryBody } from "@/components/diary/diary-body";
 import { ReadingTime } from "@/components/reading-time";
 import { ShareToX } from "@/components/share-to-x";
 import { getWeeklyDiaryBySlug } from "@/lib/weekly-diary";
-import { formatDate, stripHtml } from "@/lib/utils";
+import { createExcerpt, formatDate, stripHtml } from "@/lib/utils";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -29,15 +29,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: "Weekly Diary" };
   }
 
-  const description = entry.summary ? stripHtml(entry.summary) : undefined;
-  const ogImage = entry.heroImage?.url ?? "/tako.png";
+  const summary = entry.summary ? stripHtml(entry.summary) : "";
+  const description = createExcerpt(summary, 180);
+  const tags = (entry.tags ?? []).slice(0, 6).map((tag) => `#${tag.replace(/^#/, "")}`);
+  const withTags = tags.length > 0 ? `${description} ${tags.join(" ")}` : description;
+  const ogImage = `/api/og?title=${encodeURIComponent(entry.title)}&summary=${encodeURIComponent(description)}&tags=${encodeURIComponent(tags.join(" "))}&author=akari0koutya`;
 
   return {
     title: entry.title,
-    description,
+    description: withTags,
     openGraph: {
       title: entry.title,
-      description,
+      description: withTags,
       type: "article",
       publishedTime: entry.publishedAt,
       modifiedTime: entry.updatedAt,
@@ -50,7 +53,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     twitter: {
       card: "summary_large_image",
       title: entry.title,
-      description,
+      description: withTags,
+      creator: "@akari0koutya",
+      site: "@akari0koutya",
       images: [ogImage],
     },
   };
@@ -65,7 +70,8 @@ export default async function WeeklyDiaryDetailPage({ params }: PageProps) {
   }
 
   const shareUrl = `${SITE_URL}/weekly-diary/${entry.slug}`;
-  const tagText = entry.tags?.slice(0, 3).map((tag) => `#${tag.replace(/^#/, "")}`).join(" ") ?? "";
+  const shareTags = entry.tags?.slice(0, 6).map((tag) => tag.replace(/^#/, "")) ?? [];
+  const tagText = shareTags.slice(0, 3).map((tag) => `#${tag}`).join(" ");
   const shareText = [entry.title, tagText].filter(Boolean).join(" ");
 
   return (
@@ -85,7 +91,7 @@ export default async function WeeklyDiaryDetailPage({ params }: PageProps) {
             </time>
             <span className="text-white/30">•</span>
             <ReadingTime content={entry.body} />
-            <ShareToX url={shareUrl} text={shareText} />
+            <ShareToX url={shareUrl} text={shareText} hashtags={shareTags} via="akari0koutya" />
           </div>
           {entry.tags?.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2 text-xs text-white/60">

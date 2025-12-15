@@ -3,10 +3,15 @@ import { Twitter } from "lucide-react";
 type ShareToXProps = {
   url: string;
   text: string;
+  hashtags?: string[];
+  via?: string;
 };
 
-export function ShareToX({ url, text }: ShareToXProps) {
-  const intentUrl = `https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+export function ShareToX({ url, text, hashtags, via = "akari0koutya" }: ShareToXProps) {
+  const hashtagParam =
+    hashtags && hashtags.length > 0 ? `&hashtags=${encodeURIComponent(hashtags.map((t) => t.replace(/^#/, "")).join(","))}` : "";
+  const viaParam = via ? `&via=${encodeURIComponent(via.replace(/^@/, ""))}` : "";
+  const intentUrl = `https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}${hashtagParam}${viaParam}`;
 
   return (
     <a
@@ -22,4 +27,3 @@ export function ShareToX({ url, text }: ShareToXProps) {
     </a>
   );
 }
-
