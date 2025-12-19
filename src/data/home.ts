@@ -11,7 +11,7 @@ export const seminarThemes = [
   {
     title: "（無限）圏論 / ホモトピー型理論",
     summary:
-      "導来代数幾何を見据え、Haugseng『Yet Another Introduction to Infinity Categories』を進めつつ、Rijke『An Introduction to Homotopy Type Theory』で synthetic 手法を学習。将来は Riehl-Shulman『A type theory for synthetic ∞-categories』にも挑戦予定。",
+      "導来代数幾何を見据え、Haugseng ``Yet Another Introduction to Infinity Categories''を進めつつ、Rijke ``An Introduction to Homotopy Type Theory''で synthetic 手法を学習。将来は Riehl-Shulman ``A type theory for synthetic ∞-categories''にも挑戦予定。",
     references: [
       { label: "Rijke 2022", url: "https://arxiv.org/abs/2212.11082" },
       { label: "Riehl & Shulman 2017", url: "https://arxiv.org/abs/1705.07442" },

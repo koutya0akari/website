@@ -153,3 +153,48 @@ export async function incrementDiaryView(slug: string): Promise<number | undefin
 export const supabaseReady = Boolean(
   process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 );
+
+// 年別の活動を集計（Diary の投稿から自動生成）
+export type ActivityYear = {
+  year: string;
+  items: { title: string; slug: string; date: string }[];
+};
+
+export async function getActivityByYear(): Promise<ActivityYear[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("diary")
+    .select("title, slug, published_at, created_at, tags")
+    .eq("status", "published")
+    .or(`folder.is.null,folder.neq."${WEEKLY_DIARY_FOLDER}"`)
+    .order("published_at", { ascending: false });
+
+  if (error) {
+    console.error("[Supabase] Failed to fetch activity by year:", error);
+    return [];
+  }
+
+  // 年別にグループ化
+  const yearMap = new Map<string, { title: string; slug: string; date: string }[]>();
+
+  for (const row of data || []) {
+    const dateStr = row.published_at || row.created_at;
+    const year = new Date(dateStr).getFullYear().toString();
+    const items = yearMap.get(year) || [];
+    items.push({
+      title: row.title,
+      slug: row.slug,
+      date: dateStr,
+    });
+    yearMap.set(year, items);
+  }
+
+  // 年を降順でソート
+  const sortedYears = Array.from(yearMap.keys()).sort((a, b) => parseInt(b) - parseInt(a));
+
+  return sortedYears.map((year) => ({
+    year,
+    items: yearMap.get(year) || [],
+  }));
+}
