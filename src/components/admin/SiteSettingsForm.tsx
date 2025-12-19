@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Save, Plus, Trash2, GripVertical } from "lucide-react";
 import type { FocusArea, ProjectSummary, TimelineItem, ContactLink } from "@/lib/types";
+import { MarkdownTextarea } from "./MarkdownTextarea";
 
 interface SiteSettings {
   heroTitle: string;
@@ -197,16 +198,13 @@ export function SiteSettingsForm() {
               placeholder="メインタイトル"
             />
           </div>
-          <div>
-            <label className="mb-2 block text-sm font-medium text-gray-300">リード文</label>
-            <textarea
-              value={settings.heroLead}
-              onChange={(e) => setSettings({ ...settings, heroLead: e.target.value })}
-              rows={3}
-              className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
-              placeholder="サブタイトル・説明文"
-            />
-          </div>
+          <MarkdownTextarea
+            label="リード文"
+            value={settings.heroLead}
+            onChange={(value) => setSettings({ ...settings, heroLead: value })}
+            rows={3}
+            placeholder="サブタイトル・説明文"
+          />
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-300">プライマリCTAラベル</label>
@@ -276,11 +274,10 @@ export function SiteSettingsForm() {
                   className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
                   placeholder="タイトル"
                 />
-                <textarea
+                <MarkdownTextarea
                   value={focus.description}
-                  onChange={(e) => updateFocus(index, "description", e.target.value)}
+                  onChange={(value) => updateFocus(index, "description", value)}
                   rows={2}
-                  className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
                   placeholder="説明"
                 />
               </div>
@@ -328,11 +325,10 @@ export function SiteSettingsForm() {
                     placeholder="ステータス（進行中、完了など）"
                   />
                 </div>
-                <textarea
+                <MarkdownTextarea
                   value={project.summary}
-                  onChange={(e) => updateProject(index, "summary", e.target.value)}
+                  onChange={(value) => updateProject(index, "summary", value)}
                   rows={2}
-                  className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
                   placeholder="概要"
                 />
                 <input
@@ -394,11 +390,10 @@ export function SiteSettingsForm() {
                     placeholder="日付（2024年4月など）"
                   />
                 </div>
-                <textarea
+                <MarkdownTextarea
                   value={item.description || ""}
-                  onChange={(e) => updateTimeline(index, "description", e.target.value)}
+                  onChange={(value) => updateTimeline(index, "description", value)}
                   rows={2}
-                  className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
                   placeholder="説明（オプション）"
                 />
                 <div className="grid grid-cols-2 gap-4">

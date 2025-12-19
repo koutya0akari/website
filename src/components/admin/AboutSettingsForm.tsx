@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Save, Plus, Trash2, GripVertical } from "lucide-react";
 import type { AboutSection } from "@/lib/types";
+import { MarkdownTextarea } from "./MarkdownTextarea";
 
 interface AboutSettings {
   intro: string;
@@ -113,27 +114,21 @@ export function AboutSettingsForm() {
       <div className="space-y-4 rounded-lg border border-night-muted bg-night-soft p-6">
         <h2 className="text-lg font-semibold text-white">基本情報</h2>
 
-        <div>
-          <label className="mb-2 block text-sm font-medium text-gray-300">イントロダクション</label>
-          <textarea
-            value={settings.intro}
-            onChange={(e) => setSettings({ ...settings, intro: e.target.value })}
-            rows={3}
-            className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
-            placeholder="自己紹介文"
-          />
-        </div>
+        <MarkdownTextarea
+          label="イントロダクション"
+          value={settings.intro}
+          onChange={(value) => setSettings({ ...settings, intro: value })}
+          rows={3}
+          placeholder="自己紹介文"
+        />
 
-        <div>
-          <label className="mb-2 block text-sm font-medium text-gray-300">ミッション</label>
-          <textarea
-            value={settings.mission}
-            onChange={(e) => setSettings({ ...settings, mission: e.target.value })}
-            rows={3}
-            className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
-            placeholder="ミッション・目標"
-          />
-        </div>
+        <MarkdownTextarea
+          label="ミッション"
+          value={settings.mission}
+          onChange={(value) => setSettings({ ...settings, mission: value })}
+          rows={3}
+          placeholder="ミッション・目標"
+        />
 
         <div>
           <label className="mb-2 block text-sm font-medium text-gray-300">引用・モットー</label>
@@ -169,11 +164,10 @@ export function AboutSettingsForm() {
                 className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
                 placeholder="見出し"
               />
-              <textarea
+              <MarkdownTextarea
                 value={section.body}
-                onChange={(e) => updateSection(index, "body", e.target.value)}
+                onChange={(value) => updateSection(index, "body", value)}
                 rows={3}
-                className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
                 placeholder="本文"
               />
             </div>

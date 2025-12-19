@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Save, Trash2, ExternalLink } from "lucide-react";
+import { MarkdownTextarea } from "./MarkdownTextarea";
 
 export interface ResourceFormData {
   title: string;
@@ -70,16 +71,13 @@ export function ResourceForm({ initialData, onSubmit, onDelete, isNew = true }: 
         />
       </div>
 
-      <div>
-        <label className="mb-2 block text-sm font-medium text-gray-300">説明</label>
-        <textarea
-          value={formData.description}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          rows={3}
-          className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 placeholder-gray-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-          placeholder="資料の説明"
-        />
-      </div>
+      <MarkdownTextarea
+        label="説明"
+        value={formData.description}
+        onChange={(value) => setFormData({ ...formData, description: value })}
+        rows={3}
+        placeholder="資料の説明"
+      />
 
       <div>
         <label className="mb-2 block text-sm font-medium text-gray-300">カテゴリ</label>
