@@ -2,7 +2,7 @@ export const seminarThemes = [
   {
     title: "スキーム論",
     summary:
-      "Liu ``Algebraic Geometry and Arithmetic Curves''を自主ゼミで輪読し、基礎的なスキーム論を定着させながら、Huybrechts『Fourier-Mukai Transforms in Algebraic Geometry』で応用を個人学習。導来代数幾何に到達することを目標に据えています。",
+      "Liu ``Algebraic Geometry and Arithmetic Curves''を自主ゼミで輪読し、基礎的なスキーム論を定着させながら、Huybrechts ``Fourier-Mukai Transforms in Algebraic Geometry''で応用を個人学習。導来代数幾何に到達することを目標に据えています。",
   },
   {
     title: "可換環論",
@@ -20,17 +20,17 @@ export const seminarThemes = [
   {
     title: "Topos 理論",
     summary:
-      "Mac Lane–Moerdijk『Sheaves in Geometry and Logic』を中心に Grothendieck topos の基礎を学び、将来的には Johnstone『Sketches of an Elephant』で空間としての topos を掘り下げたいと考えています。",
+      "Mac Lane–Moerdijk``Sheaves in Geometry and Logic''を中心に Grothendieck topos の基礎を学び、将来的には Johnstone``Sketches of an Elephant''で空間としての topos を掘り下げたいと考えています。",
   },
   {
     title: "表現論",
     summary:
-      "D-加群や傾理論に興味を持ち、Assem–Simson–Skowroński『Elements of the Representation Theory of Associative Algebras』を個人で読み進めて代数的構造の理解を深めています。",
+      "D-加群や傾理論に興味を持ち、Assem–Simson–Skowroński``Elements of the Representation Theory of Associative Algebras''を個人で読み進めて代数的構造の理解を深めています。",
   },
   {
     title: "TeX / 組版",
     summary:
-      "数学文書の表現力を高めるため、Knuth『The TeXbook』をゼミで学習。TeXのプリミティブを追求し、Knuth の思想を体現する組版を自力で行えることを目標にしています。",
+      "数学文書の表現力を高めるため、Knuth``The TeXbook''をゼミで学習。TeXのプリミティブを追求し、Knuth の思想を体現する組版を自力で行えることを目標にしています。",
   },
 ];
 
