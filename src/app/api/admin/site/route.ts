@@ -88,18 +88,18 @@ export async function PUT(request: NextRequest) {
       contactLinks,
     } = body;
 
-    // Upsert site settings
+    // Atomic upsert - NOT NULL カラムには空文字列をデフォルト値として使用
     const { data, error } = await supabase
       .from("site")
       .upsert(
         {
           key: "default",
-          hero_title: heroTitle || null,
-          hero_lead: heroLead || null,
-          hero_primary_cta_label: heroPrimaryCtaLabel || null,
-          hero_primary_cta_url: heroPrimaryCtaUrl || null,
-          hero_secondary_cta_label: heroSecondaryCtaLabel || null,
-          hero_secondary_cta_url: heroSecondaryCtaUrl || null,
+          hero_title: heroTitle || "",
+          hero_lead: heroLead || "",
+          hero_primary_cta_label: heroPrimaryCtaLabel || "",
+          hero_primary_cta_url: heroPrimaryCtaUrl || "",
+          hero_secondary_cta_label: heroSecondaryCtaLabel || "",
+          hero_secondary_cta_url: heroSecondaryCtaUrl || "",
           focuses: focuses || [],
           projects: projects || [],
           timeline: timeline || [],
@@ -113,7 +113,10 @@ export async function PUT(request: NextRequest) {
 
     if (error) {
       console.error("[API] Failed to update site settings:", error);
-      return NextResponse.json({ error: "Failed to update settings" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Failed to update settings", details: error.message },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ data });

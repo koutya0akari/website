@@ -67,17 +67,17 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { intro, mission, sections, skills, quote } = body;
 
-    // Upsert about settings
+    // Atomic upsert - NOT NULL カラムには空文字列をデフォルト値として使用
     const { data, error } = await supabase
       .from("about")
       .upsert(
         {
           key: "default",
-          intro: intro || null,
-          mission: mission || null,
+          intro: intro || "",
+          mission: mission || "",
           sections: sections || [],
           skills: skills || [],
-          quote: quote || null,
+          quote: quote || "",
           updated_at: new Date().toISOString(),
         },
         { onConflict: "key" }
@@ -87,7 +87,10 @@ export async function PUT(request: NextRequest) {
 
     if (error) {
       console.error("[API] Failed to update about settings:", error);
-      return NextResponse.json({ error: "Failed to update settings" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Failed to update settings", details: error.message },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ data });
