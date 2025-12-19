@@ -22,7 +22,6 @@ export function ProjectSection({ projects }: ProjectSectionProps) {
         </div>
         <div className="flex flex-wrap gap-2 text-xs text-white/70">
           <span className="rounded-full border border-white/15 px-3 py-1">Labs &amp; Output</span>
-          <span className="rounded-full bg-accent/20 px-3 py-1 text-accent">進行中 + 共有予定</span>
         </div>
       </div>
       <div className="relative mt-4 grid gap-6 md:grid-cols-2 xl:grid-cols-3">

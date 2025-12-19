@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createExcerpt, escapeHtml } from "@/lib/utils";
 
 const WEEKLY_DIARY_FOLDER = "Weekly Diary";
+const MATH_DIARY_FOLDER = "Math Diary";
 
 type SupabaseDiaryRow = {
   id: string;
@@ -165,7 +166,7 @@ export async function getActivityByYear(): Promise<ActivityYear[]> {
 
   const { data, error } = await supabase
     .from("diary")
-    .select("title, slug, published_at, created_at, tags")
+    .select("title, slug, published_at, created_at, tags, folder")
     .eq("status", "published")
     .or(`folder.is.null,folder.neq."${WEEKLY_DIARY_FOLDER}"`)
     .order("published_at", { ascending: false });
@@ -175,10 +176,15 @@ export async function getActivityByYear(): Promise<ActivityYear[]> {
     return [];
   }
 
+  // Math Diary のエントリを除外
+  const filteredData = (data || []).filter(
+    (row) => row.folder !== MATH_DIARY_FOLDER
+  );
+
   // 年別にグループ化
   const yearMap = new Map<string, { title: string; slug: string; date: string }[]>();
 
-  for (const row of data || []) {
+  for (const row of filteredData) {
     const dateStr = row.published_at || row.created_at;
     const year = new Date(dateStr).getFullYear().toString();
     const items = yearMap.get(year) || [];

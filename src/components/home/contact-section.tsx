@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { ResourceGrid } from "@/components/resources/resource-grid";
 import { SmartLink } from "@/components/smart-link";
 import { directContacts } from "@/data/home";
@@ -28,9 +26,6 @@ export function ContactSection({ site, resources }: ContactSectionProps) {
             <h2 className="text-2xl font-semibold text-white sm:text-3xl">公開資料</h2>
             <p className="text-sm text-white/70">スライド・配布資料・メモ。</p>
           </div>
-          <Link href="/resources" className="rounded-full bg-white/10 px-3 py-1 text-xs text-accent underline-offset-4 hover:underline">
-            全て
-          </Link>
         </div>
         <ResourceGrid resources={resources} />
       </div>
@@ -41,7 +36,6 @@ export function ContactSection({ site, resources }: ContactSectionProps) {
         </div>
         <div className="relative flex items-center justify-between">
           <h3 className="text-xl font-semibold text-white">Contact</h3>
-          <span className="rounded-full bg-accent/20 px-3 py-1 text-xs font-semibold text-accent">Open</span>
         </div>
         <div className="relative flex flex-wrap gap-3">
           {contactEntries.map((link) => (

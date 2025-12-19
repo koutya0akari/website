@@ -16,7 +16,6 @@ export function SeminarSection() {
         </div>
         <div className="flex flex-wrap gap-2 text-xs text-white/70">
           <span className="rounded-full bg-white/10 px-3 py-1">Reading / Drafting</span>
-          <span className="rounded-full border border-accent/40 px-3 py-1 text-accent">参考文献は随時追加</span>
         </div>
       </div>
       <div className="relative mt-4 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
@@ -33,7 +32,6 @@ export function SeminarSection() {
                 Seminar {index + 1}
                 <span className="h-1 w-1 rounded-full bg-accent" />
               </div>
-              <span className="rounded-full bg-accent/20 px-3 py-1 text-[11px] font-semibold text-accent">Reading</span>
             </div>
             <div className="relative space-y-2">
               <h3 className="text-lg font-semibold text-white">{theme.title}</h3>

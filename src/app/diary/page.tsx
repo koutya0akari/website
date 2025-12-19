@@ -21,9 +21,6 @@ export default async function DiaryPage() {
       <section className="rounded-[32px] border border-white/10 bg-gradient-to-br from-night-soft to-night p-8">
         <p className="text-xs uppercase tracking-[0.4em] text-white/60">Math Diary</p>
         <h1 className="mt-3 text-4xl font-semibold">Math Diary</h1>
-        <p className="mt-3 text-lg text-white/70">
-          記事は環境設定に応じて Supabase または microCMS から取得します。検索ボックスで本文内も検索でき、フォルダやタグで絞り込み可能です。
-        </p>
         <Link href="/resources" className="mt-5 inline-flex text-sm text-accent underline underline-offset-4">
           公開資料を見る
         </Link>

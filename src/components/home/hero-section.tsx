@@ -67,9 +67,6 @@ export function HeroSection({ site, diaries }: HeroSectionProps) {
               {site.heroSecondaryCtaLabel}
             </SmartLink>
           )}
-          <div className="rounded-full border border-white/15 px-4 py-2 text-xs text-white/70 backdrop-blur">
-            {site.heroSecondaryCtaLabel ? "Research Notes" : "Math Diary"}
-          </div>
         </div>
           <div className="grid gap-4">
             <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black/30 p-5 sm:p-6">
