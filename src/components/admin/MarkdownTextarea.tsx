@@ -15,45 +15,76 @@ interface MarkdownTextareaProps {
 // シンプルなMarkdownプレビュー（サーバーサイドでも使える軽量版）
 function renderMarkdownPreview(markdown: string): string {
   if (!markdown) return "";
-  
-  let html = markdown
-    // エスケープ
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
+
+  // 段落ごとに分割して処理
+  const paragraphs = markdown.split(/\n\n+/);
+  const processedParagraphs: string[] = [];
+
+  for (const para of paragraphs) {
+    let html = para
+      // エスケープ
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
     // コードブロック（先に処理）
-    .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre class="bg-night-muted rounded p-3 my-2 overflow-x-auto"><code>$2</code></pre>')
-    // インラインコード
-    .replace(/`([^`]+)`/g, '<code class="bg-night-muted px-1 rounded text-accent">$1</code>')
-    // 見出し
-    .replace(/^### (.+)$/gm, '<h3 class="text-lg font-semibold text-white mt-4 mb-2">$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2 class="text-xl font-semibold text-white mt-4 mb-2">$1</h2>')
-    .replace(/^# (.+)$/gm, '<h1 class="text-2xl font-bold text-white mt-4 mb-2">$1</h1>')
-    // 太字・斜体
-    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold">$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em class="italic">$1</em>')
-    // リンク
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-accent hover:underline" target="_blank" rel="noopener">$1</a>')
-    // 引用
-    .replace(/^> (.+)$/gm, '<blockquote class="border-l-2 border-accent pl-4 my-2 text-gray-300 italic">$1</blockquote>')
-    // 順序なしリスト
-    .replace(/^- (.+)$/gm, '<li class="ml-4 list-disc">$1</li>')
-    // 順序付きリスト
-    .replace(/^\d+\. (.+)$/gm, '<li class="ml-4 list-decimal">$1</li>')
-    // 段落（空行で区切り）
-    .replace(/\n\n/g, '</p><p class="my-2">')
-    // 改行
-    .replace(/\n/g, "<br>");
-  
-  // リストアイテムをulで囲む
-  html = html.replace(/(<li class="ml-4 list-disc">.*?<\/li>(\s*<br>)?)+/g, (match) => {
-    return '<ul class="my-2">' + match.replace(/<br>/g, "") + '</ul>';
-  });
-  html = html.replace(/(<li class="ml-4 list-decimal">.*?<\/li>(\s*<br>)?)+/g, (match) => {
-    return '<ol class="my-2">' + match.replace(/<br>/g, "") + '</ol>';
-  });
-  
-  return `<p class="my-2">${html}</p>`;
+    if (html.startsWith("```")) {
+      html = html.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre class="bg-night-muted rounded p-3 my-2 overflow-x-auto"><code>$2</code></pre>');
+      processedParagraphs.push(html);
+      continue;
+    }
+
+    // 見出し（ブロックレベル - pで囲まない）
+    if (/^#{1,3} /.test(html)) {
+      html = html
+        .replace(/^### (.+)$/gm, '<h3 class="text-lg font-semibold text-white mt-4 mb-2">$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2 class="text-xl font-semibold text-white mt-4 mb-2">$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1 class="text-2xl font-bold text-white mt-4 mb-2">$1</h1>');
+      processedParagraphs.push(html);
+      continue;
+    }
+
+    // 引用（ブロックレベル - pで囲まない）
+    if (/^> /.test(html)) {
+      html = html.replace(/^> (.+)$/gm, '<blockquote class="border-l-2 border-accent pl-4 my-2 text-gray-300 italic">$1</blockquote>');
+      processedParagraphs.push(html);
+      continue;
+    }
+
+    // リスト（ブロックレベル - pで囲まない）
+    if (/^[-\d]/.test(html)) {
+      // 順序なしリスト
+      html = html.replace(/^- (.+)$/gm, '<li class="ml-4 list-disc">$1</li>');
+      // 順序付きリスト
+      html = html.replace(/^\d+\. (.+)$/gm, '<li class="ml-4 list-decimal">$1</li>');
+
+      // リストアイテムをul/olで囲む
+      if (html.includes('list-disc')) {
+        html = '<ul class="my-2">' + html.replace(/\n/g, "") + '</ul>';
+      } else if (html.includes('list-decimal')) {
+        html = '<ol class="my-2">' + html.replace(/\n/g, "") + '</ol>';
+      }
+      processedParagraphs.push(html);
+      continue;
+    }
+
+    // インライン要素を処理
+    html = html
+      // インラインコード
+      .replace(/`([^`]+)`/g, '<code class="bg-night-muted px-1 rounded text-accent">$1</code>')
+      // 太字・斜体
+      .replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold">$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em class="italic">$1</em>')
+      // リンク
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-accent hover:underline" target="_blank" rel="noopener">$1</a>')
+      // 改行
+      .replace(/\n/g, "<br>");
+
+    // 通常のテキストはpで囲む
+    processedParagraphs.push(`<p class="my-2">${html}</p>`);
+  }
+
+  return processedParagraphs.join("");
 }
 
 export function MarkdownTextarea({
