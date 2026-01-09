@@ -45,7 +45,7 @@ export const learningThemes = [
   },
   {
     title: "Condensed Mathematics",
-    summary: "Clausen–Scholze の研究から位相的な視点を使った代数である凝縮数学の基礎を学習したいです。",
+    summary: "Clausen-Scholze の研究から位相的な視点を使った代数である凝縮数学の基礎を学習したいです。",
   },
   {
     title: "TeX",

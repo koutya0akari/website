@@ -1,27 +1,22 @@
-import Link from "next/link";
-import { Code2, BookOpen, Users } from "lucide-react";
+import { Code2, Users } from "lucide-react";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { activityTimeline } from "@/data/home";
-import { getActivityByYear, type ActivityYear } from "@/lib/diary-supabase";
 import { getGitHubActivityByYear, type GitHubActivityYear, type GitHubCommit } from "@/lib/github";
 
 type MergedActivity = {
   year: string;
   manualItems: string[];
-  diaryItems: { title: string; slug: string; date: string }[];
   commits: GitHubCommit[];
 };
 
 function mergeActivities(
   manual: typeof activityTimeline,
-  diary: ActivityYear[],
   github: GitHubActivityYear[]
 ): MergedActivity[] {
   const yearSet = new Set<string>();
 
   // 全ての年を収集
   manual.forEach((a) => yearSet.add(a.year));
-  diary.forEach((a) => yearSet.add(a.year));
   github.forEach((a) => yearSet.add(a.year));
 
   // 年を降順でソート
@@ -29,24 +24,19 @@ function mergeActivities(
 
   return sortedYears.map((year) => {
     const manualActivity = manual.find((a) => a.year === year);
-    const diaryActivity = diary.find((a) => a.year === year);
     const githubActivity = github.find((a) => a.year === year);
 
     return {
       year,
       manualItems: manualActivity?.items || [],
-      diaryItems: diaryActivity?.items || [],
       commits: githubActivity?.commits || [],
     };
   });
 }
 
 export async function ActivitySection() {
-  const [diaryActivity, githubActivity] = await Promise.all([
-    getActivityByYear(),
-    getGitHubActivityByYear(),
-  ]);
-  const mergedActivities = mergeActivities(activityTimeline, diaryActivity, githubActivity);
+  const githubActivity = await getGitHubActivityByYear();
+  const mergedActivities = mergeActivities(activityTimeline, githubActivity);
 
   return (
     <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-night-soft/80 p-6 sm:p-8">
@@ -63,13 +53,12 @@ export async function ActivitySection() {
           </div>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs text-white/70">
             <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_0_4px_rgba(100,210,255,0.2)]" />
-            Diary・GitHub から自動更新
+            GitHub から自動更新
           </div>
         </div>
         <div className="relative space-y-8">
           {mergedActivities.map((activity, index) => {
             const hasManualItems = activity.manualItems.length > 0;
-            const hasDiaryItems = activity.diaryItems.length > 0;
             const hasCommits = activity.commits.length > 0;
 
             const card = (
@@ -81,12 +70,6 @@ export async function ActivitySection() {
                       <span className="inline-flex items-center gap-1 rounded-full bg-accent/20 px-3 py-1 text-xs font-semibold text-accent">
                         <Users className="h-3 w-3" />
                         Community
-                      </span>
-                    )}
-                    {hasDiaryItems && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-400">
-                        <BookOpen className="h-3 w-3" />
-                        Diary
                       </span>
                     )}
                     {hasCommits && (
@@ -105,23 +88,6 @@ export async function ActivitySection() {
                       <span>{item}</span>
                     </li>
                   ))}
-                  {/* Diary から自動取得した活動 */}
-                  {activity.diaryItems.slice(0, 5).map((item) => (
-                    <li key={item.slug} className="flex items-start gap-2 text-sm">
-                      <span className="mt-1 block h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                      <Link
-                        href={`/diary/${item.slug}` as const}
-                        className="text-white/80 underline-offset-2 hover:text-white hover:underline"
-                      >
-                        {item.title}
-                      </Link>
-                    </li>
-                  ))}
-                  {activity.diaryItems.length > 5 && (
-                    <li className="text-xs text-white/50">
-                      他 {activity.diaryItems.length - 5} 件の記事
-                    </li>
-                  )}
                   {/* GitHub コミット */}
                   {activity.commits.slice(0, 3).map((commit) => (
                     <li key={commit.sha} className="flex items-start gap-2 text-sm">
