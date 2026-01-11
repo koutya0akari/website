@@ -7,17 +7,14 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC)
 
-## ✨ 特徴
+## 特徴
 
-- 📝 **Math Diary** - 数学の学習記録をブログ形式で公開
-- 📅 **Weekly Diary** - 週間日記（1週間のまとめ）を公開
-- 📚 **Resources** - PDF や外部リンクを整理して公開
-- 🎨 **モダンな UI** - ダークテーマ、アニメーション、レスポンシブ
-- 🔐 **管理パネル** - 日記・リソース・サイト設定を GUI で管理
-- ⚡ **高速** - ISR による高速なページ配信
-- 🔍 **コマンドパレット** - `⌘+K` でサイト内検索
+- **Math Diary** - 数学の学習記録をブログ形式で公開
+- **Weekly Diary** - 週間日記（1週間のまとめ）を公開
+- **Resources** - PDF や外部リンクを整理して公開
+- **管理パネル** - 日記・リソース・サイト設定を GUI で管理
 
-## 🚀 クイックスタート
+## クイックスタート
 
 ### 1. リポジトリをクローン
 
@@ -85,7 +82,7 @@ src/
 | サイト設定 | `/admin/site` | トップページ設定 |
 | About 設定 | `/admin/about` | プロフィール編集 |
 
-## 🌐 デプロイ
+## デプロイ
 
 ### Vercel（推奨）
 
@@ -101,7 +98,7 @@ src/
 - [実装サマリー](docs/IMPLEMENTATION_SUMMARY.md)
 - [デプロイチェックリスト](DEPLOYMENT_CHECKLIST.md)
 
-## 🛠️ 技術スタック
+## 技術スタック
 
 - **フレームワーク**: Next.js 16 (App Router)
 - **データベース**: Supabase (PostgreSQL)
