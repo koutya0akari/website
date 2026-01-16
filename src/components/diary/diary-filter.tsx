@@ -89,12 +89,14 @@ export function DiaryFilter({ entries }: DiaryFilterProps) {
           </div>
         )}
       </div>
-      <div className="grid gap-6">
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {filtered.map((entry) => (
           <DiaryCard key={entry.id} entry={entry} />
         ))}
-        {filtered.length === 0 && <p className="text-center text-white/60">該当する日記はありません。</p>}
       </div>
+      {filtered.length === 0 && (
+        <p className="text-center text-white/60">該当する日記はありません。</p>
+      )}
     </div>
   );
 }

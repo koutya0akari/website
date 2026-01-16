@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { PopularDiaries } from "@/components/diary/popular-diaries";
+import { PopularDiariesGrid } from "@/components/diary/popular-diaries";
 import { DiaryFilter } from "@/components/diary/diary-filter";
 import { getDiaryEntries, getPopularDiaryEntries } from "@/lib/diary";
 
@@ -25,12 +25,12 @@ export default async function DiaryPage() {
           公開資料を見る
         </Link>
       </section>
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="lg:order-1">
-          <DiaryFilter entries={diaries} />
-        </div>
-        <PopularDiaries entries={popularDiaries} />
-      </div>
+
+      {/* よく読まれている記事 - 最上部に横並びで表示 */}
+      <PopularDiariesGrid entries={popularDiaries} />
+
+      {/* 記事一覧 - 3列グリッド */}
+      <DiaryFilter entries={diaries} />
     </div>
   );
 }
