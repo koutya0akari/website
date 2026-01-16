@@ -90,11 +90,19 @@ function Dropdown({ trigger, children, isOpen, onToggle, onClose }: DropdownProp
 
   return (
     <div ref={ref} className="relative">
-      <button type="button" onClick={onToggle} className="toolbar-btn">
+      <button
+        type="button"
+        onClick={onToggle}
+        onMouseDown={(e) => e.preventDefault()} // テキストエリアのフォーカスを維持
+        className="toolbar-btn"
+      >
         {trigger}
       </button>
       {isOpen && (
-        <div className="absolute left-0 top-full z-50 mt-1 rounded-md border border-night-muted bg-night-soft shadow-lg">
+        <div
+          className="absolute left-0 top-full z-50 mt-1 rounded-md border border-night-muted bg-night-soft shadow-lg"
+          onMouseDown={(e) => e.preventDefault()} // ドロップダウン内でもフォーカスを維持
+        >
           {children}
         </div>
       )}
@@ -121,6 +129,7 @@ function ToolbarButton({
     <button
       type="button"
       onClick={onClick}
+      onMouseDown={(e) => e.preventDefault()} // テキストエリアのフォーカスを維持
       disabled={disabled}
       title={shortcut ? `${label} (${shortcut})` : label}
       className={`toolbar-btn ${isActive ? "bg-accent/20 text-accent" : ""} ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}

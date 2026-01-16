@@ -52,6 +52,13 @@ export function RichEditor({
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [tableDialogOpen, setTableDialogOpen] = useState(false);
 
+  // ダイアログを開く前の選択範囲を保存
+  const [savedSelection, setSavedSelection] = useState<{ start: number; end: number; text: string }>({
+    start: 0,
+    end: 0,
+    text: "",
+  });
+
   // Refs
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -131,62 +138,71 @@ export function RichEditor({
 
   // Handle link insertion
   const handleLink = useCallback(() => {
+    // ダイアログを開く前に選択範囲を保存
+    const selection = getSelection();
+    setSavedSelection(selection);
     setLinkDialogOpen(true);
-  }, []);
+  }, [getSelection]);
 
   const handleLinkInsert = useCallback(
     (data: LinkDialogData) => {
-      const selection = getSelection();
+      // 保存した選択範囲を使用
       pushToUndoStack(value);
 
       const linkMarkup = generateLink(mode, data);
       const newContent =
-        value.substring(0, selection.start) + linkMarkup + value.substring(selection.end);
+        value.substring(0, savedSelection.start) + linkMarkup + value.substring(savedSelection.end);
 
       onChange(newContent);
-      requestAnimationFrame(() => setCursorPosition(selection.start + linkMarkup.length));
+      requestAnimationFrame(() => setCursorPosition(savedSelection.start + linkMarkup.length));
     },
-    [mode, value, onChange, getSelection, pushToUndoStack, setCursorPosition]
+    [mode, value, onChange, savedSelection, pushToUndoStack, setCursorPosition]
   );
 
   // Handle image insertion
   const handleImage = useCallback(() => {
+    // ダイアログを開く前に選択範囲を保存
+    const selection = getSelection();
+    setSavedSelection(selection);
     setImageDialogOpen(true);
-  }, []);
+  }, [getSelection]);
 
   const handleImageInsert = useCallback(
     (data: ImageDialogData) => {
-      const selection = getSelection();
+      // 保存した選択範囲を使用
       pushToUndoStack(value);
 
       const imageMarkup = generateImage(mode, data);
       const newContent =
-        value.substring(0, selection.start) + imageMarkup + value.substring(selection.end);
+        value.substring(0, savedSelection.start) + imageMarkup + value.substring(savedSelection.end);
 
       onChange(newContent);
-      requestAnimationFrame(() => setCursorPosition(selection.start + imageMarkup.length));
+      requestAnimationFrame(() => setCursorPosition(savedSelection.start + imageMarkup.length));
     },
-    [mode, value, onChange, getSelection, pushToUndoStack, setCursorPosition]
+    [mode, value, onChange, savedSelection, pushToUndoStack, setCursorPosition]
   );
 
   // Handle table insertion
   const handleTable = useCallback(() => {
+    // ダイアログを開く前に選択範囲を保存
+    const selection = getSelection();
+    setSavedSelection(selection);
     setTableDialogOpen(true);
-  }, []);
+  }, [getSelection]);
 
   const handleTableInsert = useCallback(
     (data: TableDialogData) => {
-      const selection = getSelection();
+      // 保存した選択範囲を使用
       pushToUndoStack(value);
 
       const tableMarkup = generateTable(mode, data);
       const newContent =
-        value.substring(0, selection.start) + "\n" + tableMarkup + "\n" + value.substring(selection.end);
+        value.substring(0, savedSelection.start) + "\n" + tableMarkup + "\n" + value.substring(savedSelection.end);
 
       onChange(newContent);
-      requestAnimationFrame(() => setCursorPosition(selection.start + tableMarkup.length + 2));
+      requestAnimationFrame(() => setCursorPosition(savedSelection.start + tableMarkup.length + 2));
     },
-    [mode, value, onChange, getSelection, pushToUndoStack, setCursorPosition]
+    [mode, value, onChange, savedSelection, pushToUndoStack, setCursorPosition]
   );
 
   // Handle color
@@ -497,7 +513,7 @@ export function RichEditor({
         isOpen={linkDialogOpen}
         onClose={() => setLinkDialogOpen(false)}
         onInsert={handleLinkInsert}
-        initialText={getSelection().text}
+        initialText={savedSelection.text}
       />
       <ImageDialog
         isOpen={imageDialogOpen}

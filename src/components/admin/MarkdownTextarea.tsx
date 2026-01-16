@@ -159,6 +159,7 @@ export function MarkdownTextarea({
                 key={index}
                 type="button"
                 onClick={action}
+                onMouseDown={(e) => e.preventDefault()} // テキストエリアのフォーカスを維持
                 title={title}
                 disabled={isPreview}
                 className="rounded p-1.5 text-gray-400 hover:bg-night-muted hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"

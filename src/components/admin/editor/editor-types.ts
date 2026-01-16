@@ -70,7 +70,7 @@ export const FORMAT_MAP: Record<EditorMode, Record<string, FormatOptions>> = {
     underline: { prefix: "<u>", suffix: "</u>", defaultText: "下線テキスト" },
     strikethrough: { prefix: "~~", suffix: "~~", defaultText: "取り消し線" },
     code: { prefix: "`", suffix: "`", defaultText: "コード" },
-    codeBlock: { prefix: "```\n", suffix: "\n```", defaultText: "コードブロック", blockLevel: true },
+    codeBlock: { prefix: "```\n", suffix: "\n```", defaultText: "コードブロック" },
     link: { prefix: "[", suffix: "](url)", defaultText: "リンクテキスト" },
     image: { prefix: "![", suffix: "](url)", defaultText: "画像の説明" },
     quote: { prefix: "> ", suffix: "", defaultText: "引用テキスト", blockLevel: true },
@@ -83,7 +83,7 @@ export const FORMAT_MAP: Record<EditorMode, Record<string, FormatOptions>> = {
     ul: { prefix: "- ", suffix: "", defaultText: "リスト項目", blockLevel: true },
     ol: { prefix: "1. ", suffix: "", defaultText: "リスト項目", blockLevel: true },
     task: { prefix: "- [ ] ", suffix: "", defaultText: "タスク", blockLevel: true },
-    hr: { prefix: "\n---\n", suffix: "", defaultText: "", blockLevel: true },
+    hr: { prefix: "\n---\n", suffix: "", defaultText: "" },
   },
   html: {
     bold: { prefix: "<strong>", suffix: "</strong>", defaultText: "太字テキスト" },
@@ -91,7 +91,7 @@ export const FORMAT_MAP: Record<EditorMode, Record<string, FormatOptions>> = {
     underline: { prefix: "<u>", suffix: "</u>", defaultText: "下線テキスト" },
     strikethrough: { prefix: "<del>", suffix: "</del>", defaultText: "取り消し線" },
     code: { prefix: "<code>", suffix: "</code>", defaultText: "コード" },
-    codeBlock: { prefix: "<pre><code>\n", suffix: "\n</code></pre>", defaultText: "コードブロック", blockLevel: true },
+    codeBlock: { prefix: "<pre><code>\n", suffix: "\n</code></pre>", defaultText: "コードブロック" },
     link: { prefix: '<a href="url">', suffix: "</a>", defaultText: "リンクテキスト" },
     image: { prefix: '<img src="url" alt="', suffix: '">', defaultText: "画像の説明" },
     quote: { prefix: "<blockquote>", suffix: "</blockquote>", defaultText: "引用テキスト", blockLevel: true },
@@ -104,7 +104,7 @@ export const FORMAT_MAP: Record<EditorMode, Record<string, FormatOptions>> = {
     ul: { prefix: "<ul>\n  <li>", suffix: "</li>\n</ul>", defaultText: "リスト項目", blockLevel: true },
     ol: { prefix: "<ol>\n  <li>", suffix: "</li>\n</ol>", defaultText: "リスト項目", blockLevel: true },
     task: { prefix: '<input type="checkbox"> ', suffix: "", defaultText: "タスク", blockLevel: true },
-    hr: { prefix: "\n<hr>\n", suffix: "", defaultText: "", blockLevel: true },
+    hr: { prefix: "\n<hr>\n", suffix: "", defaultText: "" },
   },
 };
 

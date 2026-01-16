@@ -14,6 +14,53 @@ export function applyFormat(
   const selected = content.substring(selectionStart, selectionEnd);
   const after = content.substring(selectionEnd);
 
+  // ブロックレベル要素の場合は行の先頭に適用
+  if (format.blockLevel) {
+    // 選択範囲の開始位置がある行の先頭を見つける
+    const lineStart = before.lastIndexOf("\n") + 1;
+    const beforeLine = content.substring(0, lineStart);
+    
+    // 選択範囲を含む行の内容を取得
+    const lineAndSelection = content.substring(lineStart, selectionEnd);
+    const afterContent = content.substring(selectionEnd);
+    
+    // 複数行が選択されている場合
+    const lines = lineAndSelection.split("\n");
+    
+    // 見出しやquote以外のリスト系は各行に適用
+    const isMultiLineFormat = format.prefix === "- " || 
+                              format.prefix === "1. " || 
+                              format.prefix === "- [ ] " || 
+                              format.prefix === "> ";
+    
+    const formattedLines = lines.map((line, index) => {
+      // 見出しは最初の行のみに適用
+      if (!isMultiLineFormat && index > 0) {
+        return line;
+      }
+      
+      // 空行はスキップ（最初の行を除く）
+      if (index > 0 && line.trim() === "") {
+        return line;
+      }
+      
+      // 既にプレフィックスがある場合は削除（トグル動作）
+      if (line.startsWith(format.prefix)) {
+        return line.substring(format.prefix.length);
+      }
+      
+      const textContent = line || format.defaultText || "";
+      return `${format.prefix}${textContent}${format.suffix}`;
+    });
+    
+    const newLineContent = formattedLines.join("\n");
+    const newContent = beforeLine + newLineContent + afterContent;
+    const newCursorPos = beforeLine.length + newLineContent.length;
+
+    return { newContent, newCursorPos };
+  }
+
+  // インライン要素の場合
   const textToWrap = selected || format.defaultText || "";
   const newText = `${format.prefix}${textToWrap}${format.suffix}`;
 
