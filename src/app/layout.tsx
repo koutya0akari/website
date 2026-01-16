@@ -75,7 +75,7 @@ export default function RootLayout({
   return (
     <html lang="ja" className="dark" suppressHydrationWarning>
       <body className={`${inter.variable} ${noto.variable} ${signika.variable}`}>
-        <ThemeProvider defaultTheme="dark">
+        <ThemeProvider>
           <div className="flex min-h-screen flex-col">
             <KaTeXProvider />
             <InteractiveBackground />
