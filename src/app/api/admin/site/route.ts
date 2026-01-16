@@ -41,6 +41,7 @@ export async function GET() {
           activities: [],
           seminars: [],
           learningThemes: [],
+          profile: { description: "", details: [] },
         },
       });
     }
@@ -60,6 +61,7 @@ export async function GET() {
         activities: data.activities || [],
         seminars: data.seminars || [],
         learningThemes: data.learning_themes || [],
+        profile: data.profile || { description: "", details: [] },
       },
     });
   } catch (error) {
@@ -95,6 +97,7 @@ export async function PUT(request: NextRequest) {
       activities,
       seminars,
       learningThemes,
+      profile,
     } = body;
 
     // Atomic upsert - NOT NULL カラムには空文字列をデフォルト値として使用
@@ -116,6 +119,7 @@ export async function PUT(request: NextRequest) {
           activities: activities || [],
           seminars: seminars || [],
           learning_themes: learningThemes || [],
+          profile: profile || { description: "", details: [] },
           updated_at: new Date().toISOString(),
         },
         { onConflict: "key" }

@@ -59,6 +59,17 @@ export type LearningTheme = {
   summary: string;
 };
 
+export type ProfileDetail = {
+  id: string;
+  label: string;
+  value: string;
+};
+
+export type Profile = {
+  description: string;
+  details: ProfileDetail[];
+};
+
 export type SiteContent = {
   heroTitle: string;
   heroLead: string;
@@ -73,6 +84,7 @@ export type SiteContent = {
   activities: ActivityItem[];
   seminars: SeminarTheme[];
   learningThemes: LearningTheme[];
+  profile: Profile;
 };
 
 export type DiaryEntry = {

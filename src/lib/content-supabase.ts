@@ -21,6 +21,7 @@ type SiteRow = {
   activities: unknown;
   seminars: unknown;
   learning_themes: unknown;
+  profile: unknown;
   updated_at: string;
 };
 
@@ -53,6 +54,8 @@ export async function getSiteContent(): Promise<SiteContent> {
   const supabase = await createClient();
   const { data, error } = await supabase.from("site").select("*").eq("key", SITE_KEY).maybeSingle();
 
+  const defaultProfile = { description: "", details: [] };
+
   if (error || !data) {
     if (error) console.error("[Supabase] Failed to fetch site content:", error);
     return {
@@ -69,10 +72,12 @@ export async function getSiteContent(): Promise<SiteContent> {
       activities: [],
       seminars: [],
       learningThemes: [],
+      profile: defaultProfile,
     };
   }
 
   const row = data as SiteRow;
+  const profileData = row.profile as { description?: string; details?: unknown[] } | null;
   return {
     heroTitle: row.hero_title,
     heroLead: row.hero_lead,
@@ -87,6 +92,10 @@ export async function getSiteContent(): Promise<SiteContent> {
     activities: asArray(row.activities),
     seminars: asArray(row.seminars),
     learningThemes: asArray(row.learning_themes),
+    profile: {
+      description: profileData?.description ?? "",
+      details: asArray(profileData?.details),
+    },
   };
 }
 

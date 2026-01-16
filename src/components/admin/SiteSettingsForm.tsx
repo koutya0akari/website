@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Save, Plus, Trash2, GripVertical } from "lucide-react";
-import type { ProjectSummary, ActivityItem, SeminarTheme, LearningTheme, SeminarThemeReference } from "@/lib/types";
+import type { ProjectSummary, ActivityItem, SeminarTheme, LearningTheme, SeminarThemeReference, Profile, ProfileDetail } from "@/lib/types";
 import { MarkdownTextarea } from "./MarkdownTextarea";
 
 interface SiteSettings {
@@ -10,6 +10,7 @@ interface SiteSettings {
   activities: ActivityItem[];
   seminars: SeminarTheme[];
   learningThemes: LearningTheme[];
+  profile: Profile;
 }
 
 export function SiteSettingsForm() {
@@ -18,10 +19,11 @@ export function SiteSettingsForm() {
     activities: [],
     seminars: [],
     learningThemes: [],
+    profile: { description: "", details: [] },
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<"projects" | "activities" | "seminars" | "learningThemes">("projects");
+  const [activeTab, setActiveTab] = useState<"projects" | "activities" | "seminars" | "learningThemes" | "profile">("projects");
 
   useEffect(() => {
     fetchSettings();
@@ -37,6 +39,7 @@ export function SiteSettingsForm() {
           activities: data.activities || [],
           seminars: data.seminars || [],
           learningThemes: data.learningThemes || [],
+          profile: data.profile || { description: "", details: [] },
         });
       }
     } catch (error) {
@@ -153,11 +156,43 @@ export function SiteSettingsForm() {
     setSettings({ ...settings, learningThemes: settings.learningThemes.filter((_, i) => i !== index) });
   };
 
+  // Profile helpers
+  const updateProfileDescription = (value: string) => {
+    setSettings({
+      ...settings,
+      profile: { ...settings.profile, description: value },
+    });
+  };
+  const addProfileDetail = () => {
+    setSettings({
+      ...settings,
+      profile: {
+        ...settings.profile,
+        details: [...settings.profile.details, { id: generateId(), label: "", value: "" }],
+      },
+    });
+  };
+  const updateProfileDetail = (index: number, field: keyof ProfileDetail, value: string) => {
+    const newDetails = [...settings.profile.details];
+    newDetails[index] = { ...newDetails[index], [field]: value };
+    setSettings({ ...settings, profile: { ...settings.profile, details: newDetails } });
+  };
+  const removeProfileDetail = (index: number) => {
+    setSettings({
+      ...settings,
+      profile: {
+        ...settings.profile,
+        details: settings.profile.details.filter((_, i) => i !== index),
+      },
+    });
+  };
+
   if (loading) {
     return <div className="text-center text-gray-400">読み込み中...</div>;
   }
 
   const tabs = [
+    { id: "profile", label: "プロフィール" },
     { id: "projects", label: "プロジェクト" },
     { id: "activities", label: "近年の活動" },
     { id: "seminars", label: "自主ゼミ" },
@@ -436,6 +471,70 @@ export function SiteSettingsForm() {
             <Plus className="h-4 w-4" />
             テーマを追加
           </button>
+        </div>
+      )}
+
+      {/* Profile Tab */}
+      {activeTab === "profile" && (
+        <div className="space-y-6">
+          <p className="text-sm text-gray-400">
+            ホームページのプロフィールセクションを編集します。
+          </p>
+          
+          {/* Description */}
+          <div className="rounded-lg border border-night-muted bg-night-soft p-4">
+            <label className="mb-2 block text-sm font-medium text-gray-300">プロフィール説明</label>
+            <MarkdownTextarea
+              value={settings.profile.description}
+              onChange={updateProfileDescription}
+              rows={4}
+              placeholder="・徳島大学 理工学部 理工学科 数理科学コース B2。&#10;・代数幾何を軸に...&#10;（改行で箇条書き風に表示されます）"
+            />
+          </div>
+
+          {/* Details */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-gray-300">詳細項目（ラベル＋値）</label>
+            </div>
+            {settings.profile.details.map((detail, index) => (
+              <div key={detail.id} className="rounded-lg border border-night-muted bg-night-soft p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-gray-400">
+                    <GripVertical className="h-4 w-4" />
+                    <span className="text-sm">項目 {index + 1}</span>
+                  </div>
+                  <button type="button" onClick={() => removeProfileDetail(index)} className="text-red-400 hover:text-red-300">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    value={detail.label}
+                    onChange={(e) => updateProfileDetail(index, "label", e.target.value)}
+                    className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
+                    placeholder="ラベル（例: 推し）"
+                  />
+                  <input
+                    type="text"
+                    value={detail.value}
+                    onChange={(e) => updateProfileDetail(index, "value", e.target.value)}
+                    className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
+                    placeholder="値（例: 結月ゆかりさん）"
+                  />
+                </div>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={addProfileDetail}
+              className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-night-muted py-4 text-gray-400 hover:border-accent hover:text-accent"
+            >
+              <Plus className="h-4 w-4" />
+              項目を追加
+            </button>
+          </div>
         </div>
       )}
     </form>

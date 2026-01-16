@@ -9,7 +9,7 @@ import { ProjectSection } from "@/components/home/project-section";
 import { SeminarSection } from "@/components/home/seminar-section";
 import { WeeklyDiarySection } from "@/components/home/weekly-diary-section";
 import { FadeIn } from "@/components/motion/fade-in";
-import { directContacts, personalIntro } from "@/data/home";
+import { directContacts, personalIntro as defaultPersonalIntro } from "@/data/home";
 import { getResourceItems, getSiteContent } from "@/lib/content";
 import { getDiaryEntries } from "@/lib/diary";
 import { getWeeklyDiaryEntries } from "@/lib/weekly-diary";
@@ -32,6 +32,8 @@ export default async function HomePage() {
     getResourceItems(3),
   ]);
 
+  const profileDescription = site.profile?.description || defaultPersonalIntro.description;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -43,7 +45,7 @@ export default async function HomePage() {
       "@type": "Organization",
       name: "Tokushima University",
     },
-    description: personalIntro.description,
+    description: profileDescription,
   };
 
   return (

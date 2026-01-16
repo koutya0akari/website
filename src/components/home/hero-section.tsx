@@ -1,6 +1,6 @@
 import { SmartLink } from "@/components/smart-link";
 import { RichText } from "@/components/rich-text";
-import { personalIntro } from "@/data/home";
+import { personalIntro as defaultPersonalIntro } from "@/data/home";
 import type { SiteContent, DiaryEntry } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
@@ -11,6 +11,14 @@ type HeroSectionProps = {
 
 export function HeroSection({ site, diaries }: HeroSectionProps) {
   const timelinePreview = diaries.slice(0, 4);
+  
+  // 動的データがない場合は静的データにフォールバック
+  const profile = site.profile && site.profile.description
+    ? site.profile
+    : {
+        description: defaultPersonalIntro.description,
+        details: defaultPersonalIntro.details.map((d, i) => ({ ...d, id: String(i) })),
+      };
 
   return (
     <section className="relative overflow-hidden rounded-[40px] border border-white/15 bg-gradient-to-br from-night via-[#0b1528] to-night-muted p-6 text-white shadow-card sm:p-8 lg:p-10">
@@ -72,10 +80,10 @@ export function HeroSection({ site, diaries }: HeroSectionProps) {
             <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black/30 p-5 sm:p-6">
               <div className="absolute right-4 top-4 h-16 w-16 rounded-full bg-accent/10 blur-2xl" />
               <p className="text-[11px] uppercase tracking-[0.3em] text-white/60">Profile</p>
-              <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-white/85">{personalIntro.description}</p>
+              <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-white/85">{profile.description}</p>
               <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                {personalIntro.details.map((detail) => (
-                  <span key={detail.label} className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                {profile.details.map((detail) => (
+                  <span key={detail.id || detail.label} className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1">
                     <span className="rounded-full bg-accent/20 px-1.5 py-0.5 text-[10px] font-medium text-accent">{detail.label}</span>
                     <span className="text-white/90">{detail.value}</span>
                   </span>
