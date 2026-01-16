@@ -91,7 +91,7 @@ export function GitHubStats({ username }: GitHubStatsProps) {
         }
 
         // Count push events as contributions
-        eventsData.forEach((event: GitHubEvent) => {
+        data.events.forEach((event: GitHubEvent) => {
           if (event.type === "PushEvent") {
             const dateStr = event.created_at.split("T")[0];
             const current = contributionMap.get(dateStr) || 0;
