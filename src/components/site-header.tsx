@@ -6,7 +6,6 @@ import { Menu, X, Search, Command } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { SmartLink } from "@/components/smart-link";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV_ITEMS = [
   { label: "ホーム", href: "/" },
@@ -63,16 +62,6 @@ export function SiteHeader() {
               <Command className="h-2.5 w-2.5" />K
             </kbd>
           </button>
-
-          {/* Theme Toggle */}
-          <ThemeToggle />
-
-          <Link
-            href="/diary"
-            className="rounded-full border border-white/20 px-4 py-1.5 text-sm font-medium text-white transition hover:border-accent hover:text-accent"
-          >
-            Updates
-          </Link>
         </nav>
 
         {/* Mobile Menu Toggle */}
@@ -105,13 +94,6 @@ export function SiteHeader() {
                   {item.label}
                 </SmartLink>
               ))}
-              <Link
-                href="/diary"
-                className="inline-block w-fit rounded-full border border-white/20 px-4 py-2 text-sm font-medium text-white transition hover:border-accent hover:text-accent"
-                onClick={() => setIsOpen(false)}
-              >
-                Updates
-              </Link>
             </nav>
           </motion.div>
         )}

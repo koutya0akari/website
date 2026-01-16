@@ -469,4 +469,3 @@ export function GitHubStats({ username }: GitHubStatsProps) {
     </div>
   );
 }
-
