@@ -89,26 +89,26 @@ export function PopularDiariesGrid({ entries }: PopularDiariesProps) {
               key={entry.id}
               className="relative flex flex-col gap-4 p-6 transition hover:-translate-y-0.5 hover:border-accent/80"
             >
-              {/* ランキングバッジ */}
-              <div className="absolute -left-2 -top-2 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-b from-accent/90 to-highlight/80 text-sm font-bold text-night shadow-lg">
-                #{index + 1}
-              </div>
-              <div className="flex flex-wrap items-center justify-between gap-3 pt-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                {/* ランキングバッジ */}
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-b from-accent/90 to-highlight/80 text-xs font-bold text-night shadow-lg">
+                  #{index + 1}
+                </div>
                 <span className="text-xs uppercase tracking-[0.2em] text-white/60">
                   {entry.folder ?? "Math Diary"}
                 </span>
-                <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
-                  <time className="text-sm text-white/60">{formatDate(entry.publishedAt)}</time>
-                  {views ? (
-                    <span className="rounded-full border border-accent/30 bg-accent/10 px-2 py-1 text-[11px] font-medium text-accent">
-                      {views}
-                    </span>
-                  ) : (
-                    <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70">
-                      PV集計中
-                    </span>
-                  )}
-                </div>
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-white/60">
+                <time className="text-sm text-white/60">{formatDate(entry.publishedAt)}</time>
+                {views ? (
+                  <span className="rounded-full border border-accent/30 bg-accent/10 px-2 py-1 text-[11px] font-medium text-accent">
+                    {views}
+                  </span>
+                ) : (
+                  <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70">
+                    PV集計中
+                  </span>
+                )}
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-white">

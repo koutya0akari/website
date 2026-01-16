@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 
-import { ActivityHeatmap } from "@/components/activity-heatmap";
 import { GitHubStats } from "@/components/github-stats";
 import { FadeIn } from "@/components/motion/fade-in";
 import { RichText } from "@/components/rich-text";
 import { SkillRadar } from "@/components/skill-radar";
 import { getAboutContent } from "@/lib/content";
-import { getDiaryEntries } from "@/lib/diary";
 
 export const metadata: Metadata = {
   title: "About",
@@ -24,30 +22,7 @@ const SKILL_DATA = [
 ];
 
 export default async function AboutPage() {
-  const [about, diaries] = await Promise.all([
-    getAboutContent(),
-    getDiaryEntries(100), // Get more entries for heatmap
-  ]);
-
-  // Generate activity data from diary entries
-  const activityData = diaries.map((entry) => ({
-    date: entry.publishedAt.split("T")[0],
-    count: 1 + Math.floor((entry.viewCount || 0) / 10), // Simple heuristic
-  }));
-
-  // Aggregate by date
-  const aggregatedActivity = Object.values(
-    activityData.reduce(
-      (acc, item) => {
-        if (!acc[item.date]) {
-          acc[item.date] = { date: item.date, count: 0 };
-        }
-        acc[item.date].count += item.count;
-        return acc;
-      },
-      {} as Record<string, { date: string; count: number }>
-    )
-  );
+  const about = await getAboutContent();
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-12 space-y-10">
@@ -65,16 +40,8 @@ export default async function AboutPage() {
         </section>
       </FadeIn>
 
-      {/* Activity Heatmap */}
-      <FadeIn delay={0.1}>
-        <section className="rounded-[32px] border border-white/10 bg-white/5 p-8">
-          <h2 className="mb-6 text-2xl font-semibold text-white">学習アクティビティ</h2>
-          <ActivityHeatmap data={aggregatedActivity} />
-        </section>
-      </FadeIn>
-
       {/* GitHub Stats */}
-      <FadeIn delay={0.15}>
+      <FadeIn delay={0.1}>
         <section className="rounded-[32px] border border-white/10 bg-white/5 p-8">
           <h2 className="mb-6 text-2xl font-semibold text-white">GitHub アクティビティ</h2>
           <GitHubStats username="koutya0akari" />
