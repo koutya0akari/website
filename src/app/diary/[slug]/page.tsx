@@ -6,12 +6,11 @@ import { notFound } from "next/navigation";
 import { DiaryBody } from "@/components/diary/diary-body";
 import { DiaryEngagement } from "@/components/diary/diary-engagement";
 import { Comments } from "@/components/diary/comments";
-import { PopularDiaries } from "@/components/diary/popular-diaries";
 import { TableOfContents } from "@/components/diary/table-of-contents";
 import { DiaryViewBadge } from "@/components/diary/view-badge";
 import { ReadingTime } from "@/components/reading-time";
 import { ShareToX } from "@/components/share-to-x";
-import { getDiaryBySlug, getPopularDiaryEntries } from "@/lib/diary";
+import { getDiaryBySlug } from "@/lib/diary";
 import { createExcerpt, formatDate, stripHtml } from "@/lib/utils";
 
 type PageProps = {
@@ -76,7 +75,6 @@ export default async function DiaryDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const popularDiaries = await getPopularDiaryEntries(5, entry.slug);
   const shareUrl = `${SITE_URL}/diary/${entry.slug}`;
   const shareTags = entry.tags?.slice(0, 6).map((tag) => tag.replace(/^#/, "")) ?? [];
   const tagText = shareTags.slice(0, 3).map((tag) => `#${tag}`).join(" ");
@@ -132,13 +130,7 @@ export default async function DiaryDetailPage({ params }: PageProps) {
         {/* Desktop Sidebar */}
         <aside className="hidden space-y-6 lg:block">
           <TableOfContents html={entry.body} />
-          <PopularDiaries entries={popularDiaries} />
         </aside>
-        
-        {/* Mobile Popular Section */}
-        <div className="lg:hidden">
-          <PopularDiaries entries={popularDiaries} />
-        </div>
       </div>
     </div>
   );
