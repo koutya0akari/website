@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { RichEditor } from "./editor";
+import { FileUpload } from "./FileUpload";
 import { Save, Eye, Trash2 } from "lucide-react";
 
 export interface DiaryFormData {
@@ -188,16 +189,14 @@ export function DiaryForm({
           />
         </div>
 
-        <div>
-          <label className="mb-2 block text-sm font-medium text-gray-300">Hero Image URL</label>
-          <input
-            type="url"
-            value={formData.heroImageUrl}
-            onChange={(e) => setFormData({ ...formData, heroImageUrl: e.target.value })}
-            className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 placeholder-gray-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-            placeholder="https://example.com/image.jpg"
-          />
-        </div>
+        <FileUpload
+          label="Hero Image"
+          value={formData.heroImageUrl}
+          onUrlChange={(url) => setFormData({ ...formData, heroImageUrl: url })}
+          folder="diary"
+          accept="image/*"
+          hint="記事のサムネイル画像をアップロードまたはURLを入力"
+        />
       </div>
 
       <div>

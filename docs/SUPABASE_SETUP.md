@@ -293,3 +293,64 @@ CREATE POLICY "Authenticated users full access about" ON about
 ### その他のプラットフォーム
 
 Node.js 18+ が動作する環境であれば、同様の環境変数を設定してデプロイ可能です。
+
+## 9. Storage（ファイルアップロード）
+
+管理画面から画像やPDFをアップロードするには、Supabase Storage の設定が必要です。
+
+### 9.1 Storage バケットの作成
+
+1. Supabase Dashboard → Storage
+2. 「New bucket」をクリック
+3. 以下の設定でバケットを作成：
+   - **Name**: `media`
+   - **Public bucket**: チェックを入れる（公開アクセス可能に）
+   - **File size limit**: 10MB（推奨）
+
+### 9.2 Storage ポリシーの設定
+
+SQL Editor で以下を実行して、認証ユーザーのみアップロード・削除可能、誰でも閲覧可能に設定：
+
+```sql
+-- media バケットのポリシー設定
+
+-- 公開読み取り（誰でもファイルを閲覧可能）
+CREATE POLICY "Public read media"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'media');
+
+-- 認証ユーザーのみアップロード可能
+CREATE POLICY "Authenticated users can upload media"
+ON storage.objects FOR INSERT
+WITH CHECK (
+  bucket_id = 'media' 
+  AND auth.role() = 'authenticated'
+);
+
+-- 認証ユーザーのみ削除可能
+CREATE POLICY "Authenticated users can delete media"
+ON storage.objects FOR DELETE
+USING (
+  bucket_id = 'media' 
+  AND auth.role() = 'authenticated'
+);
+```
+
+### 9.3 使用方法
+
+- **管理画面**: `/admin/media` でファイルの一覧表示・アップロード・削除が可能
+- **日記作成**: Hero Image フィールドから直接画像をアップロード可能
+- **対応ファイル**: JPEG, PNG, GIF, WebP, SVG, PDF, ZIP（最大10MB）
+
+### 9.4 トラブルシューティング
+
+#### 「バケットが見つかりません」エラー
+
+- Storage で `media` バケットが作成されているか確認
+- バケット名が正確に `media` であることを確認
+
+#### アップロードが拒否される
+
+- ファイルサイズが10MB以下であることを確認
+- 対応しているファイル形式であることを確認
+- Storage ポリシーが正しく設定されているか確認

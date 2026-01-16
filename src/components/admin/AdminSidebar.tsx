@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, FolderOpen, Globe, User, CalendarDays } from "lucide-react";
+import { LayoutDashboard, FileText, FolderOpen, Globe, User, CalendarDays, Image } from "lucide-react";
 import { clsx } from "clsx";
 
 const navigation = [
@@ -10,6 +10,7 @@ const navigation = [
   { name: "Diary", href: "/admin/diary" as const, icon: FileText },
   { name: "Weekly Diary", href: "/admin/weekly-diary" as const, icon: CalendarDays },
   { name: "Resources", href: "/admin/resources" as const, icon: FolderOpen },
+  { name: "Media", href: "/admin/media" as const, icon: Image },
   { name: "Site Settings", href: "/admin/site" as const, icon: Globe },
   { name: "About Settings", href: "/admin/about" as const, icon: User },
 ];
