@@ -1,8 +1,16 @@
 import { SmartLink } from "@/components/smart-link";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
-import { seminarThemes } from "@/data/home";
+import type { SeminarTheme } from "@/lib/types";
+import { seminarThemes as defaultSeminarThemes } from "@/data/home";
 
-export function SeminarSection() {
+type SeminarSectionProps = {
+  seminars?: SeminarTheme[];
+};
+
+export function SeminarSection({ seminars }: SeminarSectionProps) {
+  // 動的データがない場合は静的データにフォールバック
+  const themes = seminars && seminars.length > 0 ? seminars : defaultSeminarThemes.map((t, i) => ({ ...t, id: String(i) }));
+
   return (
     <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-white/5 via-night-soft/40 to-night-soft/80 p-6 sm:p-8">
       <div className="pointer-events-none absolute inset-0">
@@ -19,7 +27,7 @@ export function SeminarSection() {
         </div>
       </div>
       <div className="relative mt-4 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {seminarThemes.map((theme, index) => (
+        {themes.map((theme, index) => (
           <SpotlightCard
             key={theme.title}
             className="relative h-full space-y-3 overflow-hidden bg-white/5 p-6"

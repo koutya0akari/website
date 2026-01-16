@@ -1,7 +1,15 @@
 import { SpotlightCard } from "@/components/ui/spotlight-card";
-import { learningThemes } from "@/data/home";
+import type { LearningTheme } from "@/lib/types";
+import { learningThemes as defaultLearningThemes } from "@/data/home";
 
-export function LearningSection() {
+type LearningSectionProps = {
+  learningThemes?: LearningTheme[];
+};
+
+export function LearningSection({ learningThemes }: LearningSectionProps) {
+  // 動的データがない場合は静的データにフォールバック
+  const themes = learningThemes && learningThemes.length > 0 ? learningThemes : defaultLearningThemes.map((t, i) => ({ ...t, id: String(i) }));
+
   return (
     <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-night-muted/70 via-night/60 to-night-soft/80 p-6 sm:p-8">
       <div className="pointer-events-none absolute inset-0">
@@ -16,7 +24,7 @@ export function LearningSection() {
         </div>
       </div>
       <div className="relative mt-4 grid auto-rows-[1fr] gap-5 lg:grid-cols-12">
-        {learningThemes.map((theme, index) => {
+        {themes.map((theme, index) => {
           const spanClass = index % 2 === 0 ? "lg:col-span-7" : "lg:col-span-5";
           return (
             <SpotlightCard

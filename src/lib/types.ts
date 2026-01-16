@@ -41,6 +41,24 @@ export type ActivityItem = {
   items: string[];
 };
 
+export type SeminarThemeReference = {
+  label: string;
+  url: string;
+};
+
+export type SeminarTheme = {
+  id: string;
+  title: string;
+  summary: string;
+  references?: SeminarThemeReference[];
+};
+
+export type LearningTheme = {
+  id: string;
+  title: string;
+  summary: string;
+};
+
 export type SiteContent = {
   heroTitle: string;
   heroLead: string;
@@ -53,6 +71,8 @@ export type SiteContent = {
   timeline: TimelineItem[];
   contactLinks: ContactLink[];
   activities: ActivityItem[];
+  seminars: SeminarTheme[];
+  learningThemes: LearningTheme[];
 };
 
 export type DiaryEntry = {

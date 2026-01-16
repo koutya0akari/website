@@ -2,22 +2,26 @@
 
 import { useState, useEffect } from "react";
 import { Save, Plus, Trash2, GripVertical } from "lucide-react";
-import type { ProjectSummary, ActivityItem } from "@/lib/types";
+import type { ProjectSummary, ActivityItem, SeminarTheme, LearningTheme, SeminarThemeReference } from "@/lib/types";
 import { MarkdownTextarea } from "./MarkdownTextarea";
 
 interface SiteSettings {
   projects: ProjectSummary[];
   activities: ActivityItem[];
+  seminars: SeminarTheme[];
+  learningThemes: LearningTheme[];
 }
 
 export function SiteSettingsForm() {
   const [settings, setSettings] = useState<SiteSettings>({
     projects: [],
     activities: [],
+    seminars: [],
+    learningThemes: [],
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<"projects" | "activities">("projects");
+  const [activeTab, setActiveTab] = useState<"projects" | "activities" | "seminars" | "learningThemes">("projects");
 
   useEffect(() => {
     fetchSettings();
@@ -31,6 +35,8 @@ export function SiteSettingsForm() {
         setSettings({
           projects: data.projects || [],
           activities: data.activities || [],
+          seminars: data.seminars || [],
+          learningThemes: data.learningThemes || [],
         });
       }
     } catch (error) {
@@ -96,6 +102,57 @@ export function SiteSettingsForm() {
     setSettings({ ...settings, activities: settings.activities.filter((_, i) => i !== index) });
   };
 
+  // Seminar helpers
+  const addSeminar = () => {
+    setSettings({
+      ...settings,
+      seminars: [...settings.seminars, { id: generateId(), title: "", summary: "", references: [] }],
+    });
+  };
+  const updateSeminar = (index: number, field: keyof SeminarTheme, value: string | SeminarThemeReference[]) => {
+    const newSeminars = [...settings.seminars];
+    newSeminars[index] = { ...newSeminars[index], [field]: value };
+    setSettings({ ...settings, seminars: newSeminars });
+  };
+  const removeSeminar = (index: number) => {
+    setSettings({ ...settings, seminars: settings.seminars.filter((_, i) => i !== index) });
+  };
+  const addSeminarReference = (seminarIndex: number) => {
+    const newSeminars = [...settings.seminars];
+    const refs = newSeminars[seminarIndex].references || [];
+    newSeminars[seminarIndex] = { ...newSeminars[seminarIndex], references: [...refs, { label: "", url: "" }] };
+    setSettings({ ...settings, seminars: newSeminars });
+  };
+  const updateSeminarReference = (seminarIndex: number, refIndex: number, field: keyof SeminarThemeReference, value: string) => {
+    const newSeminars = [...settings.seminars];
+    const refs = [...(newSeminars[seminarIndex].references || [])];
+    refs[refIndex] = { ...refs[refIndex], [field]: value };
+    newSeminars[seminarIndex] = { ...newSeminars[seminarIndex], references: refs };
+    setSettings({ ...settings, seminars: newSeminars });
+  };
+  const removeSeminarReference = (seminarIndex: number, refIndex: number) => {
+    const newSeminars = [...settings.seminars];
+    const refs = (newSeminars[seminarIndex].references || []).filter((_, i) => i !== refIndex);
+    newSeminars[seminarIndex] = { ...newSeminars[seminarIndex], references: refs };
+    setSettings({ ...settings, seminars: newSeminars });
+  };
+
+  // Learning Theme helpers
+  const addLearningTheme = () => {
+    setSettings({
+      ...settings,
+      learningThemes: [...settings.learningThemes, { id: generateId(), title: "", summary: "" }],
+    });
+  };
+  const updateLearningTheme = (index: number, field: keyof LearningTheme, value: string) => {
+    const newThemes = [...settings.learningThemes];
+    newThemes[index] = { ...newThemes[index], [field]: value };
+    setSettings({ ...settings, learningThemes: newThemes });
+  };
+  const removeLearningTheme = (index: number) => {
+    setSettings({ ...settings, learningThemes: settings.learningThemes.filter((_, i) => i !== index) });
+  };
+
   if (loading) {
     return <div className="text-center text-gray-400">読み込み中...</div>;
   }
@@ -103,6 +160,8 @@ export function SiteSettingsForm() {
   const tabs = [
     { id: "projects", label: "プロジェクト" },
     { id: "activities", label: "近年の活動" },
+    { id: "seminars", label: "自主ゼミ" },
+    { id: "learningThemes", label: "学習テーマ" },
   ] as const;
 
   return (
@@ -250,6 +309,132 @@ export function SiteSettingsForm() {
           >
             <Plus className="h-4 w-4" />
             年を追加
+          </button>
+        </div>
+      )}
+
+      {/* Seminars Tab */}
+      {activeTab === "seminars" && (
+        <div className="space-y-4">
+          <p className="text-sm text-gray-400">
+            自主ゼミのテーマを管理します。各ゼミのタイトル、概要、参考文献を設定できます。
+          </p>
+          {settings.seminars.map((seminar, index) => (
+            <div key={seminar.id} className="rounded-lg border border-night-muted bg-night-soft p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-gray-400">
+                  <GripVertical className="h-4 w-4" />
+                  <span className="text-sm">ゼミ {index + 1}</span>
+                </div>
+                <button type="button" onClick={() => removeSeminar(index)} className="text-red-400 hover:text-red-300">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="grid gap-4">
+                <input
+                  type="text"
+                  value={seminar.title}
+                  onChange={(e) => updateSeminar(index, "title", e.target.value)}
+                  className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
+                  placeholder="ゼミのタイトル（例: スキーム論）"
+                />
+                <MarkdownTextarea
+                  value={seminar.summary}
+                  onChange={(value) => updateSeminar(index, "summary", value)}
+                  rows={3}
+                  placeholder="概要（使用テキスト、目標など）"
+                />
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">参考文献リンク（オプション）</label>
+                  {(seminar.references || []).map((ref, refIndex) => (
+                    <div key={refIndex} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={ref.label}
+                        onChange={(e) => updateSeminarReference(index, refIndex, "label", e.target.value)}
+                        className="w-1/3 rounded-md border border-night-muted bg-night px-3 py-2 text-sm text-gray-100 focus:border-accent focus:outline-none"
+                        placeholder="ラベル"
+                      />
+                      <input
+                        type="url"
+                        value={ref.url}
+                        onChange={(e) => updateSeminarReference(index, refIndex, "url", e.target.value)}
+                        className="flex-1 rounded-md border border-night-muted bg-night px-3 py-2 text-sm text-gray-100 focus:border-accent focus:outline-none"
+                        placeholder="URL"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeSeminarReference(index, refIndex)}
+                        className="text-red-400 hover:text-red-300"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => addSeminarReference(index)}
+                    className="flex items-center gap-1 text-sm text-accent hover:text-accent/80"
+                  >
+                    <Plus className="h-3 w-3" />
+                    参考文献を追加
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addSeminar}
+            className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-night-muted py-4 text-gray-400 hover:border-accent hover:text-accent"
+          >
+            <Plus className="h-4 w-4" />
+            ゼミを追加
+          </button>
+        </div>
+      )}
+
+      {/* Learning Themes Tab */}
+      {activeTab === "learningThemes" && (
+        <div className="space-y-4">
+          <p className="text-sm text-gray-400">
+            学習テーマを管理します。現在取り組んでいる、または興味のある学習テーマを設定できます。
+          </p>
+          {settings.learningThemes.map((theme, index) => (
+            <div key={theme.id} className="rounded-lg border border-night-muted bg-night-soft p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-gray-400">
+                  <GripVertical className="h-4 w-4" />
+                  <span className="text-sm">テーマ {index + 1}</span>
+                </div>
+                <button type="button" onClick={() => removeLearningTheme(index)} className="text-red-400 hover:text-red-300">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="grid gap-4">
+                <input
+                  type="text"
+                  value={theme.title}
+                  onChange={(e) => updateLearningTheme(index, "title", e.target.value)}
+                  className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
+                  placeholder="テーマ名（例: 導来代数幾何）"
+                />
+                <MarkdownTextarea
+                  value={theme.summary}
+                  onChange={(value) => updateLearningTheme(index, "summary", value)}
+                  rows={2}
+                  placeholder="概要"
+                />
+              </div>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addLearningTheme}
+            className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-night-muted py-4 text-gray-400 hover:border-accent hover:text-accent"
+          >
+            <Plus className="h-4 w-4" />
+            テーマを追加
           </button>
         </div>
       )}

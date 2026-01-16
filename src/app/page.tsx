@@ -64,10 +64,10 @@ export default async function HomePage() {
             <FocusSection focuses={site.focuses} />
           </FadeIn>
           <FadeIn delay={0.1}>
-            <LearningSection />
+            <LearningSection learningThemes={site.learningThemes} />
           </FadeIn>
           <FadeIn delay={0.1}>
-            <SeminarSection />
+            <SeminarSection seminars={site.seminars} />
           </FadeIn>
           <FadeIn delay={0.1}>
             <ActivitySection />
