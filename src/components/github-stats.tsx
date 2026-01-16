@@ -64,24 +64,19 @@ export function GitHubStats({ username }: GitHubStatsProps) {
       try {
         setLoading(true);
         
-        // Fetch user data, repos, and events in parallel
-        const [userRes, reposRes, eventsRes] = await Promise.all([
-          fetch(`https://api.github.com/users/${username}`),
-          fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`),
-          fetch(`https://api.github.com/users/${username}/events/public?per_page=100`),
-        ]);
-
-        if (!userRes.ok || !reposRes.ok) {
-          throw new Error("Failed to fetch GitHub data");
+        // サーバーサイドAPI経由でGitHubデータを取得（レート制限回避）
+        const response = await fetch(`/api/github?username=${encodeURIComponent(username)}`);
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || "Failed to fetch GitHub data");
         }
 
-        const userData = await userRes.json();
-        const reposData = await reposRes.json();
-        const eventsData = eventsRes.ok ? await eventsRes.json() : [];
-
-        setUser(userData);
-        setRepos(reposData);
-        setEvents(eventsData);
+        const data = await response.json();
+        
+        setUser(data.user);
+        setRepos(data.repos);
+        setEvents(data.events);
 
         // Calculate contribution data from events
         const contributionMap = new Map<string, number>();
