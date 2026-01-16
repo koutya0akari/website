@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Save, Plus, Trash2, GripVertical } from "lucide-react";
-import type { FocusArea, ProjectSummary, TimelineItem, ContactLink } from "@/lib/types";
+import type { FocusArea, ProjectSummary, TimelineItem, ContactLink, ActivityItem } from "@/lib/types";
 import { MarkdownTextarea } from "./MarkdownTextarea";
 
 interface SiteSettings {
@@ -16,6 +16,7 @@ interface SiteSettings {
   projects: ProjectSummary[];
   timeline: TimelineItem[];
   contactLinks: ContactLink[];
+  activities: ActivityItem[];
 }
 
 export function SiteSettingsForm() {
@@ -30,10 +31,11 @@ export function SiteSettingsForm() {
     projects: [],
     timeline: [],
     contactLinks: [],
+    activities: [],
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<"hero" | "focuses" | "projects" | "timeline" | "contacts">("hero");
+  const [activeTab, setActiveTab] = useState<"hero" | "focuses" | "projects" | "timeline" | "contacts" | "activities">("hero");
 
   useEffect(() => {
     fetchSettings();
@@ -141,6 +143,22 @@ export function SiteSettingsForm() {
     setSettings({ ...settings, contactLinks: settings.contactLinks.filter((_, i) => i !== index) });
   };
 
+  // Activity helpers
+  const addActivity = () => {
+    setSettings({
+      ...settings,
+      activities: [...settings.activities, { id: generateId(), year: "", items: [] }],
+    });
+  };
+  const updateActivity = (index: number, field: keyof ActivityItem, value: string | string[]) => {
+    const newActivities = [...settings.activities];
+    newActivities[index] = { ...newActivities[index], [field]: value };
+    setSettings({ ...settings, activities: newActivities });
+  };
+  const removeActivity = (index: number) => {
+    setSettings({ ...settings, activities: settings.activities.filter((_, i) => i !== index) });
+  };
+
   if (loading) {
     return <div className="text-center text-gray-400">読み込み中...</div>;
   }
@@ -151,6 +169,7 @@ export function SiteSettingsForm() {
     { id: "projects", label: "プロジェクト" },
     { id: "timeline", label: "タイムライン" },
     { id: "contacts", label: "連絡先" },
+    { id: "activities", label: "近年の活動" },
   ] as const;
 
   return (
@@ -465,6 +484,58 @@ export function SiteSettingsForm() {
           >
             <Plus className="h-4 w-4" />
             連絡先を追加
+          </button>
+        </div>
+      )}
+
+      {/* Activities Tab */}
+      {activeTab === "activities" && (
+        <div className="space-y-4">
+          <p className="text-sm text-gray-400">
+            年ごとの活動を管理します。GitHub からのコミット情報は自動取得されるため、ここでは手動で追加する活動（セミナー参加、発表など）を設定してください。
+          </p>
+          {settings.activities.map((activity, index) => (
+            <div key={activity.id} className="rounded-lg border border-night-muted bg-night-soft p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-gray-400">
+                  <GripVertical className="h-4 w-4" />
+                  <span className="text-sm">活動 {index + 1}</span>
+                </div>
+                <button type="button" onClick={() => removeActivity(index)} className="text-red-400 hover:text-red-300">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="grid gap-4">
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-gray-300">年</label>
+                  <input
+                    type="text"
+                    value={activity.year}
+                    onChange={(e) => updateActivity(index, "year", e.target.value)}
+                    className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
+                    placeholder="2025"
+                  />
+                </div>
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-gray-300">活動項目（改行区切り）</label>
+                  <textarea
+                    value={activity.items.join("\n")}
+                    onChange={(e) => updateActivity(index, "items", e.target.value.split("\n").filter(Boolean))}
+                    className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
+                    rows={5}
+                    placeholder="第8回すうがく徒のつどい 参加・運営&#10;spm29th [SGL] 参加・運営&#10;..."
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addActivity}
+            className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-dashed border-night-muted py-4 text-gray-400 hover:border-accent hover:text-accent"
+          >
+            <Plus className="h-4 w-4" />
+            年を追加
           </button>
         </div>
       )}

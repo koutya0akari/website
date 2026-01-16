@@ -12,7 +12,7 @@ export function LearningSection() {
         <div>
           <p className="text-[11px] uppercase tracking-[0.35em] text-white/60">Study Map</p>
           <h2 className="text-2xl font-semibold text-white sm:text-3xl">学習テーマ</h2>
-          <p className="text-sm text-white/70">興味の向かう先をタイル状に貼り付けて、抽象のラインを見渡す。</p>
+
         </div>
       </div>
       <div className="relative mt-4 grid auto-rows-[1fr] gap-5 lg:grid-cols-12">

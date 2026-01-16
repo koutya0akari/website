@@ -18,6 +18,7 @@ type SiteRow = {
   projects: unknown;
   timeline: unknown;
   contact_links: unknown;
+  activities: unknown;
   updated_at: string;
 };
 
@@ -63,6 +64,7 @@ export async function getSiteContent(): Promise<SiteContent> {
       projects: [],
       timeline: [],
       contactLinks: [],
+      activities: [],
     };
   }
 
@@ -78,6 +80,7 @@ export async function getSiteContent(): Promise<SiteContent> {
     projects: asArray(row.projects),
     timeline: asArray(row.timeline),
     contactLinks: asArray(row.contact_links),
+    activities: asArray(row.activities),
   };
 }
 

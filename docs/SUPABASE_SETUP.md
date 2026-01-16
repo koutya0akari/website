@@ -79,8 +79,12 @@ CREATE TABLE site (
   projects JSONB NOT NULL DEFAULT '[]'::jsonb,
   timeline JSONB NOT NULL DEFAULT '[]'::jsonb,
   contact_links JSONB NOT NULL DEFAULT '[]'::jsonb,
+  activities JSONB NOT NULL DEFAULT '[]'::jsonb,
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- 既存テーブルへの activities カラム追加（マイグレーション用）
+-- ALTER TABLE site ADD COLUMN IF NOT EXISTS activities JSONB NOT NULL DEFAULT '[]'::jsonb;
 
 ALTER TABLE site ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public read site" ON site FOR SELECT USING (true);

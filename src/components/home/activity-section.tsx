@@ -2,6 +2,8 @@ import { Code2, Users } from "lucide-react";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { activityTimeline } from "@/data/home";
 import { getGitHubActivityByYear, type GitHubActivityYear, type GitHubCommit } from "@/lib/github";
+import { getSiteContent } from "@/lib/content-supabase";
+import type { ActivityItem } from "@/lib/types";
 
 type MergedActivity = {
   year: string;
@@ -9,8 +11,13 @@ type MergedActivity = {
   commits: GitHubCommit[];
 };
 
+type ManualActivity = {
+  year: string;
+  items: string[];
+};
+
 function mergeActivities(
-  manual: typeof activityTimeline,
+  manual: ManualActivity[],
   github: GitHubActivityYear[]
 ): MergedActivity[] {
   const yearSet = new Set<string>();
@@ -35,8 +42,18 @@ function mergeActivities(
 }
 
 export async function ActivitySection() {
-  const githubActivity = await getGitHubActivityByYear();
-  const mergedActivities = mergeActivities(activityTimeline, githubActivity);
+  const [siteContent, githubActivity] = await Promise.all([
+    getSiteContent(),
+    getGitHubActivityByYear(),
+  ]);
+  
+  // データベースに活動データがあればそちらを使用、なければ静的データを使用
+  const manualActivities: ManualActivity[] = 
+    siteContent.activities && siteContent.activities.length > 0
+      ? siteContent.activities.map((a: ActivityItem) => ({ year: a.year, items: a.items }))
+      : activityTimeline;
+  
+  const mergedActivities = mergeActivities(manualActivities, githubActivity);
 
   return (
     <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-night-soft/80 p-6 sm:p-8">

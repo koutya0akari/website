@@ -35,6 +35,12 @@ export type ContactLink = {
   url: string;
 };
 
+export type ActivityItem = {
+  id: string;
+  year: string;
+  items: string[];
+};
+
 export type SiteContent = {
   heroTitle: string;
   heroLead: string;
@@ -46,6 +52,7 @@ export type SiteContent = {
   projects: ProjectSummary[];
   timeline: TimelineItem[];
   contactLinks: ContactLink[];
+  activities: ActivityItem[];
 };
 
 export type DiaryEntry = {
