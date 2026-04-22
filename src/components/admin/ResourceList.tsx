@@ -6,12 +6,16 @@ import { Plus, Pencil, Trash2, ExternalLink, FileText, Search, Filter } from "lu
 
 interface Resource {
   id: string;
+  metadata_id: string | null;
+  source: "github" | "database";
   title: string;
-  description: string | null;
-  category: string | null;
+  description: string;
+  category: string;
   file_url: string | null;
   external_url: string | null;
-  created_at: string;
+  created_at: string | null;
+  updated_at: string | null;
+  has_metadata: boolean;
 }
 
 export function ResourceList() {
@@ -30,9 +34,9 @@ export function ResourceList() {
       const res = await fetch("/api/admin/resources");
       if (res.ok) {
         const { data } = await res.json();
-        setResources(data || []);
-        // Extract unique categories
-        const uniqueCategories = [...new Set(data.map((r: Resource) => r.category).filter(Boolean))] as string[];
+        const items = (data || []) as Resource[];
+        setResources(items);
+        const uniqueCategories = [...new Set(items.map((r) => r.category).filter(Boolean))] as string[];
         setCategories(uniqueCategories);
       }
     } catch (error) {
@@ -42,17 +46,48 @@ export function ResourceList() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("この資料を削除しますか？")) return;
+  const handleDelete = async (metadataId: string | null) => {
+    if (!metadataId) return;
+    if (!confirm("この補足情報を削除しますか？")) return;
 
     try {
-      const res = await fetch(`/api/admin/resources/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/resources/${metadataId}`, { method: "DELETE" });
       if (res.ok) {
-        setResources(resources.filter((r) => r.id !== id));
+        await fetchResources();
       }
     } catch (error) {
       console.error("Failed to delete resource:", error);
     }
+  };
+
+  const buildCreateHref = (resource: Resource) => {
+    const query: Record<string, string> = {
+      title: resource.title,
+      source: resource.source,
+    };
+
+    if (resource.category) {
+      query.category = resource.category;
+    }
+    if (resource.file_url) {
+      query.fileUrl = resource.file_url;
+    }
+    if (resource.external_url) {
+      query.externalUrl = resource.external_url;
+    }
+
+    return {
+      pathname: "/admin/resources/new",
+      query,
+    };
+  };
+
+  const formatDate = (value: string | null) => {
+    if (!value) {
+      return null;
+    }
+
+    return new Date(value).toLocaleDateString("ja-JP");
   };
 
   const filteredResources = resources.filter((resource) => {
@@ -69,9 +104,13 @@ export function ResourceList() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">Resources</h1>
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold text-white">Resources</h1>
+          <p className="text-sm text-gray-400">
+            GitHub の PDF は自動で並びます。ここでは説明やカテゴリを追加できます。
+          </p>
+        </div>
         <Link
           href="/admin/resources/new"
           className="flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-night hover:bg-accent/90"
@@ -81,7 +120,6 @@ export function ResourceList() {
         </Link>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-wrap gap-4">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -110,7 +148,6 @@ export function ResourceList() {
         </div>
       </div>
 
-      {/* List */}
       {filteredResources.length === 0 ? (
         <div className="rounded-lg border border-night-muted bg-night-soft p-8 text-center">
           <FileText className="mx-auto h-12 w-12 text-gray-500" />
@@ -131,7 +168,7 @@ export function ResourceList() {
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">タイトル</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">カテゴリ</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">リンク</th>
-                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">作成日</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">更新日</th>
                 <th className="px-4 py-3 text-right text-sm font-medium text-gray-300">アクション</th>
               </tr>
             </thead>
@@ -140,15 +177,31 @@ export function ResourceList() {
                 <tr key={resource.id} className="hover:bg-night-soft/50">
                   <td className="px-4 py-3">
                     <div className="font-medium text-white">{resource.title}</div>
+                    <div className="mt-1 flex flex-wrap gap-2 text-xs">
+                      <span className="rounded-md bg-white/5 px-2 py-1 text-gray-300">
+                        {resource.source === "github" ? "GitHub PDF" : "手動追加"}
+                      </span>
+                      <span
+                        className={`rounded-md px-2 py-1 ${
+                          resource.has_metadata
+                            ? "bg-accent/10 text-accent"
+                            : "bg-white/5 text-gray-400"
+                        }`}
+                      >
+                        {resource.has_metadata ? "補足あり" : "補足なし"}
+                      </span>
+                    </div>
                     {resource.description && (
                       <div className="mt-1 text-sm text-gray-400 line-clamp-1">{resource.description}</div>
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    {resource.category && (
+                    {resource.category ? (
                       <span className="rounded-md bg-accent/10 px-2 py-1 text-xs text-accent">
                         {resource.category}
                       </span>
+                    ) : (
+                      <span className="text-sm text-gray-500">-</span>
                     )}
                   </td>
                   <td className="px-4 py-3">
@@ -165,24 +218,36 @@ export function ResourceList() {
                     )}
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-400">
-                    {new Date(resource.created_at).toLocaleDateString("ja-JP")}
+                    {formatDate(resource.updated_at) ?? formatDate(resource.created_at) ?? "-"}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-2">
-                      <Link
-                        href={`/admin/resources/${resource.id}/edit`}
-                        className="rounded p-1.5 text-gray-400 hover:bg-night-muted hover:text-white"
-                        title="編集"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(resource.id)}
-                        className="rounded p-1.5 text-gray-400 hover:bg-red-500/10 hover:text-red-400"
-                        title="削除"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                      {resource.metadata_id ? (
+                        <>
+                          <Link
+                            href={`/admin/resources/${resource.metadata_id}/edit`}
+                            className="rounded p-1.5 text-gray-400 hover:bg-night-muted hover:text-white"
+                            title="編集"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(resource.metadata_id)}
+                            className="rounded p-1.5 text-gray-400 hover:bg-red-500/10 hover:text-red-400"
+                            title="削除"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </>
+                      ) : (
+                        <Link
+                          href={buildCreateHref(resource)}
+                          className="inline-flex items-center gap-2 rounded-md border border-night-muted px-3 py-1.5 text-sm text-gray-300 hover:border-accent hover:text-accent"
+                        >
+                          <Plus className="h-4 w-4" />
+                          説明を追加
+                        </Link>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -194,4 +259,3 @@ export function ResourceList() {
     </div>
   );
 }
-

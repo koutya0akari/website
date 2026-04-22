@@ -19,6 +19,7 @@ export default async function ResourcesPage() {
         <p className="text-xs uppercase tracking-[0.4em] text-white/60">Resources</p>
         <h1 className="mt-3 text-4xl font-semibold">公開資料</h1>
       </section>
+
       <ResourceGrid resources={resources} />
     </div>
   );

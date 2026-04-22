@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Save, Trash2, ExternalLink } from "lucide-react";
 import { MarkdownTextarea } from "./MarkdownTextarea";
 
@@ -17,11 +17,12 @@ interface ResourceFormProps {
   onSubmit: (data: ResourceFormData) => Promise<void>;
   onDelete?: () => Promise<void>;
   isNew?: boolean;
+  lockFileUrl?: boolean;
 }
 
 const CATEGORY_SUGGESTIONS = ["スライド", "PDF", "論文", "ノート", "ツール", "その他"];
 
-export function ResourceForm({ initialData, onSubmit, onDelete, isNew = true }: ResourceFormProps) {
+export function ResourceForm({ initialData, onSubmit, onDelete, isNew = true, lockFileUrl = false }: ResourceFormProps) {
   const [formData, setFormData] = useState<ResourceFormData>({
     title: initialData?.title || "",
     description: initialData?.description || "",
@@ -32,6 +33,22 @@ export function ResourceForm({ initialData, onSubmit, onDelete, isNew = true }: 
 
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    setFormData({
+      title: initialData?.title || "",
+      description: initialData?.description || "",
+      category: initialData?.category || "",
+      fileUrl: initialData?.fileUrl || "",
+      externalUrl: initialData?.externalUrl || "",
+    });
+  }, [
+    initialData?.title,
+    initialData?.description,
+    initialData?.category,
+    initialData?.fileUrl,
+    initialData?.externalUrl,
+  ]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,9 +120,17 @@ export function ResourceForm({ initialData, onSubmit, onDelete, isNew = true }: 
             type="url"
             value={formData.fileUrl}
             onChange={(e) => setFormData({ ...formData, fileUrl: e.target.value })}
-            className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 placeholder-gray-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+            readOnly={lockFileUrl}
+            className={`w-full rounded-md border border-night-muted px-4 py-2 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-accent ${
+              lockFileUrl
+                ? "cursor-not-allowed bg-night-soft text-gray-400"
+                : "bg-night focus:border-accent"
+            }`}
             placeholder="https://example.com/file.pdf"
           />
+          {lockFileUrl ? (
+            <p className="mt-2 text-xs text-gray-500">GitHub と紐付けるため、リンク先は固定です。</p>
+          ) : null}
         </div>
 
         <div>
@@ -114,7 +139,12 @@ export function ResourceForm({ initialData, onSubmit, onDelete, isNew = true }: 
             type="url"
             value={formData.externalUrl}
             onChange={(e) => setFormData({ ...formData, externalUrl: e.target.value })}
-            className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 placeholder-gray-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+            readOnly={lockFileUrl}
+            className={`w-full rounded-md border border-night-muted px-4 py-2 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-accent ${
+              lockFileUrl
+                ? "cursor-not-allowed bg-night-soft text-gray-400"
+                : "bg-night focus:border-accent"
+            }`}
             placeholder="https://example.com"
           />
         </div>
@@ -163,4 +193,3 @@ export function ResourceForm({ initialData, onSubmit, onDelete, isNew = true }: 
     </form>
   );
 }
-

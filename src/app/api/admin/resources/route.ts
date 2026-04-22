@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { buildAdminResourceItems, getLectureNoteItems, type ResourceRow } from "@/lib/resource-items";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET /api/admin/resources - List all resources
@@ -18,22 +20,22 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "100");
     const offset = parseInt(searchParams.get("offset") || "0");
 
-    let query = supabase.from("resources").select("*").order("created_at", { ascending: false });
-
-    if (category) {
-      query = query.eq("category", category);
-    }
-
-    query = query.range(offset, offset + limit - 1);
-
-    const { data, error } = await query;
+    const [{ data, error }, githubItems] = await Promise.all([
+      supabase.from("resources").select("*").order("updated_at", { ascending: false }),
+      getLectureNoteItems(),
+    ]);
 
     if (error) {
       console.error("[API] Failed to fetch resources:", error);
       return NextResponse.json({ error: "Failed to fetch resources" }, { status: 500 });
     }
 
-    return NextResponse.json({ data });
+    const mergedItems = buildAdminResourceItems((data as ResourceRow[]) ?? [], githubItems);
+    const filteredItems = category
+      ? mergedItems.filter((item) => item.category === category)
+      : mergedItems;
+
+    return NextResponse.json({ data: filteredItems.slice(offset, offset + limit) });
   } catch (error) {
     console.error("[API] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -59,6 +61,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
     }
 
+    if (fileUrl) {
+      const { data: existing, error: existingError } = await supabase
+        .from("resources")
+        .select("id")
+        .eq("file_url", fileUrl)
+        .maybeSingle();
+
+      if (existingError) {
+        console.error("[API] Failed to check existing resource:", existingError);
+        return NextResponse.json({ error: "Failed to validate resource" }, { status: 500 });
+      }
+
+      if (existing) {
+        return NextResponse.json(
+          { error: "この PDF の補足情報は既に存在します", existingId: existing.id },
+          { status: 409 },
+        );
+      }
+    }
+
     const { data, error } = await supabase
       .from("resources")
       .insert({
@@ -76,10 +98,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to create resource" }, { status: 500 });
     }
 
+    revalidatePath("/");
+    revalidatePath("/resources");
+
     return NextResponse.json({ data }, { status: 201 });
   } catch (error) {
     console.error("[API] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-

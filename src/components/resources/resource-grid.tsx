@@ -8,7 +8,7 @@ type ResourceGridProps = {
 
 export function ResourceGrid({ resources }: ResourceGridProps) {
   if (resources.length === 0) {
-    return <p className="text-white/70">まだ公開中の資料がありません。。。</p>;
+    return <p className="text-white/70">まだ公開中の資料がありません。</p>;
   }
 
   return (
@@ -18,7 +18,9 @@ export function ResourceGrid({ resources }: ResourceGridProps) {
           <div>
             <div className="text-xs uppercase tracking-[0.2em] text-white/50">{item.category}</div>
             <h3 className="text-lg font-semibold text-white">{item.title}</h3>
-            <RichText content={item.description} className="prose-sm text-white/70" />
+            {item.description.trim() ? (
+              <RichText content={item.description} className="prose-sm text-white/70" />
+            ) : null}
           </div>
           <SmartLink
             href={item.externalUrl ?? item.fileUrl}

@@ -1,31 +1,24 @@
-"use client";
+import { NewResourcePageClient } from "@/components/admin/NewResourcePageClient";
+import type { ResourceFormData } from "@/components/admin/ResourceForm";
 
-import { useRouter } from "next/navigation";
-import { ResourceForm, type ResourceFormData } from "@/components/admin/ResourceForm";
+type PageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
-export default function NewResourcePage() {
-  const router = useRouter();
-
-  const handleSubmit = async (data: ResourceFormData) => {
-    const res = await fetch("/api/admin/resources", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
-    if (res.ok) {
-      router.push("/admin/resources");
-    } else {
-      const error = await res.json();
-      alert(error.error || "作成に失敗しました");
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white">新規資料</h1>
-      <ResourceForm onSubmit={handleSubmit} isNew />
-    </div>
-  );
+function getSearchParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] ?? "" : value ?? "";
 }
 
+export default async function NewResourcePage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const initialData: Partial<ResourceFormData> = {
+    title: getSearchParam(params.title),
+    description: getSearchParam(params.description),
+    category: getSearchParam(params.category),
+    fileUrl: getSearchParam(params.fileUrl),
+    externalUrl: getSearchParam(params.externalUrl),
+  };
+  const isGitHubResource = getSearchParam(params.source) === "github";
+
+  return <NewResourcePageClient initialData={initialData} isGitHubResource={isGitHubResource} />;
+}

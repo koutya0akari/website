@@ -8,11 +8,19 @@ type PageProps = {
   params: Promise<{ id: string }>;
 };
 
+function isLectureNoteFileUrl(fileUrl: string) {
+  return (
+    fileUrl.startsWith("https://github.com/koutya0akari/Lecture-Note/blob/main/") &&
+    fileUrl.toLowerCase().endsWith(".pdf")
+  );
+}
+
 export default function EditResourcePage({ params }: PageProps) {
   const { id } = use(params);
   const router = useRouter();
   const [initialData, setInitialData] = useState<ResourceFormData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lockFileUrl, setLockFileUrl] = useState(false);
 
   useEffect(() => {
     const fetchResource = async () => {
@@ -20,13 +28,15 @@ export default function EditResourcePage({ params }: PageProps) {
         const res = await fetch(`/api/admin/resources/${id}`);
         if (res.ok) {
           const { data } = await res.json();
+          const fileUrl = data.file_url || "";
           setInitialData({
             title: data.title || "",
             description: data.description || "",
             category: data.category || "",
-            fileUrl: data.file_url || "",
+            fileUrl,
             externalUrl: data.external_url || "",
           });
+          setLockFileUrl(isLectureNoteFileUrl(fileUrl));
         } else {
           router.push("/admin/resources");
         }
@@ -78,9 +88,19 @@ export default function EditResourcePage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white">資料を編集</h1>
-      <ResourceForm initialData={initialData} onSubmit={handleSubmit} onDelete={handleDelete} isNew={false} />
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold text-white">資料を編集</h1>
+        {lockFileUrl ? (
+          <p className="text-sm text-gray-400">この項目は GitHub PDF の補足情報です。</p>
+        ) : null}
+      </div>
+      <ResourceForm
+        initialData={initialData}
+        onSubmit={handleSubmit}
+        onDelete={handleDelete}
+        isNew={false}
+        lockFileUrl={lockFileUrl}
+      />
     </div>
   );
 }
-

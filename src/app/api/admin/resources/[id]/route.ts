@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 type RouteParams = {
@@ -75,6 +76,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Failed to update resource" }, { status: 500 });
     }
 
+    revalidatePath("/");
+    revalidatePath("/resources");
+
     return NextResponse.json({ data });
   } catch (error) {
     console.error("[API] Error:", error);
@@ -102,10 +106,12 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Failed to delete resource" }, { status: 500 });
     }
 
+    revalidatePath("/");
+    revalidatePath("/resources");
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[API] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-

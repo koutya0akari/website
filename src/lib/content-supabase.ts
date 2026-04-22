@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { AboutContent, ResourceItem, SiteContent } from "@/lib/types";
+import { getLectureNoteItems, mergeResourceItems, type ResourceRow } from "@/lib/resource-items";
 import { createClient } from "@/lib/supabase/server";
 
 const SITE_KEY = "default";
@@ -32,17 +33,6 @@ type AboutRow = {
   sections: unknown;
   skills: string[] | null;
   quote: string | null;
-  updated_at: string;
-};
-
-type ResourceRow = {
-  id: string;
-  microcms_id: string;
-  title: string;
-  description: string;
-  category: string;
-  file_url: string;
-  external_url: string | null;
   updated_at: string;
 };
 
@@ -120,25 +110,18 @@ export async function getAboutContent(): Promise<AboutContent> {
 
 export async function getResourceItems(limit = 100): Promise<ResourceItem[]> {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("resources")
-    .select("*")
-    .order("updated_at", { ascending: false })
-    .limit(limit);
+  const [githubResources, { data, error }] = await Promise.all([
+    getLectureNoteItems(),
+    supabase
+      .from("resources")
+      .select("*")
+      .order("updated_at", { ascending: false })
+      .limit(limit),
+  ]);
 
   if (error) {
     console.error("[Supabase] Failed to fetch resources:", error);
-    return [];
   }
 
-  return ((data as ResourceRow[]) ?? []).map((row) => ({
-    id: row.id,
-    title: row.title,
-    description: row.description,
-    category: row.category,
-    fileUrl: row.file_url,
-    externalUrl: row.external_url ?? undefined,
-  }));
+  return mergeResourceItems((data as ResourceRow[]) ?? [], githubResources, limit);
 }
-
-
