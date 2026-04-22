@@ -11,10 +11,10 @@ export function FocusSection({ focuses }: FocusSectionProps) {
   return (
     <section
       id="focus"
-      className="relative overflow-hidden rounded-[32px] border border-white/12 bg-gradient-to-br from-night-soft via-night to-night-muted p-6 sm:p-8"
+      className="relative overflow-hidden rounded-[32px] border border-transparent bg-gradient-to-br from-night-soft via-night to-night-muted p-6 sm:p-8"
     >
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-3 rounded-[28px] border border-white/5" />
+        <div className="absolute inset-3 rounded-[28px] border border-transparent" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_30%,rgba(100,210,255,0.12),transparent_35%),radial-gradient(circle_at_92%_10%,rgba(247,181,0,0.12),transparent_30%)]" />
         <div className="absolute left-10 top-0 h-full w-px bg-gradient-to-b from-white/15 via-white/5 to-transparent" />
       </div>
@@ -30,7 +30,7 @@ export function FocusSection({ focuses }: FocusSectionProps) {
           {focuses.map((focus) => (
             <article
               key={focus.id}
-              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:-translate-y-1 hover:border-accent/60"
+              className="group relative overflow-hidden rounded-2xl border border-transparent bg-white/5 p-5 transition hover:-translate-y-1 hover:border-accent/60"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 opacity-0 transition duration-500 group-hover:opacity-100" />
               <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-accent via-highlight to-accent/40" />

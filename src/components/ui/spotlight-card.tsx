@@ -46,7 +46,7 @@ export function SpotlightCard({ children, className, spotlightColor = 'rgba(255,
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        'relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 transition-colors hover:bg-white/10',
+        'relative overflow-hidden rounded-3xl border border-transparent bg-white/5 transition-colors hover:bg-white/10',
         className
       )}
     >

@@ -183,12 +183,12 @@ export function CommandPalette() {
       {/* Trigger Button */}
       <button
         onClick={open}
-        className="hidden items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/60 transition hover:border-white/25 hover:bg-white/10 hover:text-white/80 md:flex"
+        className="hidden items-center gap-2 rounded-full border border-transparent bg-white/5 px-3 py-1.5 text-xs text-white/60 transition hover:border-transparent hover:bg-white/10 hover:text-white/80 md:flex"
         aria-label="検索を開く"
       >
         <Search className="h-3.5 w-3.5" />
         <span>検索</span>
-        <kbd className="ml-2 flex items-center gap-0.5 rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-[10px] font-medium">
+        <kbd className="ml-2 flex items-center gap-0.5 rounded border border-transparent bg-white/10 px-1.5 py-0.5 text-[10px] font-medium">
           <Command className="h-2.5 w-2.5" />K
         </kbd>
       </button>
@@ -212,10 +212,10 @@ export function CommandPalette() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed left-1/2 top-[15%] z-50 w-full max-w-xl -translate-x-1/2 overflow-hidden rounded-2xl border border-white/10 bg-night-soft/95 shadow-2xl backdrop-blur-xl"
+              className="fixed left-1/2 top-[15%] z-50 w-full max-w-xl -translate-x-1/2 overflow-hidden rounded-2xl border border-transparent bg-night-soft/95 shadow-2xl backdrop-blur-xl"
             >
               {/* Search Input */}
-              <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
+              <div className="flex items-center gap-3 border-b border-transparent px-4 py-3">
                 <Search className="h-5 w-5 text-white/40" />
                 <input
                   ref={inputRef}
@@ -233,7 +233,7 @@ export function CommandPalette() {
                 {loading && (
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-accent border-t-transparent" />
                 )}
-                <kbd className="rounded border border-white/20 bg-white/10 px-2 py-0.5 text-xs text-white/50">
+                <kbd className="rounded border border-transparent bg-white/10 px-2 py-0.5 text-xs text-white/50">
                   ESC
                 </kbd>
               </div>
@@ -286,15 +286,15 @@ export function CommandPalette() {
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-between border-t border-white/10 px-4 py-2 text-xs text-white/40">
+              <div className="flex items-center justify-between border-t border-transparent px-4 py-2 text-xs text-white/40">
                 <div className="flex items-center gap-4">
                   <span className="flex items-center gap-1">
-                    <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5">↑</kbd>
-                    <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5">↓</kbd>
+                    <kbd className="rounded border border-transparent bg-white/10 px-1.5 py-0.5">↑</kbd>
+                    <kbd className="rounded border border-transparent bg-white/10 px-1.5 py-0.5">↓</kbd>
                     移動
                   </span>
                   <span className="flex items-center gap-1">
-                    <kbd className="rounded border border-white/20 bg-white/10 px-1.5 py-0.5">
+                    <kbd className="rounded border border-transparent bg-white/10 px-1.5 py-0.5">
                       <CornerDownLeft className="h-3 w-3" />
                     </kbd>
                     開く

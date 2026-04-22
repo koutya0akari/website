@@ -12,9 +12,9 @@ export function SeminarSection({ seminars }: SeminarSectionProps) {
   const themes = seminars && seminars.length > 0 ? seminars : defaultSeminarThemes.map((t, i) => ({ ...t, id: String(i) }));
 
   return (
-    <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-white/5 via-night-soft/40 to-night-soft/80 p-6 sm:p-8">
+    <section className="relative overflow-hidden rounded-[32px] border border-transparent bg-gradient-to-br from-white/5 via-night-soft/40 to-night-soft/80 p-6 sm:p-8">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-3 rounded-[28px] border border-white/5" />
+        <div className="absolute inset-3 rounded-[28px] border border-transparent" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(100,210,255,0.12),transparent_40%),radial-gradient(circle_at_85%_10%,rgba(247,181,0,0.1),transparent_35%)]" />
       </div>
       <div className="relative flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -37,14 +37,14 @@ export function SeminarSection({ seminars }: SeminarSectionProps) {
               <p className="text-sm text-white/75">{theme.summary}</p>
             </div>
             {theme.references && (
-              <div className="relative space-y-2 border-t border-white/10 pt-2 text-xs">
+              <div className="relative space-y-2 border-t border-transparent pt-2 text-xs">
                 <p className="text-white/60">References</p>
                 <div className="flex flex-wrap gap-2">
                   {theme.references.map((ref) => (
                     <SmartLink
                       key={ref.url}
                       href={ref.url}
-                      className="inline-flex items-center gap-1 rounded-full border border-white/15 px-3 py-1 text-accent underline-offset-4 hover:underline"
+                      className="inline-flex items-center gap-1 rounded-full border border-transparent px-3 py-1 text-accent underline-offset-4 hover:underline"
                     >
                       {ref.label}
                     </SmartLink>

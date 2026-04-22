@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { SpotlightCard } from "@/components/ui/spotlight-card";
+import { JournalCard } from "@/components/journal/journal-card";
 import { MATH_DIARY_LABEL, getDiaryDisplayLabel } from "@/lib/diary-labels";
 import type { DiaryEntry } from "@/lib/types";
 import { createExcerpt, escapeHtml, formatDate } from "@/lib/utils";
@@ -27,7 +27,7 @@ export function DiaryCard({
       : null;
 
   return (
-    <SpotlightCard className="flex flex-col gap-4 p-6 transition hover:-translate-y-0.5 hover:border-accent/80">
+    <JournalCard className="flex flex-col gap-4 p-6 hover:-translate-y-0.5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <span className="text-xs uppercase tracking-[0.2em] text-white/60">
           {getDiaryDisplayLabel(entry.folder, MATH_DIARY_LABEL)}
@@ -35,7 +35,7 @@ export function DiaryCard({
         <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
           <time className="text-sm text-white/60">{formatDate(entry.publishedAt)}</time>
           {showViewCount && (
-            <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70">
+            <span className="rounded-full bg-accent/10 px-2 py-1 text-[11px] text-white/78">
               {viewCountLabel ?? "PV集計中"}
             </span>
           )}
@@ -53,12 +53,12 @@ export function DiaryCard({
       {!compact && entry.tags?.length > 0 && (
         <div className="flex flex-wrap gap-2 text-xs text-white/60">
           {entry.tags.map((tag) => (
-            <span key={tag} className="tag-chip">
+            <span key={tag} className="tag-chip !border-0 bg-white/5">
               #{tag}
             </span>
           ))}
         </div>
       )}
-    </SpotlightCard>
+    </JournalCard>
   );
 }

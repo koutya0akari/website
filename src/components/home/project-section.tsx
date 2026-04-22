@@ -9,9 +9,9 @@ type ProjectSectionProps = {
 
 export function ProjectSection({ projects }: ProjectSectionProps) {
   return (
-    <section id="projects" className="relative overflow-hidden rounded-[32px] border border-white/10 bg-white/5 p-6 sm:p-8">
+    <section id="projects" className="relative overflow-hidden rounded-[32px] border border-transparent bg-white/5 p-6 sm:p-8">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-3 rounded-[28px] border border-white/5" />
+        <div className="absolute inset-3 rounded-[28px] border border-transparent" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_30%,rgba(100,210,255,0.12),transparent_40%),radial-gradient(circle_at_85%_20%,rgba(247,181,0,0.08),transparent_35%)]" />
       </div>
       <div className="relative flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">

@@ -37,7 +37,7 @@ export function DiaryFilter({ entries }: DiaryFilterProps) {
 
   return (
     <div className="space-y-6">
-      <div className="glass-panel rounded-3xl p-6">
+      <div className="glass-panel rounded-3xl !border-0 p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center">
           <input
             type="search"
@@ -71,7 +71,7 @@ export function DiaryFilter({ entries }: DiaryFilterProps) {
             <button
               type="button"
               onClick={() => setTag(null)}
-              className={`rounded-full border px-3 py-1 ${!tag ? "border-accent text-accent" : "border-white/20 text-white/60"}`}
+              className={`rounded-full px-3 py-1 ${!tag ? "bg-accent/12 text-accent" : "bg-white/5 text-white/60"}`}
             >
               All tags
             </button>
@@ -80,8 +80,8 @@ export function DiaryFilter({ entries }: DiaryFilterProps) {
                 key={item}
                 type="button"
                 onClick={() => setTag((prev) => (prev === item ? null : item))}
-                className={`rounded-full border px-3 py-1 ${
-                  tag === item ? "border-accent text-accent" : "border-white/20 text-white/60"
+                className={`rounded-full px-3 py-1 ${
+                  tag === item ? "bg-accent/12 text-accent" : "bg-white/5 text-white/60"
                 }`}
               >
                 #{item}

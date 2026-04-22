@@ -2,7 +2,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
-import { SpotlightCard } from "@/components/ui/spotlight-card";
+import { JournalCard } from "@/components/journal/journal-card";
 import { formatMonthlyDiaryLabel, getMonthlyDiarySummary } from "@/lib/monthly-diary-utils";
 import type { DiaryEntry } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
@@ -19,17 +19,12 @@ export function MonthlyDiaryCard({ entry, compact = false }: MonthlyDiaryCardPro
   const detailHref = `/monthly-diary/${entry.slug}` as Route;
 
   return (
-    <SpotlightCard
-      className={`h-full border-white/12 bg-[linear-gradient(160deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] ${
-        compact ? "p-0" : "p-0"
-      }`}
-      spotlightColor="rgba(100, 210, 255, 0.16)"
-    >
+    <JournalCard className="h-full hover:-translate-y-0.5">
       <div className="flex h-full flex-col gap-5 p-6 sm:p-7">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2 text-xs text-white/55">
-              <span className="rounded-full border border-white/12 bg-white/5 px-3 py-1 text-white/70">
+              <span className="rounded-full bg-accent/10 px-3 py-1 text-accent">
                 {monthLabel}
               </span>
               <span>{formatDate(entry.publishedAt, "yyyy.MM.dd")}</span>
@@ -50,7 +45,7 @@ export function MonthlyDiaryCard({ entry, compact = false }: MonthlyDiaryCardPro
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap gap-2 text-xs text-white/55">
               {visibleTags.map((tag) => (
-                <span key={tag} className="tag-chip">
+                <span key={tag} className="tag-chip !border-0 bg-white/5">
                   #{tag}
                 </span>
               ))}
@@ -62,6 +57,6 @@ export function MonthlyDiaryCard({ entry, compact = false }: MonthlyDiaryCardPro
           </div>
         </div>
       </div>
-    </SpotlightCard>
+    </JournalCard>
   );
 }

@@ -13,7 +13,7 @@ const NAV_ITEMS = [
   { label: "プロジェクト", href: "/#projects" },
   { label: "数学メモ", href: "/diary" },
   { label: "日記", href: "/monthly-diary" },
-  { label: "Resources", href: "/resources" },
+  { label: "資料", href: "/resources" },
   { label: "About", href: "/about" },
 ];
 
@@ -21,7 +21,7 @@ export function SiteHeader() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#030817]/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-transparent bg-[#030817]/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-content items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-2 text-lg font-semibold tracking-wide">
           <span className="rounded-full bg-accent/20 px-3 py-1 text-sm font-medium text-accent">Akari</span>
@@ -53,12 +53,12 @@ export function SiteHeader() {
               });
               window.dispatchEvent(event);
             }}
-            className="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/60 transition hover:border-white/25 hover:bg-white/10 hover:text-white/80"
+            className="flex items-center gap-2 rounded-full border border-transparent bg-white/5 px-3 py-1.5 text-xs text-white/60 transition hover:border-transparent hover:bg-white/10 hover:text-white/80"
             aria-label="検索を開く"
           >
             <Search className="h-3.5 w-3.5" />
             <span className="hidden lg:inline">検索</span>
-            <kbd className="ml-1 hidden items-center gap-0.5 rounded border border-white/20 bg-white/10 px-1.5 py-0.5 text-[10px] font-medium lg:flex">
+            <kbd className="ml-1 hidden items-center gap-0.5 rounded border border-transparent bg-white/10 px-1.5 py-0.5 text-[10px] font-medium lg:flex">
               <Command className="h-2.5 w-2.5" />K
             </kbd>
           </button>
@@ -81,7 +81,7 @@ export function SiteHeader() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="border-b border-white/10 bg-[#030817] md:hidden"
+            className="border-b border-transparent bg-[#030817] md:hidden"
           >
             <nav className="flex flex-col gap-4 p-6">
               {NAV_ITEMS.map((item) => (

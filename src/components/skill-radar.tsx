@@ -158,7 +158,7 @@ export function SkillRadar({ skills, size = 300 }: SkillRadarProps) {
         {skills.map((skill, i) => (
           <motion.div
             key={skill.name}
-            className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2"
+            className="flex items-center gap-2 rounded-lg border border-transparent bg-white/5 px-3 py-2"
             initial={{ opacity: 0, y: 10 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.6 + i * 0.1 }}

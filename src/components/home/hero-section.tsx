@@ -1,6 +1,7 @@
 import { SmartLink } from "@/components/smart-link";
 import { RichText } from "@/components/rich-text";
 import { personalIntro as defaultPersonalIntro } from "@/data/home";
+import { MATH_DIARY_OVERLINE } from "@/lib/diary-labels";
 import type { SiteContent, DiaryEntry } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
@@ -21,9 +22,9 @@ export function HeroSection({ site, diaries }: HeroSectionProps) {
       };
 
   return (
-    <section className="relative overflow-hidden rounded-[40px] border border-white/15 bg-gradient-to-br from-night via-[#0b1528] to-night-muted p-6 text-white shadow-card sm:p-8 lg:p-10">
+    <section className="relative overflow-hidden rounded-[40px] border border-transparent bg-gradient-to-br from-night via-[#0b1528] to-night-muted p-6 text-white shadow-card sm:p-8 lg:p-10">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-2 rounded-[36px] border border-white/5" />
+        <div className="absolute inset-2 rounded-[36px] border border-transparent" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(100,210,255,0.18),transparent_35%),radial-gradient(circle_at_82%_0%,rgba(247,181,0,0.17),transparent_32%),linear-gradient(120deg,rgba(255,255,255,0.06),transparent_35%)]" />
         <div className="absolute inset-4 rounded-[30px] bg-[linear-gradient(to_right,rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:120px_120px]" />
         <div className="absolute -right-28 bottom-10 h-64 w-64 rounded-full bg-accent/25 blur-3xl" />
@@ -54,20 +55,20 @@ export function HeroSection({ site, diaries }: HeroSectionProps) {
           {site.heroSecondaryCtaLabel && site.heroSecondaryCtaUrl && (
             <SmartLink
               href={site.heroSecondaryCtaUrl}
-              className="rounded-full border border-white/25 px-6 py-3 text-center text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:border-accent hover:text-accent active:translate-y-0"
+              className="rounded-full border border-transparent px-6 py-3 text-center text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:border-accent hover:text-accent active:translate-y-0"
             >
               {site.heroSecondaryCtaLabel}
             </SmartLink>
           )}
         </div>
           <div className="grid gap-4">
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-black/30 p-5 sm:p-6">
+            <div className="relative overflow-hidden rounded-3xl border border-transparent bg-black/30 p-5 sm:p-6">
               <div className="absolute right-4 top-4 h-16 w-16 rounded-full bg-accent/10 blur-2xl" />
               <p className="text-[11px] uppercase tracking-[0.3em] text-white/60">Profile</p>
               <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-white/85">{profile.description}</p>
               <div className="mt-4 flex flex-wrap gap-2 text-xs">
                 {profile.details.map((detail) => (
-                  <span key={detail.id || detail.label} className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1">
+                  <span key={detail.id || detail.label} className="inline-flex items-center gap-1.5 rounded-full border border-transparent bg-white/5 px-3 py-1">
                     <span className="rounded-full bg-accent/20 px-1.5 py-0.5 text-[10px] font-medium text-accent">{detail.label}</span>
                     <span className="text-white/90">{detail.value}</span>
                   </span>
@@ -76,37 +77,38 @@ export function HeroSection({ site, diaries }: HeroSectionProps) {
             </div>
           </div>
         </div>
-        <div className="relative space-y-4 overflow-hidden rounded-[28px] border border-white/15 bg-black/30 p-5 backdrop-blur sm:p-6">
+        <div className="relative space-y-4 overflow-hidden rounded-[28px] border border-transparent bg-black/30 p-5 backdrop-blur sm:p-6">
           <div className="pointer-events-none absolute inset-0">
-            <div className="absolute inset-4 rounded-[22px] border border-white/5" />
+            <div className="absolute inset-4 rounded-[22px] border border-transparent" />
             <div className="absolute -left-10 top-10 h-40 w-40 rounded-full bg-accent/15 blur-3xl" />
           </div>
           <div className="relative flex items-baseline justify-between gap-3">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.3em] text-white/60">数学メモ</p>
+              <p className="text-[11px] uppercase tracking-[0.3em] text-white/60">{MATH_DIARY_OVERLINE}</p>
               <h2 className="text-xl font-semibold">最近の足跡</h2>
             </div>
           </div>
           <div className="relative">
-            <div className="absolute left-5 top-1 bottom-1 w-px bg-gradient-to-b from-accent/70 via-white/40 to-transparent" />
+            <div className="absolute left-5 top-1 bottom-1 w-px bg-gradient-to-b from-accent/70 via-accent/20 to-transparent" />
             <ul className="space-y-4">
               {timelinePreview.map((entry, index) => (
                 <li
                   key={entry.id}
-                  className="relative rounded-2xl border border-white/10 bg-white/5 p-4 pl-12 shadow-[0_10px_30px_rgba(4,11,22,0.4)]"
+                  className="relative overflow-hidden rounded-2xl border border-accent/15 bg-[linear-gradient(160deg,rgba(8,18,36,0.92),rgba(10,20,38,0.96))] p-4 pl-12 shadow-[0_10px_30px_rgba(4,11,22,0.4)]"
                 >
-                  <div className="absolute left-3 top-5 flex h-6 w-6 items-center justify-center rounded-full border border-white/40 bg-black/70">
+                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_16%,rgba(100,210,255,0.14),transparent_30%),radial-gradient(circle_at_90%_0%,rgba(247,181,0,0.08),transparent_26%)]" />
+                  <div className="absolute left-3 top-5 flex h-6 w-6 items-center justify-center rounded-full border border-accent/35 bg-black/70">
                     <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_0_6px_rgba(100,210,255,0.18)]" />
                     <span className="absolute -z-10 h-10 w-10 rounded-full bg-accent/10 blur-2xl" />
                   </div>
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="relative flex items-start justify-between gap-3">
                     <div>
                       <p className="text-[11px] uppercase tracking-[0.2em] text-white/55">{formatDate(entry.publishedAt)}</p>
                       <p className="text-sm font-semibold text-white">{entry.title}</p>
                       <p className="text-xs text-white/65">{entry.summary}</p>
                     </div>
                     <div className="flex flex-col items-end gap-1 text-right">
-                      <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-semibold text-white/80">
+                      <span className="rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-[11px] font-semibold text-white/80">
                         PV {entry.viewCount ?? 0}
                       </span>
                       <span className="text-[11px] uppercase tracking-[0.2em] text-white/40">#{index + 1}</span>
@@ -114,7 +116,7 @@ export function HeroSection({ site, diaries }: HeroSectionProps) {
                   </div>
                   <SmartLink
                     href={`/diary/${entry.slug}`}
-                    className="mt-2 inline-flex text-xs text-accent underline underline-offset-4"
+                    className="relative mt-2 inline-flex text-xs text-accent underline underline-offset-4"
                   >
                     詳細
                   </SmartLink>

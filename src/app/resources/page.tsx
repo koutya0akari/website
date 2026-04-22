@@ -15,7 +15,7 @@ export default async function ResourcesPage() {
 
   return (
     <div className="mx-auto max-w-content px-6 py-12 space-y-8">
-      <section className="rounded-[32px] border border-white/10 bg-gradient-to-br from-night-soft to-night p-8">
+      <section className="rounded-[32px] border border-transparent bg-gradient-to-br from-night-soft to-night p-8">
         <p className="text-xs uppercase tracking-[0.4em] text-white/60">Resources</p>
         <h1 className="mt-3 text-4xl font-semibold">公開資料</h1>
       </section>

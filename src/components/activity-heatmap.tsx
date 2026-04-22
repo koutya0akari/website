@@ -73,7 +73,7 @@ export function ActivityHeatmap({ data, year = new Date().getFullYear() }: Activ
   };
 
   const intensityColors = [
-    "bg-white/5 border-white/10",
+    "bg-white/5 border-transparent",
     "bg-accent/20 border-accent/30",
     "bg-accent/40 border-accent/50",
     "bg-accent/60 border-accent/70",
@@ -107,7 +107,7 @@ export function ActivityHeatmap({ data, year = new Date().getFullYear() }: Activ
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         <motion.div
-          className="rounded-xl border border-white/10 bg-white/5 p-4 text-center"
+          className="rounded-xl border border-transparent bg-white/5 p-4 text-center"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -116,7 +116,7 @@ export function ActivityHeatmap({ data, year = new Date().getFullYear() }: Activ
           <div className="text-xs text-white/50">総アクティビティ</div>
         </motion.div>
         <motion.div
-          className="rounded-xl border border-white/10 bg-white/5 p-4 text-center"
+          className="rounded-xl border border-transparent bg-white/5 p-4 text-center"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -125,7 +125,7 @@ export function ActivityHeatmap({ data, year = new Date().getFullYear() }: Activ
           <div className="text-xs text-white/50">アクティブ日数</div>
         </motion.div>
         <motion.div
-          className="rounded-xl border border-white/10 bg-white/5 p-4 text-center"
+          className="rounded-xl border border-transparent bg-white/5 p-4 text-center"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -136,7 +136,7 @@ export function ActivityHeatmap({ data, year = new Date().getFullYear() }: Activ
       </div>
 
       {/* Heatmap */}
-      <div className="overflow-x-auto rounded-xl border border-white/10 bg-white/5 p-4">
+      <div className="overflow-x-auto rounded-xl border border-transparent bg-white/5 p-4">
         {/* Month labels */}
         <div className="mb-2 ml-8 flex gap-1">
           {months.map((month, i) => (

@@ -5,8 +5,9 @@ import { notFound } from "next/navigation";
 
 import { DiaryBody } from "@/components/diary/diary-body";
 import { TableOfContents } from "@/components/diary/table-of-contents";
+import { JournalSection } from "@/components/journal/journal-section";
 import { ShareToX } from "@/components/share-to-x";
-import { MONTHLY_DIARY_LABEL } from "@/lib/diary-labels";
+import { MONTHLY_DIARY_LABEL, MONTHLY_DIARY_OVERLINE } from "@/lib/diary-labels";
 import { getMonthlyDiaryBySlug } from "@/lib/monthly-diary";
 import { formatMonthlyDiaryLabel, getMonthlyDiarySummary } from "@/lib/monthly-diary-utils";
 import { createExcerpt, formatDate, stripHtml } from "@/lib/utils";
@@ -81,37 +82,36 @@ export default async function MonthlyDiaryDetailPage({ params }: PageProps) {
 
       <div className="mt-6 grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
         <article className="space-y-8">
-          <section className="overflow-hidden rounded-[36px] border border-white/12 bg-[linear-gradient(155deg,rgba(10,18,30,0.98),rgba(16,28,48,0.94))]">
-            <div className="p-8 sm:p-10">
-              <h1 className="font-display text-4xl leading-tight text-white sm:text-5xl">{entry.title}</h1>
-              <p className="mt-5 max-w-3xl text-base leading-8 text-white/72 sm:text-lg">{summary}</p>
+          <JournalSection variant="page">
+            <p className="text-xs uppercase tracking-[0.4em] text-white/60">{MONTHLY_DIARY_OVERLINE}</p>
+            <h1 className="mt-3 text-4xl font-semibold leading-tight text-white sm:text-5xl">{entry.title}</h1>
+            <p className="mt-5 max-w-3xl text-base leading-8 text-white/72 sm:text-lg">{summary}</p>
 
-              <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-white/70">
-                <span>{monthLabel}</span>
-                <span className="text-white/30">•</span>
-                <time>
-                  Published {formatDate(entry.publishedAt)}
-                  {entry.updatedAt && (
-                    <span className="text-white/45"> （更新 {formatDate(entry.updatedAt)}）</span>
-                  )}
-                </time>
-                <ShareToX url={shareUrl} text={shareText} hashtags={shareTags} via="akari0koutya" />
-              </div>
-
-              {entry.tags.length > 0 && (
-                <div className="mt-5 flex flex-wrap gap-2 text-xs text-white/60">
-                  {entry.tags.map((tag) => (
-                    <span key={tag} className="tag-chip">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              )}
+            <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-white/70">
+              <span>{monthLabel}</span>
+              <span className="text-white/30">•</span>
+              <time>
+                Published {formatDate(entry.publishedAt)}
+                {entry.updatedAt && (
+                  <span className="text-white/45"> （更新 {formatDate(entry.updatedAt)}）</span>
+                )}
+              </time>
+              <ShareToX url={shareUrl} text={shareText} hashtags={shareTags} via="akari0koutya" />
             </div>
-          </section>
+
+            {entry.tags.length > 0 && (
+              <div className="mt-5 flex flex-wrap gap-2 text-xs text-white/60">
+                {entry.tags.map((tag) => (
+                  <span key={tag} className="tag-chip !border-0 bg-white/5">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </JournalSection>
 
           {entry.heroImage?.url && (
-            <div className="relative overflow-hidden rounded-3xl border border-white/10">
+            <div className="relative overflow-hidden rounded-3xl shadow-[0_18px_48px_rgba(2,8,20,0.22)]">
               <Image
                 src={entry.heroImage.url}
                 alt={entry.heroImage.alt ?? entry.title}
@@ -123,7 +123,7 @@ export default async function MonthlyDiaryDetailPage({ params }: PageProps) {
             </div>
           )}
 
-          <section className="rounded-[32px] border border-white/10 bg-night-soft/75 p-6 sm:p-8">
+          <section className="rounded-[32px] bg-night-soft/75 p-6 shadow-[0_18px_48px_rgba(2,8,20,0.18)] sm:p-8">
             <DiaryBody html={entry.body} />
           </section>
         </article>

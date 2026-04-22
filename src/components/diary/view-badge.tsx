@@ -42,7 +42,7 @@ export function DiaryViewBadge({ slug, initialCount }: DiaryViewBadgeProps) {
     typeof count === "number" && Number.isFinite(count) ? `${count.toLocaleString("ja-JP")} PV` : "PV集計中";
 
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80">
+    <span className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1 text-xs text-white/82">
       <span aria-hidden>👁️</span>
       {label}
     </span>

@@ -17,7 +17,7 @@ export default async function AboutPage() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-12 space-y-10">
       <FadeIn>
-        <section className="rounded-[32px] border border-white/10 bg-gradient-to-br from-night-soft to-night p-8">
+        <section className="rounded-[32px] border border-transparent bg-gradient-to-br from-night-soft to-night p-8">
           <p className="text-xs uppercase tracking-[0.4em] text-white/60">About</p>
           <h1 className="mt-3 text-4xl font-semibold text-white">Akari Math Lab</h1>
           <RichText content={about.intro} className="mt-5 text-lg text-white/80" prose={false} />

@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import { DiaryCard } from "@/components/diary/diary-card";
+import { JournalSection } from "@/components/journal/journal-section";
+import { MATH_DIARY_OVERLINE } from "@/lib/diary-labels";
 import type { DiaryEntry } from "@/lib/types";
 
 type DiarySectionProps = {
@@ -9,20 +11,16 @@ type DiarySectionProps = {
 
 export function DiarySection({ diaries }: DiarySectionProps) {
   return (
-    <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-night-soft/80 via-night/70 to-night-muted/70 p-6 sm:p-8">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-3 rounded-[28px] border border-white/5" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(100,210,255,0.15),transparent_40%),radial-gradient(circle_at_82%_0%,rgba(247,181,0,0.12),transparent_35%)]" />
-      </div>
+    <JournalSection variant="home">
       <div className="relative flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.32em] text-white/60">数学メモ</p>
+          <p className="text-[11px] uppercase tracking-[0.32em] text-white/60">{MATH_DIARY_OVERLINE}</p>
           <h2 className="text-2xl font-semibold text-white sm:text-3xl">最近の数学メモ</h2>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Link
             href="/diary"
-            className="rounded-full border border-white/15 px-4 py-2 text-sm text-white transition hover:-translate-y-0.5 hover:border-accent hover:text-accent"
+            className="rounded-full bg-accent/10 px-4 py-2 text-sm text-white/85 transition hover:-translate-y-0.5 hover:bg-accent/14 hover:text-accent"
           >
             すべて見る
           </Link>
@@ -33,6 +31,6 @@ export function DiarySection({ diaries }: DiarySectionProps) {
           <DiaryCard key={entry.id} entry={entry} compact />
         ))}
       </div>
-    </section>
+    </JournalSection>
   );
 }

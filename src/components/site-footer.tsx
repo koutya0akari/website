@@ -18,7 +18,7 @@ export function SiteFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative border-t border-white/10 bg-night/80 backdrop-blur-sm">
+    <footer className="relative border-t border-transparent bg-night/80 backdrop-blur-sm">
       {/* Decorative gradient */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
 
@@ -75,7 +75,7 @@ export function SiteFooter() {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/50 transition hover:border-accent/50 hover:bg-accent/10 hover:text-accent"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-transparent bg-white/5 text-white/50 transition hover:border-accent/50 hover:bg-accent/10 hover:text-accent"
                     aria-label={link.label}
                   >
                     <Icon className="h-5 w-5" />
@@ -87,7 +87,7 @@ export function SiteFooter() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-white/40 sm:flex-row">
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-transparent pt-6 text-xs text-white/40 sm:flex-row">
           <p>© {currentYear} Akari Math Lab. All rights reserved.</p>
           <p className="flex items-center gap-1">
             Built with <Heart className="h-3 w-3 text-red-400" /> using Next.js + Supabase

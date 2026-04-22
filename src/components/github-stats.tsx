@@ -199,7 +199,7 @@ export function GitHubStats({ username }: GitHubStatsProps) {
   };
 
   const intensityColors = [
-    "bg-white/5 border-white/10",
+    "bg-white/5 border-transparent",
     "bg-green-500/30 border-green-500/40",
     "bg-green-500/50 border-green-500/60",
     "bg-green-500/70 border-green-500/80",
@@ -246,7 +246,7 @@ export function GitHubStats({ username }: GitHubStatsProps) {
           href={`https://github.com/${username}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/70 transition hover:bg-white/10"
+          className="flex items-center gap-2 rounded-full border border-transparent bg-white/5 px-4 py-2 text-sm text-white/70 transition hover:bg-white/10"
         >
           View Profile
           <ExternalLink className="h-4 w-4" />
@@ -256,7 +256,7 @@ export function GitHubStats({ username }: GitHubStatsProps) {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <motion.div
-          className="rounded-xl border border-white/10 bg-white/5 p-4 text-center"
+          className="rounded-xl border border-transparent bg-white/5 p-4 text-center"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -266,7 +266,7 @@ export function GitHubStats({ username }: GitHubStatsProps) {
           <div className="text-xs text-white/50">リポジトリ</div>
         </motion.div>
         <motion.div
-          className="rounded-xl border border-white/10 bg-white/5 p-4 text-center"
+          className="rounded-xl border border-transparent bg-white/5 p-4 text-center"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
@@ -276,7 +276,7 @@ export function GitHubStats({ username }: GitHubStatsProps) {
           <div className="text-xs text-white/50">スター</div>
         </motion.div>
         <motion.div
-          className="rounded-xl border border-white/10 bg-white/5 p-4 text-center"
+          className="rounded-xl border border-transparent bg-white/5 p-4 text-center"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -286,7 +286,7 @@ export function GitHubStats({ username }: GitHubStatsProps) {
           <div className="text-xs text-white/50">フォーク</div>
         </motion.div>
         <motion.div
-          className="rounded-xl border border-white/10 bg-white/5 p-4 text-center"
+          className="rounded-xl border border-transparent bg-white/5 p-4 text-center"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
@@ -298,7 +298,7 @@ export function GitHubStats({ username }: GitHubStatsProps) {
       </div>
 
       {/* Contribution Heatmap */}
-      <div className="overflow-x-auto rounded-xl border border-white/10 bg-white/5 p-4">
+      <div className="overflow-x-auto rounded-xl border border-transparent bg-white/5 p-4">
         <h4 className="mb-4 text-sm font-medium text-white/70">コミット活動</h4>
         
         {/* Month labels */}
@@ -377,7 +377,7 @@ export function GitHubStats({ username }: GitHubStatsProps) {
       {/* Language Distribution */}
       {topLanguages.length > 0 && (
         <motion.div
-          className="rounded-xl border border-white/10 bg-white/5 p-4"
+          className="rounded-xl border border-transparent bg-white/5 p-4"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -428,7 +428,7 @@ export function GitHubStats({ username }: GitHubStatsProps) {
                 href={repo.html_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-white/20 hover:bg-white/10"
+                className="group rounded-xl border border-transparent bg-white/5 p-4 transition hover:border-transparent hover:bg-white/10"
               >
                 <div className="flex items-start justify-between">
                   <h5 className="font-medium text-white group-hover:text-accent">

@@ -8,9 +8,10 @@ import { DiaryEngagement } from "@/components/diary/diary-engagement";
 import { Comments } from "@/components/diary/comments";
 import { TableOfContents } from "@/components/diary/table-of-contents";
 import { DiaryViewBadge } from "@/components/diary/view-badge";
+import { JournalSection } from "@/components/journal/journal-section";
 import { ReadingTime } from "@/components/reading-time";
 import { ShareToX } from "@/components/share-to-x";
-import { MATH_DIARY_LABEL, getDiaryDisplayLabel } from "@/lib/diary-labels";
+import { MATH_DIARY_LABEL, MATH_DIARY_OVERLINE } from "@/lib/diary-labels";
 import { getDiaryBySlug } from "@/lib/diary";
 import { createExcerpt, formatDate, stripHtml } from "@/lib/utils";
 
@@ -88,10 +89,8 @@ export default async function DiaryDetailPage({ params }: PageProps) {
       </Link>
       <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
         <article className="space-y-8">
-          <div className="rounded-[32px] border border-white/10 bg-night-soft/80 p-8">
-            <p className="text-xs uppercase tracking-[0.4em] text-white/60">
-              {getDiaryDisplayLabel(entry.folder, MATH_DIARY_LABEL)}
-            </p>
+          <JournalSection variant="detail">
+            <p className="text-xs uppercase tracking-[0.4em] text-white/60">{MATH_DIARY_OVERLINE}</p>
             <h1 className="mt-3 text-4xl font-semibold text-white">{entry.title}</h1>
             <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-white/70">
               <time>
@@ -107,15 +106,15 @@ export default async function DiaryDetailPage({ params }: PageProps) {
             {entry.tags?.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2 text-xs text-white/60">
                 {entry.tags.map((tag) => (
-                  <span key={tag} className="tag-chip">
+                  <span key={tag} className="tag-chip !border-0 bg-white/5">
                     #{tag}
                   </span>
                 ))}
               </div>
             )}
-          </div>
+          </JournalSection>
           {entry.heroImage?.url && (
-            <div className="relative overflow-hidden rounded-3xl border border-white/10">
+            <div className="relative overflow-hidden rounded-3xl shadow-[0_18px_48px_rgba(2,8,20,0.22)]">
               <Image
                 src={entry.heroImage.url}
                 alt={entry.heroImage.alt ?? entry.title}

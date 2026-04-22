@@ -14,7 +14,7 @@ export function ResourceGrid({ resources }: ResourceGridProps) {
   return (
     <div className="grid gap-4">
       {resources.map((item) => (
-        <article key={item.id} className="flex flex-col gap-3 rounded-2xl border border-white/15 bg-white/5 p-6 sm:flex-row sm:items-center sm:justify-between">
+        <article key={item.id} className="flex flex-col gap-3 rounded-2xl border border-transparent bg-white/5 p-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <div className="text-xs uppercase tracking-[0.2em] text-white/50">{item.category}</div>
             <h3 className="text-lg font-semibold text-white">{item.title}</h3>

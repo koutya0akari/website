@@ -42,7 +42,7 @@ export function LinkCard({ url }: { url: string }) {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="my-4 flex items-center gap-2 break-all rounded-lg border border-white/10 bg-white/5 p-4 text-accent hover:underline"
+        className="my-4 flex items-center gap-2 break-all rounded-lg border border-transparent bg-white/5 p-4 text-accent hover:underline"
       >
         <ExternalLink size={16} />
         {url}
@@ -52,7 +52,7 @@ export function LinkCard({ url }: { url: string }) {
 
   if (loading) {
     return (
-      <div className="my-4 h-[120px] w-full animate-pulse rounded-xl border border-white/10 bg-white/5" />
+      <div className="my-4 h-[120px] w-full animate-pulse rounded-xl border border-transparent bg-white/5" />
     );
   }
 
@@ -63,7 +63,7 @@ export function LinkCard({ url }: { url: string }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group my-6 flex h-full w-full flex-col overflow-hidden rounded-xl border border-white/10 bg-night-soft/50 transition hover:border-accent/50 hover:bg-night-soft md:h-[120px] md:flex-row"
+      className="group my-6 flex h-full w-full flex-col overflow-hidden rounded-xl border border-transparent bg-night-soft/50 transition hover:border-accent/50 hover:bg-night-soft md:h-[120px] md:flex-row"
     >
       <div className="flex flex-1 flex-col justify-between p-4">
         <div className="space-y-2">

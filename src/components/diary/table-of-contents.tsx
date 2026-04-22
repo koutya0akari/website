@@ -77,7 +77,7 @@ export function TableOfContents({ html }: TableOfContentsProps) {
 
   return (
     <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto">
-      <div className="rounded-2xl border border-white/10 bg-night-soft/80 backdrop-blur-sm">
+      <div className="rounded-2xl border border-transparent bg-night-soft/80 backdrop-blur-sm">
         {/* Header */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
@@ -105,7 +105,7 @@ export function TableOfContents({ html }: TableOfContentsProps) {
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <nav className="border-t border-white/10 p-4 pt-2">
+              <nav className="border-t border-transparent p-4 pt-2">
                 <ul className="space-y-1">
                   {items.map((item) => {
                     const isActive = activeId === item.id;
@@ -148,7 +148,7 @@ export function TableOfContents({ html }: TableOfContentsProps) {
               </nav>
 
               {/* Progress indicator */}
-              <div className="border-t border-white/10 px-4 py-2">
+              <div className="border-t border-transparent px-4 py-2">
                 <div className="flex items-center justify-between text-xs text-white/40">
                   <span>
                     {items.findIndex((item) => item.id === activeId) + 1} / {items.length}

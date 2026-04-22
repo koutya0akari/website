@@ -11,9 +11,9 @@ export function LearningSection({ learningThemes }: LearningSectionProps) {
   const themes = learningThemes && learningThemes.length > 0 ? learningThemes : defaultLearningThemes.map((t, i) => ({ ...t, id: String(i) }));
 
   return (
-    <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-night-muted/70 via-night/60 to-night-soft/80 p-6 sm:p-8">
+    <section className="relative overflow-hidden rounded-[32px] border border-transparent bg-gradient-to-br from-night-muted/70 via-night/60 to-night-soft/80 p-6 sm:p-8">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-3 rounded-[28px] border border-white/5" />
+        <div className="absolute inset-3 rounded-[28px] border border-transparent" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(100,210,255,0.15),transparent_40%),radial-gradient(circle_at_85%_15%,rgba(247,181,0,0.12),transparent_35%)]" />
       </div>
       <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

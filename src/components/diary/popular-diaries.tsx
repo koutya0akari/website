@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { SpotlightCard } from "@/components/ui/spotlight-card";
+import { JournalCard } from "@/components/journal/journal-card";
 import { MATH_DIARY_LABEL, getDiaryDisplayLabel } from "@/lib/diary-labels";
 import type { DiaryEntry } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
@@ -24,7 +24,7 @@ export function PopularDiaries({ entries }: PopularDiariesProps) {
 
   return (
     <aside>
-      <div className="overflow-hidden rounded-[24px] border border-white/10 bg-gradient-to-b from-white/10 via-night-soft/60 to-night-soft/90 p-5 shadow-card">
+      <div className="overflow-hidden rounded-[24px] bg-[linear-gradient(165deg,rgba(8,18,36,0.97),rgba(12,25,47,0.95),rgba(7,13,24,0.98))] p-5 shadow-card">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="space-y-1">
             <p className="text-[11px] uppercase tracking-[0.28em] text-white/50">Popular</p>
@@ -39,7 +39,7 @@ export function PopularDiaries({ entries }: PopularDiariesProps) {
               <Link
                 key={entry.id}
                 href={`/diary/${entry.slug}`}
-                className="group block rounded-2xl border border-white/5 bg-white/5 px-4 py-3 transition duration-150 hover:-translate-y-0.5 hover:border-accent/70 hover:bg-white/10"
+                className="group block rounded-2xl bg-[linear-gradient(160deg,rgba(8,18,36,0.9),rgba(11,21,38,0.95))] px-4 py-3 transition duration-150 hover:-translate-y-0.5"
               >
                 <div className="flex items-start gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-b from-accent/90 to-highlight/80 text-sm font-semibold text-night shadow-card">
@@ -52,9 +52,9 @@ export function PopularDiaries({ entries }: PopularDiariesProps) {
                     <h3 className="text-sm font-semibold text-white transition group-hover:text-accent">{entry.title}</h3>
                     <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
                       {views ? (
-                        <span className="rounded-full bg-white/10 px-2 py-1 text-[11px] text-white/80">{views}</span>
+                        <span className="rounded-full bg-accent/10 px-2 py-1 text-[11px] text-accent">{views}</span>
                       ) : (
-                        <span className="rounded-full bg-white/10 px-2 py-1 text-[11px] text-white/70">PV集計中</span>
+                        <span className="rounded-full bg-accent/10 px-2 py-1 text-[11px] text-white/70">PV集計中</span>
                       )}
                       <time className="text-white/50">{formatDate(entry.publishedAt)}</time>
                     </div>
@@ -88,9 +88,9 @@ export function PopularDiariesGrid({ entries }: PopularDiariesProps) {
         {entries.map((entry, index) => {
           const views = formatViews(entry.viewCount);
           return (
-            <SpotlightCard
+            <JournalCard
               key={entry.id}
-              className="relative flex flex-col gap-4 p-6 transition hover:-translate-y-0.5 hover:border-accent/80"
+              className="relative flex flex-col gap-4 p-6 hover:-translate-y-0.5"
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 {/* ランキングバッジ */}
@@ -104,11 +104,11 @@ export function PopularDiariesGrid({ entries }: PopularDiariesProps) {
               <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-white/60">
                 <time className="text-sm text-white/60">{formatDate(entry.publishedAt)}</time>
                 {views ? (
-                  <span className="rounded-full border border-accent/30 bg-accent/10 px-2 py-1 text-[11px] font-medium text-accent">
+                  <span className="rounded-full bg-accent/10 px-2 py-1 text-[11px] font-medium text-accent">
                     {views}
                   </span>
                 ) : (
-                  <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] text-white/70">
+                  <span className="rounded-full bg-accent/10 px-2 py-1 text-[11px] text-white/70">
                     PV集計中
                   </span>
                 )}
@@ -123,13 +123,13 @@ export function PopularDiariesGrid({ entries }: PopularDiariesProps) {
               {entry.tags && entry.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 text-xs text-white/60">
                   {entry.tags.slice(0, 3).map((tag) => (
-                    <span key={tag} className="tag-chip">
+                    <span key={tag} className="tag-chip !border-0 bg-white/5">
                       #{tag}
                     </span>
                   ))}
                 </div>
               )}
-            </SpotlightCard>
+            </JournalCard>
           );
         })}
       </div>

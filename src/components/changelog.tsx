@@ -200,7 +200,7 @@ export function Changelog({ username = "Mori-Yusei", repo = "website" }: Changel
                       initial={{ opacity: 0, y: 5 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: groupIndex * 0.05 + commitIndex * 0.02 }}
-                      className="group flex items-start gap-3 rounded-lg border border-white/5 bg-white/[0.02] p-3 transition-all hover:border-white/10 hover:bg-white/5"
+                      className="group flex items-start gap-3 rounded-lg border border-transparent bg-white/[0.02] p-3 transition-all hover:border-transparent hover:bg-white/5"
                     >
                       <GitCommit className="mt-0.5 h-4 w-4 flex-shrink-0 text-white/30 group-hover:text-accent" />
                       <div className="min-w-0 flex-1">
@@ -230,7 +230,7 @@ export function Changelog({ username = "Mori-Yusei", repo = "website" }: Changel
       {hasMore && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/5 py-3 text-sm text-white/60 transition hover:border-white/20 hover:bg-white/10 hover:text-white"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-transparent bg-white/5 py-3 text-sm text-white/60 transition hover:border-transparent hover:bg-white/10 hover:text-white"
         >
           {expanded ? (
             <>

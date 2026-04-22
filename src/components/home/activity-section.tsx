@@ -55,9 +55,9 @@ export async function ActivitySection() {
   const mergedActivities = mergeActivities(manualActivities, githubActivity);
 
   return (
-    <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-night-soft/80 p-6 sm:p-8">
+    <section className="relative overflow-hidden rounded-[32px] border border-transparent bg-night-soft/80 p-6 sm:p-8">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-3 rounded-[28px] border border-white/5" />
+        <div className="absolute inset-3 rounded-[28px] border border-transparent" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(100,210,255,0.12),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(247,181,0,0.08),transparent_35%)]" />
         <div className="absolute left-1/2 top-16 hidden h-[calc(100%-4rem)] w-px -translate-x-1/2 bg-gradient-to-b from-accent/60 via-white/25 to-transparent lg:block" />
       </div>
@@ -116,7 +116,7 @@ export async function ActivitySection() {
                 <div className="hidden items-center gap-4 lg:grid lg:grid-cols-[1fr_auto_1fr]">
                   {index % 2 === 0 ? card : <div className="h-full" />}
                   <div className="relative flex flex-col items-center gap-2">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-black/40 text-sm font-semibold text-white">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-transparent bg-black/40 text-sm font-semibold text-white">
                       {activity.year}
                     </div>
                     {index < mergedActivities.length - 1 && <div className="h-16 w-px bg-white/15" />}

@@ -3,7 +3,8 @@ import Link from "next/link";
 
 import { PopularDiariesGrid } from "@/components/diary/popular-diaries";
 import { DiaryFilter } from "@/components/diary/diary-filter";
-import { MATH_DIARY_LABEL } from "@/lib/diary-labels";
+import { JournalSection } from "@/components/journal/journal-section";
+import { MATH_DIARY_LABEL, MATH_DIARY_OVERLINE } from "@/lib/diary-labels";
 import { getDiaryEntries, getPopularDiaryEntries } from "@/lib/diary";
 
 export const metadata: Metadata = {
@@ -19,13 +20,13 @@ export default async function DiaryPage() {
 
   return (
     <div className="mx-auto max-w-content px-6 py-12 space-y-10">
-      <section className="rounded-[32px] border border-white/10 bg-gradient-to-br from-night-soft to-night p-8">
-        <p className="text-xs uppercase tracking-[0.4em] text-white/60">{MATH_DIARY_LABEL}</p>
+      <JournalSection variant="listing">
+        <p className="text-xs uppercase tracking-[0.4em] text-white/60">{MATH_DIARY_OVERLINE}</p>
         <h1 className="mt-3 text-4xl font-semibold">{MATH_DIARY_LABEL}</h1>
         <Link href="/resources" className="mt-5 inline-flex text-sm text-accent underline underline-offset-4">
           公開資料を見る
         </Link>
-      </section>
+      </JournalSection>
 
       {/* よく読まれている記事 - 最上部に横並びで表示 */}
       <PopularDiariesGrid entries={popularDiaries} />

@@ -87,7 +87,7 @@ export function DiaryEngagement({ entryId, title, summary }: DiaryEngagementProp
   }, [canNativeShare, shareUrl, title, trimmedSummary]);
 
   return (
-    <section className="glass-panel flex flex-col gap-4 rounded-3xl p-6">
+    <section className="glass-panel flex flex-col gap-4 rounded-3xl !border-0 p-6">
       <div className="flex flex-wrap items-center gap-3">
         <button
           type="button"
@@ -117,7 +117,7 @@ export function DiaryEngagement({ entryId, title, summary }: DiaryEngagementProp
             href={link.href}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-white/80 transition hover:border-accent/80 hover:text-accent"
+            className="inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-white/80 transition hover:bg-white/10 hover:text-accent"
           >
             ↗ {link.label} で共有
           </a>
@@ -125,7 +125,7 @@ export function DiaryEngagement({ entryId, title, summary }: DiaryEngagementProp
         <button
           type="button"
           onClick={handleCopy}
-          className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-white/80 transition hover:border-accent/80 hover:text-accent"
+          className="inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-white/80 transition hover:bg-white/10 hover:text-accent"
         >
           🔗 リンクをコピー
         </button>
