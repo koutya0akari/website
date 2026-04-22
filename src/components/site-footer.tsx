@@ -1,5 +1,4 @@
 import Link from "next/link";
-// eslint-disable-next-line @typescript-eslint/no-deprecated
 import { Github, Twitter, Mail, Heart, BookOpen, FolderOpen, User, CalendarDays } from "lucide-react";
 
 const SOCIAL_LINKS = [
@@ -9,8 +8,8 @@ const SOCIAL_LINKS = [
 ];
 
 const NAV_LINKS = [
-  { icon: BookOpen, href: "/diary" as const, label: "Math Diary" },
-  { icon: CalendarDays, href: "/weekly-diary" as const, label: "Weekly Diary" },
+  { icon: BookOpen, href: "/diary" as const, label: "数学メモ" },
+  { icon: CalendarDays, href: "/monthly-diary" as const, label: "日記" },
   { icon: FolderOpen, href: "/resources" as const, label: "Resources" },
   { icon: User, href: "/about" as const, label: "About" },
 ];

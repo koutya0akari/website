@@ -5,14 +5,14 @@ import { ContactSection } from "@/components/home/contact-section";
 import { FocusSection } from "@/components/home/focus-section";
 import { HeroSection } from "@/components/home/hero-section";
 import { LearningSection } from "@/components/home/learning-section";
+import { MonthlyDiarySection } from "@/components/home/monthly-diary-section";
 import { ProjectSection } from "@/components/home/project-section";
 import { SeminarSection } from "@/components/home/seminar-section";
-import { WeeklyDiarySection } from "@/components/home/weekly-diary-section";
 import { FadeIn } from "@/components/motion/fade-in";
 import { directContacts, personalIntro as defaultPersonalIntro } from "@/data/home";
 import { getResourceItems, getSiteContent } from "@/lib/content";
 import { getDiaryEntries } from "@/lib/diary";
-import { getWeeklyDiaryEntries } from "@/lib/weekly-diary";
+import { getMonthlyDiaryEntries } from "@/lib/monthly-diary";
 
 export const revalidate = 300;
 
@@ -25,10 +25,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [site, diaries, weeklyDiaries, resources] = await Promise.all([
+  const [site, diaries, monthlyDiaries, resources] = await Promise.all([
     getSiteContent(),
     getDiaryEntries(3),
-    getWeeklyDiaryEntries(2),
+    getMonthlyDiaryEntries(2),
     getResourceItems(3),
   ]);
 
@@ -60,7 +60,7 @@ export default async function HomePage() {
             <HeroSection site={site} diaries={diaries} />
           </FadeIn>
           <FadeIn delay={0.08}>
-            <WeeklyDiarySection entries={weeklyDiaries} />
+            <MonthlyDiarySection entries={monthlyDiaries} />
           </FadeIn>
           <FadeIn delay={0.1}>
             <FocusSection focuses={site.focuses} />

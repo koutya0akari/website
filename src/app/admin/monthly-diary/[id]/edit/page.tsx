@@ -1,13 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { ArrowLeft } from "lucide-react";
+
 import { DiaryForm, DiaryFormData } from "@/components/admin/DiaryForm";
 import { useToast } from "@/components/admin/ToastProvider";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 
-export default function EditDiaryPage() {
+export default function EditMonthlyDiaryPage() {
   const router = useRouter();
   const params = useParams();
   const id = params?.id as string;
@@ -19,16 +20,16 @@ export default function EditDiaryPage() {
 
   useEffect(() => {
     if (id) {
-      fetchDiary();
+      fetchEntry();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const fetchDiary = async () => {
+  const fetchEntry = async () => {
     try {
-      const response = await fetch(`/api/admin/diary/${id}`);
+      const response = await fetch(`/api/admin/monthly-diary/${id}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch diary entry");
+        throw new Error("日記の取得に失敗しました");
       }
       const result = await response.json();
       const data = result.data;
@@ -38,7 +39,7 @@ export default function EditDiaryPage() {
         slug: data.slug,
         body: data.body || "",
         summary: data.summary || "",
-        folder: data.folder || "",
+        folder: "日記",
         tags: data.tags || [],
         status: data.status,
         publishedAt: data.published_at
@@ -57,7 +58,7 @@ export default function EditDiaryPage() {
 
   const handleSubmit = async (data: DiaryFormData) => {
     try {
-      const response = await fetch(`/api/admin/diary/${id}`, {
+      const response = await fetch(`/api/admin/monthly-diary/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -67,7 +68,6 @@ export default function EditDiaryPage() {
           slug: data.slug,
           body: data.body,
           summary: data.summary,
-          folder: data.folder,
           tags: data.tags,
           status: data.status,
           publishedAt: data.publishedAt,
@@ -76,33 +76,33 @@ export default function EditDiaryPage() {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to update post");
+        const apiError = await response.json();
+        throw new Error(apiError.error || "日記の更新に失敗しました");
       }
 
-      showSuccess("Post updated successfully!");
-      await fetchDiary();
-    } catch (error) {
-      showError(error instanceof Error ? error.message : "Failed to update post");
-      throw error;
+      showSuccess("日記を更新しました");
+      await fetchEntry();
+    } catch (apiError) {
+      showError(apiError instanceof Error ? apiError.message : "日記の更新に失敗しました");
+      throw apiError;
     }
   };
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`/api/admin/diary/${id}`, {
+      const response = await fetch(`/api/admin/monthly-diary/${id}`, {
         method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error("Failed to delete post");
+        throw new Error("日記の削除に失敗しました");
       }
 
-      showSuccess("Post deleted successfully!");
-      router.push("/admin/diary");
-    } catch (error) {
-      showError(error instanceof Error ? error.message : "Failed to delete post");
-      throw error;
+      showSuccess("日記を削除しました");
+      router.push("/admin/monthly-diary");
+    } catch (apiError) {
+      showError(apiError instanceof Error ? apiError.message : "日記の削除に失敗しました");
+      throw apiError;
     }
   };
 
@@ -118,14 +118,14 @@ export default function EditDiaryPage() {
     return (
       <div className="space-y-4">
         <Link
-          href="/admin/diary"
+          href="/admin/monthly-diary"
           className="flex items-center gap-2 text-gray-400 hover:text-accent"
         >
           <ArrowLeft className="h-5 w-5" />
           Back to list
         </Link>
         <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-red-400">
-          {error || "Failed to load diary entry"}
+          {error || "日記の読み込みに失敗しました"}
         </div>
       </div>
     );
@@ -135,12 +135,17 @@ export default function EditDiaryPage() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Link
-          href="/admin/diary"
+          href="/admin/monthly-diary"
           className="rounded-md border border-night-muted p-2 text-gray-400 hover:bg-night-muted hover:text-gray-300"
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <h1 className="text-3xl font-bold text-gray-100">数学メモを編集</h1>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-100">日記を編集</h1>
+          <p className="mt-2 text-sm text-gray-400">
+            h2 見出しを日付として書くと、公開ページ側の月次目次に反映されます。
+          </p>
+        </div>
       </div>
 
       <div className="rounded-lg border border-night-muted bg-night-soft p-6">
@@ -149,6 +154,9 @@ export default function EditDiaryPage() {
           onSubmit={handleSubmit}
           onDelete={handleDelete}
           isNew={false}
+          previewBasePath="/monthly-diary"
+          formKey="monthly-diary"
+          folderDisabled
         />
       </div>
     </div>

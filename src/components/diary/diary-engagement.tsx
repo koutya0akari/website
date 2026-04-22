@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 
+import { MATH_DIARY_LABEL } from "@/lib/diary-labels";
 import { stripHtml } from "@/lib/utils";
 
 const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_URL ?? "https://akari0koutya.com";
@@ -62,7 +63,7 @@ export function DiaryEngagement({ entryId, title, summary }: DiaryEngagementProp
     }
   }, [shareUrl]);
 
-  const summaryText = summary ? stripHtml(summary) : "Math Diary";
+  const summaryText = summary ? stripHtml(summary) : MATH_DIARY_LABEL;
   const trimmedSummary = summaryText.slice(0, 50);
   const shareText = encodeURIComponent(`${title}\n${trimmedSummary}`);
   const encodedUrl = encodeURIComponent(shareUrl);

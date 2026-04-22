@@ -22,12 +22,9 @@ export function SeminarSection({ seminars }: SeminarSectionProps) {
           <p className="text-[11px] uppercase tracking-[0.35em] text-white/55">Seminars</p>
           <h2 className="text-2xl font-semibold text-white sm:text-3xl">自主ゼミのテーマ</h2>
         </div>
-        <div className="flex flex-wrap gap-2 text-xs text-white/70">
-          <span className="rounded-full bg-white/10 px-3 py-1">Reading / Drafting</span>
-        </div>
       </div>
       <div className="relative mt-4 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {themes.map((theme, index) => (
+        {themes.map((theme) => (
           <SpotlightCard
             key={theme.title}
             className="relative h-full space-y-3 overflow-hidden bg-white/5 p-6"
@@ -35,12 +32,6 @@ export function SeminarSection({ seminars }: SeminarSectionProps) {
           >
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/10" />
             <div className="absolute -right-16 top-0 h-28 w-28 rotate-12 rounded-full bg-highlight/15 blur-2xl" />
-            <div className="relative flex items-center justify-between">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/20 px-3 py-1 text-[11px] uppercase tracking-[0.25em] text-white/70">
-                Seminar {index + 1}
-                <span className="h-1 w-1 rounded-full bg-accent" />
-              </div>
-            </div>
             <div className="relative space-y-2">
               <h3 className="text-lg font-semibold text-white">{theme.title}</h3>
               <p className="text-sm text-white/75">{theme.summary}</p>

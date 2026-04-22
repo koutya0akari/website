@@ -16,11 +16,10 @@ export function DiarySection({ diaries }: DiarySectionProps) {
       </div>
       <div className="relative flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.32em] text-white/60">Math Diary</p>
-          <h2 className="text-2xl font-semibold text-white sm:text-3xl">最近の学習記録</h2>
+          <p className="text-[11px] uppercase tracking-[0.32em] text-white/60">数学メモ</p>
+          <h2 className="text-2xl font-semibold text-white sm:text-3xl">最近の数学メモ</h2>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">Draft → Clean copy</span>
           <Link
             href="/diary"
             className="rounded-full border border-white/15 px-4 py-2 text-sm text-white transition hover:-translate-y-0.5 hover:border-accent hover:text-accent"

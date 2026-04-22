@@ -11,7 +11,6 @@ import {
   FolderOpen,
   BookOpen,
   CalendarDays,
-  Hash,
   ArrowRight,
   Command,
   CornerDownLeft,
@@ -28,8 +27,8 @@ interface SearchResult {
 
 const STATIC_PAGES: SearchResult[] = [
   { id: "home", title: "ホーム", description: "トップページへ", href: "/", type: "page", icon: <Home className="h-4 w-4" /> },
-  { id: "diary", title: "Math Diary", description: "学習記録一覧", href: "/diary", type: "page", icon: <BookOpen className="h-4 w-4" /> },
-  { id: "weekly-diary", title: "Weekly Diary", description: "週間日記一覧", href: "/weekly-diary", type: "page", icon: <CalendarDays className="h-4 w-4" /> },
+  { id: "diary", title: "数学メモ", description: "学習記録一覧", href: "/diary", type: "page", icon: <BookOpen className="h-4 w-4" /> },
+  { id: "monthly-diary", title: "日記", description: "日記一覧", href: "/monthly-diary", type: "page", icon: <CalendarDays className="h-4 w-4" /> },
   { id: "resources", title: "Resources", description: "公開資料", href: "/resources", type: "page", icon: <FolderOpen className="h-4 w-4" /> },
   { id: "about", title: "About", description: "プロフィール", href: "/about", type: "page", icon: <User className="h-4 w-4" /> },
 ];
@@ -171,7 +170,7 @@ export function CommandPalette() {
 
   const groupedResults = results.reduce(
     (acc, result) => {
-      const group = result.type === "page" ? "ページ" : result.type === "diary" ? "Math Diary" : "その他";
+      const group = result.type === "page" ? "ページ" : result.type === "diary" ? "数学メモ" : "その他";
       if (!acc[group]) acc[group] = [];
       acc[group].push(result);
       return acc;
@@ -252,7 +251,7 @@ export function CommandPalette() {
                     <div className="px-3 py-2 text-xs font-medium uppercase tracking-wider text-white/40">
                       {group}
                     </div>
-                    {items.map((result, index) => {
+                    {items.map((result) => {
                       const globalIndex = results.indexOf(result);
                       const isSelected = globalIndex === selectedIndex;
 

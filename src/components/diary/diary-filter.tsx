@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { getDiaryDisplayLabel } from "@/lib/diary-labels";
 import type { DiaryEntry } from "@/lib/types";
 import { stripHtml } from "@/lib/utils";
 import { DiaryCard } from "./diary-card";
@@ -60,7 +61,7 @@ export function DiaryFilter({ entries }: DiaryFilterProps) {
                 onClick={() => setFolder((prev) => (prev === name ? null : name))}
                 className={`rounded-full px-4 py-1 ${folder === name ? "bg-accent text-black" : "bg-white/10 text-white/70"}`}
               >
-                {name}
+                {getDiaryDisplayLabel(name, name)}
               </button>
             ))}
           </div>

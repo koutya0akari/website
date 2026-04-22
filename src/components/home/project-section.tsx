@@ -20,22 +20,15 @@ export function ProjectSection({ projects }: ProjectSectionProps) {
           <h2 className="text-2xl font-semibold text-white sm:text-3xl">進行中のプロジェクト</h2>
           <p className="text-sm text-white/70">資料づくり、ウェブ制作、数理系コミュニティの試みなど。</p>
         </div>
-        <div className="flex flex-wrap gap-2 text-xs text-white/70">
-          <span className="rounded-full border border-white/15 px-3 py-1">Labs &amp; Output</span>
-        </div>
       </div>
       <div className="relative mt-4 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {projects.map((project, index) => (
+        {projects.map((project) => (
           <SpotlightCard
             key={project.id}
             className="relative h-full space-y-3 overflow-hidden bg-white/5 p-6"
             spotlightColor="rgba(100, 210, 255, 0.2)"
           >
             <div className="absolute -right-14 top-0 h-24 w-24 rotate-12 rounded-full bg-accent/15 blur-3xl" />
-            <div className="relative flex items-center justify-between text-xs uppercase tracking-[0.25em] text-white/60">
-              <span>{project.status || "In progress"}</span>
-              <span className="rounded-full bg-accent/15 px-2 py-1 text-[11px] font-semibold text-accent">Lab {index + 1}</span>
-            </div>
             <h3 className="text-lg font-semibold text-white">{project.title}</h3>
             <RichText content={project.summary} className="prose-sm text-white/75" />
             <div className="space-y-2 text-sm text-white/70">

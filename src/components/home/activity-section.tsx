@@ -1,4 +1,3 @@
-import { Code2, Users } from "lucide-react";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { activityTimeline } from "@/data/home";
 import { getGitHubActivityByYear, type GitHubActivityYear, type GitHubCommit } from "@/lib/github";
@@ -68,34 +67,13 @@ export async function ActivitySection() {
             <p className="text-[11px] uppercase tracking-[0.35em] text-white/55">Activities</p>
             <h2 className="text-2xl font-semibold text-white sm:text-3xl">近年の活動</h2>
           </div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs text-white/70">
-            <span className="h-2 w-2 rounded-full bg-accent shadow-[0_0_0_4px_rgba(100,210,255,0.2)]" />
-            GitHub から自動更新
-          </div>
         </div>
         <div className="relative space-y-8">
           {mergedActivities.map((activity, index) => {
-            const hasManualItems = activity.manualItems.length > 0;
-            const hasCommits = activity.commits.length > 0;
-
             const card = (
               <SpotlightCard className="h-full p-6">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h3 className="text-xl font-semibold text-white">{activity.year}</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {hasManualItems && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-accent/20 px-3 py-1 text-xs font-semibold text-accent">
-                        <Users className="h-3 w-3" />
-                        Community
-                      </span>
-                    )}
-                    {hasCommits && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-purple-500/20 px-3 py-1 text-xs font-semibold text-purple-400">
-                        <Code2 className="h-3 w-3" />
-                        {activity.commits.length} commits
-                      </span>
-                    )}
-                  </div>
                 </div>
                 <ul className="mt-3 space-y-2 text-white/80">
                   {/* 手動で追加した活動 */}

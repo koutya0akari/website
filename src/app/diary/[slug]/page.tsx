@@ -10,6 +10,7 @@ import { TableOfContents } from "@/components/diary/table-of-contents";
 import { DiaryViewBadge } from "@/components/diary/view-badge";
 import { ReadingTime } from "@/components/reading-time";
 import { ShareToX } from "@/components/share-to-x";
+import { MATH_DIARY_LABEL, getDiaryDisplayLabel } from "@/lib/diary-labels";
 import { getDiaryBySlug } from "@/lib/diary";
 import { createExcerpt, formatDate, stripHtml } from "@/lib/utils";
 
@@ -32,7 +33,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const entry = await getDiaryBySlug(slug);
   if (!entry) {
-    return { title: "Math Diary" };
+    return { title: MATH_DIARY_LABEL };
   }
 
   const summary = entry.summary ? stripHtml(entry.summary) : "";
@@ -83,12 +84,14 @@ export default async function DiaryDetailPage({ params }: PageProps) {
   return (
     <div className="mx-auto max-w-content px-6 py-12">
       <Link href="/diary" className="text-sm text-accent underline-offset-4 hover:underline">
-        ← Math Diary 一覧へ戻る
+        ← {MATH_DIARY_LABEL} 一覧へ戻る
       </Link>
       <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px]">
         <article className="space-y-8">
           <div className="rounded-[32px] border border-white/10 bg-night-soft/80 p-8">
-            <p className="text-xs uppercase tracking-[0.4em] text-white/60">{entry.folder ?? "Math Diary"}</p>
+            <p className="text-xs uppercase tracking-[0.4em] text-white/60">
+              {getDiaryDisplayLabel(entry.folder, MATH_DIARY_LABEL)}
+            </p>
             <h1 className="mt-3 text-4xl font-semibold text-white">{entry.title}</h1>
             <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-white/70">
               <time>

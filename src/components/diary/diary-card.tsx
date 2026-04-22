@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { SpotlightCard } from "@/components/ui/spotlight-card";
+import { MATH_DIARY_LABEL, getDiaryDisplayLabel } from "@/lib/diary-labels";
 import type { DiaryEntry } from "@/lib/types";
 import { createExcerpt, escapeHtml, formatDate } from "@/lib/utils";
 
@@ -28,7 +29,9 @@ export function DiaryCard({
   return (
     <SpotlightCard className="flex flex-col gap-4 p-6 transition hover:-translate-y-0.5 hover:border-accent/80">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <span className="text-xs uppercase tracking-[0.2em] text-white/60">{entry.folder ?? "Math Diary"}</span>
+        <span className="text-xs uppercase tracking-[0.2em] text-white/60">
+          {getDiaryDisplayLabel(entry.folder, MATH_DIARY_LABEL)}
+        </span>
         <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
           <time className="text-sm text-white/60">{formatDate(entry.publishedAt)}</time>
           {showViewCount && (

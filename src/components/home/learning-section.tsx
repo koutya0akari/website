@@ -33,18 +33,8 @@ export function LearningSection({ learningThemes }: LearningSectionProps) {
               spotlightColor="rgba(100, 210, 255, 0.25)"
             >
               <div className="absolute -right-14 top-1/2 h-32 w-32 -translate-y-1/2 rotate-12 rounded-full bg-highlight/10 blur-3xl" />
-              <div className="flex items-start justify-between gap-3">
-                <div className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.26em] text-white/70">
-                  Theme {index + 1}
-                </div>
-                <span className="text-[11px] uppercase tracking-[0.24em] text-white/50">Study</span>
-              </div>
               <h3 className="mt-3 text-lg font-semibold text-white">{theme.title}</h3>
               <p className="mt-2 text-sm text-white/75">{theme.summary}</p>
-              <div className="mt-4 flex items-center gap-2 text-xs text-white/50">
-                <span className="h-px flex-1 bg-gradient-to-r from-accent/60 via-white/40 to-transparent" />
-                <span>Draft → Publish</span>
-              </div>
             </SpotlightCard>
           );
         })}

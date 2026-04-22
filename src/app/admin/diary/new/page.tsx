@@ -53,7 +53,7 @@ export default function NewDiaryPage() {
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <h1 className="text-3xl font-bold text-gray-100">Create New Post</h1>
+        <h1 className="text-3xl font-bold text-gray-100">新しい数学メモを作成</h1>
       </div>
 
       <div className="rounded-lg border border-night-muted bg-night-soft p-6">

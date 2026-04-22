@@ -55,7 +55,7 @@ pnpm dev
 
 http://localhost:3000 でサイトが表示されます。
 
-## 📁 プロジェクト構成
+## プロジェクト構成
 
 ```
 src/
@@ -70,7 +70,7 @@ src/
 └── types/              # TypeScript 型定義
 ```
 
-## 🔧 管理パネル
+## 管理パネル
 
 | ページ | URL | 機能 |
 |--------|-----|------|
@@ -92,7 +92,7 @@ src/
 
 詳細は `DEPLOYMENT_CHECKLIST.md` を参照
 
-## 📖 ドキュメント
+## ドキュメント
 
 - [Supabase セットアップ](docs/SUPABASE_SETUP.md)
 - [実装サマリー](docs/IMPLEMENTATION_SUMMARY.md)
@@ -108,6 +108,6 @@ src/
 - **数式**: KaTeX
 - **エディタ**: Ace Editor
 
-## 📄 ライセンス
+## ライセンス
 
 MIT

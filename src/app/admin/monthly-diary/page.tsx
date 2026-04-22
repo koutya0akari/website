@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { FilePlus } from "lucide-react";
+
 import { DiaryList } from "@/components/admin/DiaryList";
 import { useToast } from "@/components/admin/ToastProvider";
-import { FilePlus } from "lucide-react";
-import Link from "next/link";
 
-interface DiaryItem {
+interface MonthlyDiaryItem {
   id: string;
   title: string;
   slug: string;
@@ -18,9 +19,9 @@ interface DiaryItem {
   published_at?: string;
 }
 
-export default function DiaryListPage() {
+export default function MonthlyDiaryListPage() {
   const { showError } = useToast();
-  const [items, setItems] = useState<DiaryItem[]>([]);
+  const [items, setItems] = useState<MonthlyDiaryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,9 +32,9 @@ export default function DiaryListPage() {
 
   const fetchItems = async () => {
     try {
-      const response = await fetch("/api/admin/diary");
+      const response = await fetch("/api/admin/monthly-diary");
       if (!response.ok) {
-        throw new Error("Failed to fetch diary entries");
+        throw new Error("日記の取得に失敗しました");
       }
       const result = await response.json();
       setItems(result.data || []);
@@ -48,18 +49,17 @@ export default function DiaryListPage() {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await fetch(`/api/admin/diary/${id}`, {
+      const response = await fetch(`/api/admin/monthly-diary/${id}`, {
         method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error("Failed to delete entry");
+        throw new Error("日記の削除に失敗しました");
       }
 
-      // Refresh the list
       await fetchItems();
     } catch (err) {
-      showError(err instanceof Error ? err.message : "Failed to delete entry");
+      showError(err instanceof Error ? err.message : "日記の削除に失敗しました");
     }
   };
 
@@ -82,9 +82,12 @@ export default function DiaryListPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-100">数学メモ</h1>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-100">日記</h1>
+          <p className="mt-2 text-sm text-gray-400">1 か月を 1 エントリとして管理します。</p>
+        </div>
         <Link
-          href="/admin/diary/new"
+          href="/admin/monthly-diary/new"
           className="flex items-center gap-2 rounded-md bg-accent px-4 py-2 font-medium text-night transition-colors hover:bg-accent/90"
         >
           <FilePlus className="h-4 w-4" />
@@ -92,7 +95,12 @@ export default function DiaryListPage() {
         </Link>
       </div>
 
-      <DiaryList items={items} onDelete={handleDelete} />
+      <DiaryList
+        items={items}
+        onDelete={handleDelete}
+        adminBasePath="/admin/monthly-diary"
+        publicBasePath="/monthly-diary"
+      />
     </div>
   );
 }

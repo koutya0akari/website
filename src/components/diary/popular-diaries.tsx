@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { SpotlightCard } from "@/components/ui/spotlight-card";
+import { MATH_DIARY_LABEL, getDiaryDisplayLabel } from "@/lib/diary-labels";
 import type { DiaryEntry } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
@@ -45,7 +46,9 @@ export function PopularDiaries({ entries }: PopularDiariesProps) {
                     #{index + 1}
                   </div>
                   <div className="flex-1 space-y-1">
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-white/50">{entry.folder ?? "Math Diary"}</p>
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-white/50">
+                      {getDiaryDisplayLabel(entry.folder, MATH_DIARY_LABEL)}
+                    </p>
                     <h3 className="text-sm font-semibold text-white transition group-hover:text-accent">{entry.title}</h3>
                     <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
                       {views ? (
@@ -95,7 +98,7 @@ export function PopularDiariesGrid({ entries }: PopularDiariesProps) {
                   #{index + 1}
                 </div>
                 <span className="text-xs uppercase tracking-[0.2em] text-white/60">
-                  {entry.folder ?? "Math Diary"}
+                  {getDiaryDisplayLabel(entry.folder, MATH_DIARY_LABEL)}
                 </span>
               </div>
               <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-white/60">

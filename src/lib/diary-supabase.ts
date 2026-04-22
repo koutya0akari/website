@@ -2,10 +2,10 @@ import "server-only";
 
 import type { DiaryEntry } from "@/lib/types";
 import { normalizeRichTextToHtml } from "@/lib/markdown";
+import { RESERVED_DIARY_FOLDER_EXCLUSION_FILTER } from "@/lib/monthly-diary-config";
 import { createClient } from "@/lib/supabase/server";
 import { createExcerpt, escapeHtml } from "@/lib/utils";
 
-const WEEKLY_DIARY_FOLDER = "Weekly Diary";
 const MATH_DIARY_FOLDER = "Math Diary";
 
 type SupabaseDiaryRow = {
@@ -55,7 +55,7 @@ export async function getDiaryEntries(limit = 50): Promise<DiaryEntry[]> {
     .from("diary")
     .select("*")
     .eq("status", "published")
-    .or(`folder.is.null,folder.neq."${WEEKLY_DIARY_FOLDER}"`)
+    .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
     .order("published_at", { ascending: false })
     .limit(limit);
 
@@ -77,7 +77,7 @@ export async function getPopularDiaryEntries(
     .from("diary")
     .select("*")
     .eq("status", "published")
-    .or(`folder.is.null,folder.neq."${WEEKLY_DIARY_FOLDER}"`)
+    .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
     .order("view_count", { ascending: false })
     .order("published_at", { ascending: false })
     .limit(limit);
@@ -104,7 +104,7 @@ export async function getDiaryBySlug(slug: string): Promise<DiaryEntry | undefin
     .select("*")
     .eq("slug", slug)
     .eq("status", "published")
-    .or(`folder.is.null,folder.neq."${WEEKLY_DIARY_FOLDER}"`)
+    .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
     .maybeSingle();
 
   if (error) {
@@ -128,7 +128,7 @@ export async function incrementDiaryView(slug: string): Promise<number | undefin
     .select("id, view_count")
     .eq("slug", slug)
     .eq("status", "published")
-    .or(`folder.is.null,folder.neq."${WEEKLY_DIARY_FOLDER}"`)
+    .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
     .maybeSingle();
 
   if (fetchError || !diary) {
@@ -168,7 +168,7 @@ export async function getActivityByYear(): Promise<ActivityYear[]> {
     .from("diary")
     .select("title, slug, published_at, created_at, tags, folder")
     .eq("status", "published")
-    .or(`folder.is.null,folder.neq."${WEEKLY_DIARY_FOLDER}"`)
+    .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
     .order("published_at", { ascending: false });
 
   if (error) {
