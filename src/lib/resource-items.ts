@@ -68,11 +68,60 @@ function getFileKey(fileUrl: string | null | undefined): string | null {
   return trimmed ? trimmed : null;
 }
 
+function buildFallbackDescription({
+  title,
+  category,
+  fileUrl,
+  externalUrl,
+}: {
+  title: string;
+  category: string | null;
+  fileUrl: string | null;
+  externalUrl: string | null;
+}): string {
+  if (isLectureNoteFileUrl(fileUrl) || category === LECTURE_NOTE_CATEGORY) {
+    return `「${title}」の講義ノートを PDF で公開しています。`;
+  }
+
+  if (externalUrl?.trim()) {
+    return `「${title}」の公開資料です。リンク先で内容を確認できます。`;
+  }
+
+  return `「${title}」の公開資料です。`;
+}
+
+function resolvePublicDescription({
+  title,
+  description,
+  category,
+  fileUrl,
+  externalUrl,
+}: {
+  title: string;
+  description: string | null | undefined;
+  category: string | null;
+  fileUrl: string | null;
+  externalUrl: string | null;
+}): string {
+  const trimmed = description?.trim();
+  if (trimmed) {
+    return trimmed;
+  }
+
+  return buildFallbackDescription({ title, category, fileUrl, externalUrl });
+}
+
 function mapDatabaseRow(row: ResourceRow): ResourceItem {
   return {
     id: row.id,
     title: row.title,
-    description: row.description ?? "",
+    description: resolvePublicDescription({
+      title: row.title,
+      description: row.description,
+      category: row.category,
+      fileUrl: row.file_url,
+      externalUrl: row.external_url,
+    }),
     category: row.category ?? "",
     fileUrl: row.file_url ?? "",
     externalUrl: row.external_url ?? undefined,
@@ -139,7 +188,13 @@ export function mergeResourceItems(databaseRows: ResourceRow[], githubItems: Git
       return {
         id: `lecture-note-${item.path}`,
         title: item.title,
-        description: item.description,
+        description: resolvePublicDescription({
+          title: item.title,
+          description: item.description,
+          category: item.category,
+          fileUrl: item.fileUrl,
+          externalUrl: null,
+        }),
         category: item.category,
         fileUrl: item.fileUrl,
       };
@@ -148,7 +203,13 @@ export function mergeResourceItems(databaseRows: ResourceRow[], githubItems: Git
     return {
       id: metadata.id,
       title: metadata.title || item.title,
-      description: metadata.description ?? item.description,
+      description: resolvePublicDescription({
+        title: metadata.title || item.title,
+        description: metadata.description ?? item.description,
+        category: metadata.category || item.category,
+        fileUrl: item.fileUrl,
+        externalUrl: metadata.external_url,
+      }),
       category: metadata.category || item.category,
       fileUrl: item.fileUrl,
     };
