@@ -6,6 +6,10 @@ type RouteParams = {
   params: Promise<{ id: string }>;
 };
 
+function normalizeText(value: unknown) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
 // GET /api/admin/resources/[id] - Get single resource
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
@@ -51,7 +55,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     const body = await request.json();
-    const { title, description, category, fileUrl, externalUrl } = body;
+    const title = normalizeText(body.title);
+    const description = normalizeText(body.description);
+    const category = normalizeText(body.category);
+    const fileUrl = normalizeText(body.fileUrl);
+    const externalUrl = normalizeText(body.externalUrl);
 
     if (!title) {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
@@ -61,9 +69,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .from("resources")
       .update({
         title,
-        description: description || null,
-        category: category || null,
-        file_url: fileUrl || null,
+        description,
+        category,
+        file_url: fileUrl,
         external_url: externalUrl || null,
         updated_at: new Date().toISOString(),
       })

@@ -3,6 +3,16 @@ import { buildAdminResourceItems, getLectureNoteItems, type ResourceRow } from "
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
+function normalizeText(value: unknown) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function createMicrocmsId(fileUrl: string, externalUrl: string, title: string) {
+  const source = fileUrl || externalUrl || title || crypto.randomUUID();
+  const sanitized = source.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return `${sanitized || "resource"}-${crypto.randomUUID()}`;
+}
+
 // GET /api/admin/resources - List all resources
 export async function GET(request: NextRequest) {
   try {
@@ -55,7 +65,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { title, description, category, fileUrl, externalUrl } = body;
+    const title = normalizeText(body.title);
+    const description = normalizeText(body.description);
+    const category = normalizeText(body.category);
+    const fileUrl = normalizeText(body.fileUrl);
+    const externalUrl = normalizeText(body.externalUrl);
 
     if (!title) {
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
@@ -84,10 +98,11 @@ export async function POST(request: NextRequest) {
     const { data, error } = await supabase
       .from("resources")
       .insert({
+        microcms_id: createMicrocmsId(fileUrl, externalUrl, title),
         title,
-        description: description || null,
-        category: category || null,
-        file_url: fileUrl || null,
+        description,
+        category,
+        file_url: fileUrl,
         external_url: externalUrl || null,
       })
       .select()
