@@ -419,7 +419,7 @@ export function RichEditor({
   `;
 
   const previewClasses = `
-    prose prose-invert max-w-none p-4 overflow-y-auto
+    prose prose-invert prose-preserve-whitespace max-w-none p-4 overflow-y-auto
     ${isDark ? "bg-night-soft" : "bg-gray-50"}
   `;
 
@@ -549,4 +549,3 @@ export function RichEditor({
     </>
   );
 }
-

@@ -134,3 +134,7 @@ html.light .glass-panel {
   display: inline-block;
   min-width: max-content;
 }
+
+.prose-preserve-whitespace :where(p, li, blockquote, td, th):not(:where(pre *, code *)) {
+  white-space: pre-wrap;
+}

@@ -10,12 +10,6 @@ import rehypeSlug from "rehype-slug";
 import rehypeKatex from "rehype-katex";
 import rehypeStringify from "rehype-stringify";
 
-function looksLikeHtml(value: string): boolean {
-  // Rough detection to avoid treating already-rendered HTML as Markdown.
-  // Examples: <p>, <div>, <h1>, <img ...>, <!-- ... -->
-  return /<\/?[a-z][\s\S]*?>/i.test(value) || /<!--[\s\S]*?-->/.test(value);
-}
-
 const markdownProcessor = unified()
   .use(remarkParse)
   .use(remarkGfm)
@@ -30,6 +24,10 @@ export function renderMarkdownToHtml(markdown: string): string {
   return String(markdownProcessor.processSync(markdown));
 }
 
+function normalizeLineEndings(value: string): string {
+  return value.replace(/\r\n?/g, "\n");
+}
+
 function unwrapSingleParagraph(html: string): string {
   const trimmed = html.trim();
   const match = trimmed.match(/^<p>([\s\S]*)<\/p>$/i);
@@ -37,10 +35,9 @@ function unwrapSingleParagraph(html: string): string {
 }
 
 export function normalizeRichTextToHtml(content: string): string {
-  const trimmed = content?.trim?.() ?? "";
-  if (!trimmed) return "";
-  if (looksLikeHtml(trimmed)) return trimmed;
-  return renderMarkdownToHtml(trimmed);
+  const normalized = normalizeLineEndings(content ?? "");
+  if (!normalized.trim()) return "";
+  return renderMarkdownToHtml(normalized);
 }
 
 export function normalizeRichTextToInlineHtml(content: string): string {

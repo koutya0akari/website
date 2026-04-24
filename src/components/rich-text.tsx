@@ -23,7 +23,7 @@ export function RichText({
 
   const proseClasses = prose
     ? cn(
-        "prose prose-invert max-w-none",
+        "prose prose-invert prose-preserve-whitespace max-w-none",
         compact &&
           "prose-p:my-0 prose-ul:my-0 prose-ol:my-0 prose-li:my-0 prose-pre:my-0 prose-blockquote:my-0",
       )
@@ -32,7 +32,6 @@ export function RichText({
   return (
     <Tag
       className={cn(proseClasses, className)}
-      // eslint-disable-next-line react/no-danger
       dangerouslySetInnerHTML={{ __html: html }}
     />
   );

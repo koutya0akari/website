@@ -103,7 +103,7 @@ const replaceNode = (domNode: DOMNode) => {
 
 export function DiaryBody({ html }: DiaryBodyProps) {
   return (
-    <div className="prose prose-invert max-w-none prose-headings:font-semibold prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl">
+    <div className="prose prose-invert prose-preserve-whitespace max-w-none prose-headings:font-semibold prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl">
       {parse(html, { replace: replaceNode })}
     </div>
   );

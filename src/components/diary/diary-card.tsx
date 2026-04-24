@@ -48,7 +48,7 @@ export function DiaryCard({
             {entry.title}
           </Link>
         </h3>
-        <div className="prose-custom mt-2 text-white/70" dangerouslySetInnerHTML={{ __html: summaryHtml }} />
+        <div className="prose-custom prose-preserve-whitespace mt-2 text-white/70" dangerouslySetInnerHTML={{ __html: summaryHtml }} />
       </div>
       {!compact && entry.tags?.length > 0 && (
         <div className="flex flex-wrap gap-2 text-xs text-white/60">
