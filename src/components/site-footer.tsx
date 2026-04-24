@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Github, Twitter, Mail, Heart, BookOpen, FolderOpen, User, CalendarDays } from "lucide-react";
+import { Github, Twitter, Mail, Heart, BookOpen, FolderOpen, User, CalendarDays, FileText } from "lucide-react";
 
 const SOCIAL_LINKS = [
   { icon: Github, href: "https://github.com/koutya0akari", label: "GitHub" },
@@ -9,6 +9,7 @@ const SOCIAL_LINKS = [
 
 const NAV_LINKS = [
   { icon: BookOpen, href: "/diary" as const, label: "数学メモ" },
+  { icon: FileText, href: "/memo" as const, label: "メモ" },
   { icon: CalendarDays, href: "/monthly-diary" as const, label: "日記" },
   { icon: FolderOpen, href: "/resources" as const, label: "Resources" },
   { icon: User, href: "/about" as const, label: "About" },

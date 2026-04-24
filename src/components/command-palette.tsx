@@ -28,6 +28,7 @@ interface SearchResult {
 const STATIC_PAGES: SearchResult[] = [
   { id: "home", title: "ホーム", description: "トップページへ", href: "/", type: "page", icon: <Home className="h-4 w-4" /> },
   { id: "diary", title: "数学メモ", description: "学習記録一覧", href: "/diary", type: "page", icon: <BookOpen className="h-4 w-4" /> },
+  { id: "memo", title: "メモ", description: "文章メモ一覧", href: "/memo", type: "page", icon: <FileText className="h-4 w-4" /> },
   { id: "monthly-diary", title: "日記", description: "日記一覧", href: "/monthly-diary", type: "page", icon: <CalendarDays className="h-4 w-4" /> },
   { id: "resources", title: "Resources", description: "公開資料", href: "/resources", type: "page", icon: <FolderOpen className="h-4 w-4" /> },
   { id: "about", title: "About", description: "プロフィール", href: "/about", type: "page", icon: <User className="h-4 w-4" /> },

@@ -1,13 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
-import {
-  MEMO_FOLDER,
-  MONTHLY_DIARY_FOLDER,
-  MONTHLY_DIARY_FOLDERS,
-  RESERVED_DIARY_FOLDER_EXCLUSION_FILTER,
-} from "@/lib/monthly-diary-config";
+import { MEMO_FOLDER } from "@/lib/monthly-diary-config";
 import { NextRequest, NextResponse } from "next/server";
 
-// GET /api/admin/diary/[id] - Get single diary entry
+// GET /api/admin/memo/[id] - Get single memo entry
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -16,7 +11,6 @@ export async function GET(
     const supabase = await createClient();
     const { id } = await params;
 
-    // Check authentication
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -28,14 +22,14 @@ export async function GET(
       .from("diary")
       .select("*")
       .eq("id", id)
-      .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
+      .eq("folder", MEMO_FOLDER)
       .single();
 
     if (error) {
       if (error.code === "PGRST116") {
         return NextResponse.json({ error: "Entry not found" }, { status: 404 });
       }
-      console.error("[API] Failed to fetch diary entry:", error);
+      console.error("[API] Failed to fetch memo entry:", error);
       return NextResponse.json({ error: "Failed to fetch entry" }, { status: 500 });
     }
 
@@ -46,7 +40,7 @@ export async function GET(
   }
 }
 
-// PUT /api/admin/diary/[id] - Update diary entry
+// PUT /api/admin/memo/[id] - Update memo entry
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -55,7 +49,6 @@ export async function PUT(
     const supabase = await createClient();
     const { id } = await params;
 
-    // Check authentication
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -64,28 +57,12 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { title, slug, body: content, summary, folder, tags, status, publishedAt, heroImageUrl } = body;
+    const { title, slug, body: content, summary, tags, status, publishedAt, heroImageUrl } = body;
 
-    // Validate required fields
     if (!title || !slug) {
       return NextResponse.json({ error: "Title and slug are required" }, { status: 400 });
     }
 
-    if (MONTHLY_DIARY_FOLDERS.includes(String(folder ?? "") as (typeof MONTHLY_DIARY_FOLDERS)[number])) {
-      return NextResponse.json(
-        { error: `Folder "${MONTHLY_DIARY_FOLDER}" is reserved. Use 日記 admin instead.` },
-        { status: 400 },
-      );
-    }
-
-    if (folder === MEMO_FOLDER) {
-      return NextResponse.json(
-        { error: `Folder "${MEMO_FOLDER}" is reserved. Use メモ admin instead.` },
-        { status: 400 },
-      );
-    }
-
-    // Check if slug exists on another entry
     const { data: existing } = await supabase
       .from("diary")
       .select("id")
@@ -104,7 +81,7 @@ export async function PUT(
         slug,
         body: content || null,
         summary: summary || null,
-        folder: folder || null,
+        folder: MEMO_FOLDER,
         tags: tags || null,
         status: status || "draft",
         published_at: publishedAt || null,
@@ -112,12 +89,12 @@ export async function PUT(
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)
-      .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
+      .eq("folder", MEMO_FOLDER)
       .select()
       .single();
 
     if (error) {
-      console.error("[API] Failed to update diary entry:", error);
+      console.error("[API] Failed to update memo entry:", error);
       return NextResponse.json({ error: "Failed to update entry" }, { status: 500 });
     }
 
@@ -128,7 +105,7 @@ export async function PUT(
   }
 }
 
-// DELETE /api/admin/diary/[id] - Delete diary entry
+// DELETE /api/admin/memo/[id] - Delete memo entry
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -137,7 +114,6 @@ export async function DELETE(
     const supabase = await createClient();
     const { id } = await params;
 
-    // Check authentication
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -149,10 +125,10 @@ export async function DELETE(
       .from("diary")
       .delete()
       .eq("id", id)
-      .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER);
+      .eq("folder", MEMO_FOLDER);
 
     if (error) {
-      console.error("[API] Failed to delete diary entry:", error);
+      console.error("[API] Failed to delete memo entry:", error);
       return NextResponse.json({ error: "Failed to delete entry" }, { status: 500 });
     }
 

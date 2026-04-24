@@ -9,10 +9,11 @@
 
 ## 特徴
 
-- **Math Diary** - 数学の学習記録をブログ形式で公開
-- **Weekly Diary** - 週間日記（1週間のまとめ）を公開
+- **数学メモ** - 数学の学習記録をブログ形式で公開
+- **メモ** - 文章メモを公開
+- **日記** - 月ごとの日記を公開
 - **Resources** - PDF や外部リンクを整理して公開
-- **管理パネル** - 日記・リソース・サイト設定を GUI で管理
+- **管理パネル** - 数学メモ・メモ・日記・リソース・サイト設定を GUI で管理
 
 ## クイックスタート
 
@@ -62,7 +63,9 @@ src/
 ├── app/                # Next.js App Router
 │   ├── admin/          # 管理パネル
 │   ├── api/            # API ルート
-│   ├── diary/          # 日記ページ
+│   ├── diary/          # 数学メモページ
+│   ├── memo/           # メモページ
+│   ├── monthly-diary/  # 日記ページ
 │   ├── resources/      # リソースページ
 │   └── about/          # About ページ
 ├── components/         # React コンポーネント
@@ -76,8 +79,9 @@ src/
 |--------|-----|------|
 | ログイン | `/login` | 認証 |
 | ダッシュボード | `/admin/dashboard` | 統計・概要 |
-| 日記管理 | `/admin/diary` | 記事の CRUD |
-| 週間日記管理 | `/admin/weekly-diary` | 週間日記の CRUD |
+| 数学メモ管理 | `/admin/diary` | 数学メモの CRUD |
+| メモ管理 | `/admin/memo` | 文章メモの CRUD |
+| 日記管理 | `/admin/monthly-diary` | 日記の CRUD |
 | リソース管理 | `/admin/resources` | 資料の管理 |
 | サイト設定 | `/admin/site` | トップページ設定 |
 | About 設定 | `/admin/about` | プロフィール編集 |

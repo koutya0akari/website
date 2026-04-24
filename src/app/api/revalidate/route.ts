@@ -1,8 +1,9 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
 
-const DEFAULT_PATHS = ["/", "/diary", "/resources"] as const;
+const DEFAULT_PATHS = ["/", "/diary", "/memo", "/monthly-diary", "/resources"] as const;
 const DIARY_ENDPOINTS = new Set(["diary", "diaries", "blogs", "math-diary", "math_diary"]);
+const MEMO_ENDPOINTS = new Set(["memo", "memos"]);
 
 export async function GET(request: NextRequest) {
   const secretValidation = validateSecret(request);
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
       body.contentsId;
 
     if (slug) {
-      pathSet.add(`/diary/${slug}`);
+      pathSet.add(`${MEMO_ENDPOINTS.has(apiName) ? "/memo" : "/diary"}/${slug}`);
     }
 
     if (DIARY_ENDPOINTS.has(apiName)) {

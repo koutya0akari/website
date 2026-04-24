@@ -10,7 +10,7 @@ interface DiaryListItem {
   slug: string;
   status: "draft" | "published";
   folder?: string;
-  tags: string[];
+  tags?: string[] | null;
   view_count: number;
   created_at: string;
   published_at?: string;
@@ -136,9 +136,9 @@ export function DiaryList({
                       {item.folder && <span className="ml-3">📁 {item.folder}</span>}
                     </div>
 
-                    {item.tags.length > 0 && (
+                    {(item.tags ?? []).length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">
-                        {item.tags.map((tag) => (
+                        {(item.tags ?? []).map((tag) => (
                           <span
                             key={tag}
                             className="rounded-md bg-accent/10 px-2 py-0.5 text-xs text-accent"

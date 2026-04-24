@@ -8,6 +8,7 @@ import { clsx } from "clsx";
 const navigation = [
   { name: "Dashboard", href: "/admin/dashboard" as const, icon: LayoutDashboard },
   { name: "数学メモ", href: "/admin/diary" as const, icon: FileText },
+  { name: "メモ", href: "/admin/memo" as const, icon: FileText },
   { name: "日記", href: "/admin/monthly-diary" as const, icon: CalendarDays },
   { name: "Resources", href: "/admin/resources" as const, icon: FolderOpen },
   { name: "Media", href: "/admin/media" as const, icon: Image },

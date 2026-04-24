@@ -19,7 +19,7 @@
 
 Supabase の SQL Editor で以下のスキーマを実行してください。
 
-### 2.1 Diary テーブル（日記/ブログ記事）
+### 2.1 Diary テーブル（数学メモ/メモ/日記）
 
 ```sql
 -- Diary テーブル
@@ -59,9 +59,16 @@ CREATE POLICY "Authenticated users full access" ON diary
   WITH CHECK (auth.role() = 'authenticated');
 ```
 
-### 2.2 Weekly Diary（週間日記）
+### 2.2 コンテンツ分類
 
-Weekly Diary は `diary` テーブルの `folder` を `Weekly Diary` に固定して区別します（追加テーブル不要）。
+追加テーブルは作らず、`diary` テーブルの `folder` で公開ページを分けます。
+
+| 種別 | folder | 管理画面 | 公開ページ |
+|------|--------|----------|------------|
+| 数学メモ | `NULL` または通常フォルダ | `/admin/diary` | `/diary` |
+| メモ | `Memo` | `/admin/memo` | `/memo` |
+| 日記 | `Monthly Diary` | `/admin/monthly-diary` | `/monthly-diary` |
+| 旧週間日記 | `Weekly Diary` | `/admin/weekly-diary` から日記管理へリダイレクト | `/weekly-diary` から日記へリダイレクト |
 
 ### 2.3 Site テーブル（サイト設定）
 
@@ -228,8 +235,9 @@ pnpm dev
 | 機能 | パス | 説明 |
 |------|------|------|
 | ダッシュボード | `/admin/dashboard` | 統計情報、最近の投稿 |
-| 日記管理 | `/admin/diary` | 記事の CRUD |
-| 週間日記管理 | `/admin/weekly-diary` | 週間日記の CRUD |
+| 数学メモ管理 | `/admin/diary` | 数学メモの CRUD |
+| メモ管理 | `/admin/memo` | 文章メモの CRUD |
+| 日記管理 | `/admin/monthly-diary` | 日記の CRUD |
 | リソース管理 | `/admin/resources` | 公開資料の管理 |
 | サイト設定 | `/admin/site` | ヒーロー、プロジェクト等 |
 | About 設定 | `/admin/about` | プロフィール編集 |

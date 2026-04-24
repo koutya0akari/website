@@ -9,9 +9,17 @@ import { DiaryCard } from "./diary-card";
 
 type DiaryFilterProps = {
   entries: DiaryEntry[];
+  hrefBase?: string;
+  emptyMessage?: string;
+  showViewCount?: boolean;
 };
 
-export function DiaryFilter({ entries }: DiaryFilterProps) {
+export function DiaryFilter({
+  entries,
+  hrefBase = "/diary",
+  emptyMessage = "該当する日記はありません。",
+  showViewCount = true,
+}: DiaryFilterProps) {
   const [query, setQuery] = useState("");
   const [folder, setFolder] = useState<string | null>(null);
   const [tag, setTag] = useState<string | null>(null);
@@ -92,11 +100,16 @@ export function DiaryFilter({ entries }: DiaryFilterProps) {
       </div>
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {filtered.map((entry) => (
-          <DiaryCard key={entry.id} entry={entry} />
+          <DiaryCard
+            key={entry.id}
+            entry={entry}
+            hrefBase={hrefBase}
+            showViewCount={showViewCount}
+          />
         ))}
       </div>
       {filtered.length === 0 && (
-        <p className="text-center text-white/60">該当する日記はありません。</p>
+        <p className="text-center text-white/60">{emptyMessage}</p>
       )}
     </div>
   );

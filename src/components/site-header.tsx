@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { label: "研究関心", href: "/#focus" },
   { label: "プロジェクト", href: "/#projects" },
   { label: "数学メモ", href: "/diary" },
+  { label: "メモ", href: "/memo" },
   { label: "日記", href: "/monthly-diary" },
   { label: "資料", href: "/resources" },
   { label: "About", href: "/about" },
