@@ -13,19 +13,27 @@ interface AceEditorProps {
 export function AceEditor({ value, onChange, placeholder, minHeight = 400 }: AceEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const aceEditorRef = useRef<Ace.Editor | null>(null);
+  const initialValueRef = useRef(value);
+  const onChangeRef = useRef(onChange);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    let ace: typeof import("ace-builds");
-    let editor: Ace.Editor;
+    onChangeRef.current = onChange;
+  }, [onChange]);
+
+  useEffect(() => {
+    let editor: Ace.Editor | null = null;
+    let disposed = false;
 
     const initAce = async () => {
       if (!editorRef.current) return;
 
-      ace = await import("ace-builds");
+      const ace = await import("ace-builds");
       await import("ace-builds/src-noconflict/mode-markdown");
       await import("ace-builds/src-noconflict/theme-monokai");
       await import("ace-builds/src-noconflict/ext-language_tools");
+
+      if (disposed || !editorRef.current) return;
 
       ace.config.set("basePath", "/ace-builds/src-noconflict");
 
@@ -44,10 +52,10 @@ export function AceEditor({ value, onChange, placeholder, minHeight = 400 }: Ace
         enableLiveAutocompletion: false,
       });
 
-      editor.setValue(value, -1);
+      editor.setValue(initialValueRef.current, -1);
       editor.on("change", () => {
-        const newValue = editor.getValue();
-        onChange(newValue);
+        if (!editor) return;
+        onChangeRef.current(editor.getValue());
       });
 
       setIsLoading(false);
@@ -56,13 +64,15 @@ export function AceEditor({ value, onChange, placeholder, minHeight = 400 }: Ace
     initAce();
 
     return () => {
+      disposed = true;
+      if (editor) {
+        editor.destroy();
+      }
       if (aceEditorRef.current) {
-        aceEditorRef.current.destroy();
         aceEditorRef.current = null;
       }
     };
-    // onChange is intentionally not in deps to avoid recreating the editor
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // The Ace instance owns its initial value; external value changes are synced below.
   }, []);
 
   useEffect(() => {
@@ -100,6 +110,7 @@ export function AceEditor({ value, onChange, placeholder, minHeight = 400 }: Ace
         ref={editorRef}
         className="rounded-md border border-night-muted"
         style={{ minHeight: `${minHeight}px`, display: isLoading ? "none" : "block" }}
+        aria-label="Markdown editor"
       />
       {placeholder && !value && !isLoading && (
         <div className="pointer-events-none absolute left-4 top-4 text-gray-500">{placeholder}</div>

@@ -14,7 +14,7 @@ import {
   Code,
   FileCode,
   Link,
-  Image,
+  Image as ImageIcon,
   Table,
   Smile,
   Minus,
@@ -320,7 +320,7 @@ export function EditorToolbar({
 
       {/* Insert */}
       <ToolbarButton icon={<Link className="h-4 w-4" />} label="リンク挿入" shortcut="Ctrl+K" onClick={onLink} />
-      <ToolbarButton icon={<Image className="h-4 w-4" />} label="画像挿入" onClick={onImage} />
+      <ToolbarButton icon={<ImageIcon className="h-4 w-4" />} label="画像挿入" onClick={onImage} />
       <ToolbarButton icon={<Table className="h-4 w-4" />} label="テーブル挿入" onClick={onTable} />
 
       {/* Emoji */}
@@ -337,9 +337,9 @@ export function EditorToolbar({
       >
         <div className="p-3 w-72 max-h-64 overflow-y-auto">
           <div className="grid grid-cols-10 gap-1">
-            {COMMON_EMOJIS.map((emoji) => (
+            {COMMON_EMOJIS.map((emoji, index) => (
               <button
-                key={emoji}
+                key={`${emoji}-${index}`}
                 type="button"
                 onClick={() => { onEmoji(emoji); closeDropdown(); }}
                 className="h-7 w-7 flex items-center justify-center rounded hover:bg-night-muted text-lg"
@@ -411,4 +411,3 @@ export function EditorToolbar({
     </div>
   );
 }
-

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, useDeferredValue, useMemo } from "react";
 import type { EditorMode, ViewMode, LinkDialogData, ImageDialogData, TableDialogData } from "./editor-types";
 import { KEYBOARD_SHORTCUTS } from "./editor-types";
 import {
@@ -14,10 +14,12 @@ import {
   removeIndent,
   applyAlignment,
   markdownToHtml,
-  debounce,
 } from "./editor-utils";
 import { EditorToolbar } from "./EditorToolbar";
 import { LinkDialog, ImageDialog, TableDialog } from "./EditorDialogs";
+
+const HISTORY_LIMIT = 50;
+const HISTORY_COALESCE_MS = 900;
 
 interface RichEditorProps {
   value: string;
@@ -43,7 +45,6 @@ export function RichEditor({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [undoStack, setUndoStack] = useState<string[]>([]);
   const [redoStack, setRedoStack] = useState<string[]>([]);
-  const [previewHtml, setPreviewHtml] = useState("");
   const [splitPosition, setSplitPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -63,27 +64,28 @@ export function RichEditor({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Preview update with debounce
-  const updatePreview = useCallback(
-    debounce((content: string, editorMode: EditorMode) => {
-      if (editorMode === "markdown") {
-        setPreviewHtml(markdownToHtml(content));
-      } else {
-        setPreviewHtml(content);
-      }
-    }, 150),
-    []
+  const lastHistoryAtRef = useRef(0);
+  const deferredValue = useDeferredValue(value);
+  const previewHtml = useMemo(
+    () => (mode === "markdown" ? markdownToHtml(deferredValue) : deferredValue),
+    [deferredValue, mode],
   );
 
-  useEffect(() => {
-    updatePreview(value, mode);
-  }, [value, mode, updatePreview]);
-
   // Undo/Redo management
-  const pushToUndoStack = useCallback((content: string) => {
-    setUndoStack((prev) => [...prev.slice(-50), content]);
+  const pushToUndoStack = useCallback((content: string, force = false) => {
+    const now = Date.now();
+    if (!force && now - lastHistoryAtRef.current < HISTORY_COALESCE_MS) {
+      return;
+    }
+
+    setUndoStack((prev) => {
+      if (prev[prev.length - 1] === content) {
+        return prev;
+      }
+      return [...prev.slice(-(HISTORY_LIMIT - 1)), content];
+    });
     setRedoStack([]);
+    lastHistoryAtRef.current = now;
   }, []);
 
   // Get selection
@@ -113,7 +115,7 @@ export function RichEditor({
       if (!format) return;
 
       const selection = getSelection();
-      pushToUndoStack(value);
+      pushToUndoStack(value, true);
 
       const { newContent, newCursorPos } = applyFormat(
         value,
@@ -147,7 +149,7 @@ export function RichEditor({
   const handleLinkInsert = useCallback(
     (data: LinkDialogData) => {
       // 保存した選択範囲を使用
-      pushToUndoStack(value);
+      pushToUndoStack(value, true);
 
       const linkMarkup = generateLink(mode, data);
       const newContent =
@@ -170,7 +172,7 @@ export function RichEditor({
   const handleImageInsert = useCallback(
     (data: ImageDialogData) => {
       // 保存した選択範囲を使用
-      pushToUndoStack(value);
+      pushToUndoStack(value, true);
 
       const imageMarkup = generateImage(mode, data);
       const newContent =
@@ -193,7 +195,7 @@ export function RichEditor({
   const handleTableInsert = useCallback(
     (data: TableDialogData) => {
       // 保存した選択範囲を使用
-      pushToUndoStack(value);
+      pushToUndoStack(value, true);
 
       const tableMarkup = generateTable(mode, data);
       const newContent =
@@ -209,10 +211,10 @@ export function RichEditor({
   const handleColor = useCallback(
     (color: string, isBackground: boolean) => {
       const selection = getSelection();
-      if (!selection.text) return;
+      const text = selection.text || "テキスト";
 
-      pushToUndoStack(value);
-      const coloredText = generateColorText(mode, selection.text, color, isBackground);
+      pushToUndoStack(value, true);
+      const coloredText = generateColorText(mode, text, color, isBackground);
       const newContent =
         value.substring(0, selection.start) + coloredText + value.substring(selection.end);
 
@@ -226,7 +228,7 @@ export function RichEditor({
   const handleEmoji = useCallback(
     (emoji: string) => {
       const selection = getSelection();
-      pushToUndoStack(value);
+      pushToUndoStack(value, true);
 
       const newContent =
         value.substring(0, selection.start) + emoji + value.substring(selection.end);
@@ -241,14 +243,26 @@ export function RichEditor({
   const handleIndent = useCallback(
     (increase: boolean) => {
       const selection = getSelection();
-      pushToUndoStack(value);
+      pushToUndoStack(value, true);
 
       if (increase) {
         const result = addIndent(value, selection.start, selection.end);
         onChange(result.newContent);
+        requestAnimationFrame(() => {
+          const textarea = textareaRef.current;
+          if (!textarea) return;
+          textarea.focus();
+          textarea.setSelectionRange(result.newSelectionStart, result.newSelectionEnd);
+        });
       } else {
         const result = removeIndent(value, selection.start, selection.end);
         onChange(result.newContent);
+        requestAnimationFrame(() => {
+          const textarea = textareaRef.current;
+          if (!textarea) return;
+          textarea.focus();
+          textarea.setSelectionRange(result.newSelectionStart, result.newSelectionEnd);
+        });
       }
     },
     [value, onChange, getSelection, pushToUndoStack]
@@ -258,12 +272,13 @@ export function RichEditor({
   const handleAlign = useCallback(
     (alignment: "left" | "center" | "right") => {
       const selection = getSelection();
-      pushToUndoStack(value);
+      pushToUndoStack(value, true);
 
       const newContent = applyAlignment(value, selection.start, selection.end, alignment);
       onChange(newContent);
+      requestAnimationFrame(() => setCursorPosition(selection.start + newContent.length - value.length));
     },
-    [value, onChange, getSelection, pushToUndoStack]
+    [value, onChange, getSelection, pushToUndoStack, setCursorPosition]
   );
 
   // Undo
@@ -272,6 +287,7 @@ export function RichEditor({
     const prevContent = undoStack[undoStack.length - 1];
     setUndoStack((prev) => prev.slice(0, -1));
     setRedoStack((prev) => [...prev, value]);
+    lastHistoryAtRef.current = Date.now();
     onChange(prevContent);
   }, [undoStack, value, onChange]);
 
@@ -281,6 +297,7 @@ export function RichEditor({
     const nextContent = redoStack[redoStack.length - 1];
     setRedoStack((prev) => prev.slice(0, -1));
     setUndoStack((prev) => [...prev, value]);
+    lastHistoryAtRef.current = Date.now();
     onChange(nextContent);
   }, [redoStack, value, onChange]);
 
@@ -312,6 +329,11 @@ export function RichEditor({
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const editorIsActive = containerRef.current?.contains(document.activeElement) ?? false;
+      if (!editorIsActive || e.isComposing) {
+        return;
+      }
+
       for (const [action, shortcut] of Object.entries(KEYBOARD_SHORTCUTS)) {
         const ctrlMatch = shortcut.ctrl ? e.ctrlKey || e.metaKey : !e.ctrlKey && !e.metaKey;
         const shiftMatch = shortcut.shift ? e.shiftKey : !e.shiftKey;
@@ -391,7 +413,11 @@ export function RichEditor({
     const preview = previewRef.current;
     if (!textarea || !preview || viewMode !== "split") return;
 
-    const scrollPercentage = textarea.scrollTop / (textarea.scrollHeight - textarea.clientHeight);
+    const scrollableEditorHeight = textarea.scrollHeight - textarea.clientHeight;
+    const scrollablePreviewHeight = preview.scrollHeight - preview.clientHeight;
+    if (scrollableEditorHeight <= 0 || scrollablePreviewHeight <= 0) return;
+
+    const scrollPercentage = textarea.scrollTop / scrollableEditorHeight;
     preview.scrollTop = scrollPercentage * (preview.scrollHeight - preview.clientHeight);
   }, [viewMode]);
 

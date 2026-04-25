@@ -1,5 +1,56 @@
 import type { EditorMode, FormatOptions, LinkDialogData, ImageDialogData, TableDialogData } from "./editor-types";
 import { FORMAT_MAP } from "./editor-types";
+import { renderMarkdownToHtml } from "@/lib/markdown-renderer";
+
+const BLOCK_LINE_PREFIXES = new Set(["- ", "1. ", "- [ ] ", "> "]);
+
+function escapeHtml(value: string): string {
+  const entities: Record<string, string> = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  };
+  return value.replace(/[&<>"']/g, (char) => entities[char] ?? char);
+}
+
+function escapeAttribute(value: string): string {
+  return escapeHtml(value).replace(/`/g, "&#96;");
+}
+
+function wrapSelection(
+  content: string,
+  selectionStart: number,
+  selectionEnd: number,
+  prefix: string,
+  suffix: string,
+  defaultText = "",
+) {
+  const before = content.substring(0, selectionStart);
+  const selected = content.substring(selectionStart, selectionEnd);
+  const after = content.substring(selectionEnd);
+  const text = selected || defaultText;
+  const newText = `${prefix}${text}${suffix}`;
+
+  return {
+    newContent: before + newText + after,
+    newCursorPos: selectionStart + prefix.length + text.length,
+  };
+}
+
+function toggleLineFormat(line: string, format: FormatOptions): string {
+  if (line.startsWith(format.prefix)) {
+    const withoutPrefix = line.substring(format.prefix.length);
+    if (format.suffix && withoutPrefix.endsWith(format.suffix)) {
+      return withoutPrefix.substring(0, withoutPrefix.length - format.suffix.length);
+    }
+    return withoutPrefix;
+  }
+
+  const textContent = line || format.defaultText || "";
+  return `${format.prefix}${textContent}${format.suffix}`;
+}
 
 /**
  * Apply format to selected text or insert at cursor
@@ -10,49 +61,35 @@ export function applyFormat(
   selectionEnd: number,
   format: FormatOptions
 ): { newContent: string; newCursorPos: number } {
-  const before = content.substring(0, selectionStart);
-  const selected = content.substring(selectionStart, selectionEnd);
-  const after = content.substring(selectionEnd);
-
-  // ブロックレベル要素の場合は行の先頭に適用
   if (format.blockLevel) {
-    // 選択範囲の開始位置がある行の先頭を見つける
-    const lineStart = before.lastIndexOf("\n") + 1;
+    const lineStart = content.lastIndexOf("\n", Math.max(0, selectionStart - 1)) + 1;
+    const adjustedSelectionEnd =
+      selectionEnd > selectionStart && content[selectionEnd - 1] === "\n"
+        ? selectionEnd - 1
+        : selectionEnd;
+    const nextLineBreak = content.indexOf("\n", adjustedSelectionEnd);
+    const lineEnd = adjustedSelectionEnd === selectionStart
+      ? content.indexOf("\n", selectionStart)
+      : nextLineBreak;
+    const blockEnd = lineEnd === -1 ? content.length : lineEnd;
     const beforeLine = content.substring(0, lineStart);
-    
-    // 選択範囲を含む行の内容を取得
-    const lineAndSelection = content.substring(lineStart, selectionEnd);
-    const afterContent = content.substring(selectionEnd);
-    
-    // 複数行が選択されている場合
+    const lineAndSelection = content.substring(lineStart, blockEnd);
+    const afterContent = content.substring(blockEnd);
     const lines = lineAndSelection.split("\n");
-    
-    // 見出しやquote以外のリスト系は各行に適用
-    const isMultiLineFormat = format.prefix === "- " || 
-                              format.prefix === "1. " || 
-                              format.prefix === "- [ ] " || 
-                              format.prefix === "> ";
-    
+    const isMultiLineFormat = BLOCK_LINE_PREFIXES.has(format.prefix);
+
     const formattedLines = lines.map((line, index) => {
-      // 見出しは最初の行のみに適用
       if (!isMultiLineFormat && index > 0) {
         return line;
       }
-      
-      // 空行はスキップ（最初の行を除く）
+
       if (index > 0 && line.trim() === "") {
         return line;
       }
-      
-      // 既にプレフィックスがある場合は削除（トグル動作）
-      if (line.startsWith(format.prefix)) {
-        return line.substring(format.prefix.length);
-      }
-      
-      const textContent = line || format.defaultText || "";
-      return `${format.prefix}${textContent}${format.suffix}`;
+
+      return toggleLineFormat(line, format);
     });
-    
+
     const newLineContent = formattedLines.join("\n");
     const newContent = beforeLine + newLineContent + afterContent;
     const newCursorPos = beforeLine.length + newLineContent.length;
@@ -60,14 +97,14 @@ export function applyFormat(
     return { newContent, newCursorPos };
   }
 
-  // インライン要素の場合
-  const textToWrap = selected || format.defaultText || "";
-  const newText = `${format.prefix}${textToWrap}${format.suffix}`;
-
-  const newContent = before + newText + after;
-  const newCursorPos = selectionStart + format.prefix.length + textToWrap.length;
-
-  return { newContent, newCursorPos };
+  return wrapSelection(
+    content,
+    selectionStart,
+    selectionEnd,
+    format.prefix,
+    format.suffix,
+    format.defaultText || "",
+  );
 }
 
 /**
@@ -85,7 +122,7 @@ export function generateLink(mode: EditorMode, data: LinkDialogData): string {
     return `[${data.text || "リンク"}](${data.url})`;
   } else {
     const target = data.openInNewTab ? ' target="_blank" rel="noopener noreferrer"' : "";
-    return `<a href="${data.url}"${target}>${data.text || "リンク"}</a>`;
+    return `<a href="${escapeAttribute(data.url)}"${target}>${escapeHtml(data.text || "リンク")}</a>`;
   }
 }
 
@@ -96,9 +133,9 @@ export function generateImage(mode: EditorMode, data: ImageDialogData): string {
   if (mode === "markdown") {
     return `![${data.alt || "画像"}](${data.url})`;
   } else {
-    const width = data.width ? ` width="${data.width}"` : "";
-    const height = data.height ? ` height="${data.height}"` : "";
-    return `<img src="${data.url}" alt="${data.alt || "画像"}"${width}${height}>`;
+    const width = data.width ? ` width="${escapeAttribute(data.width)}"` : "";
+    const height = data.height ? ` height="${escapeAttribute(data.height)}"` : "";
+    return `<img src="${escapeAttribute(data.url)}" alt="${escapeAttribute(data.alt || "画像")}"${width}${height}>`;
   }
 }
 
@@ -111,15 +148,12 @@ export function generateTable(mode: EditorMode, data: TableDialogData): string {
   if (mode === "markdown") {
     let table = "";
 
-    // Header row
     if (hasHeader) {
       table += "|" + Array(cols).fill(" ヘッダー ").join("|") + "|\n";
-      // Separator with alignment
       const alignChar = alignment === "center" ? ":---:" : alignment === "right" ? "---:" : "---";
       table += "|" + Array(cols).fill(` ${alignChar} `).join("|") + "|\n";
     }
 
-    // Data rows
     const dataRows = hasHeader ? rows - 1 : rows;
     for (let i = 0; i < dataRows; i++) {
       table += "|" + Array(cols).fill(" セル ").join("|") + "|\n";
@@ -131,9 +165,7 @@ export function generateTable(mode: EditorMode, data: TableDialogData): string {
 
     if (hasHeader) {
       table += "  <thead>\n    <tr>\n";
-      for (let j = 0; j < cols; j++) {
-        table += `      <th>ヘッダー</th>\n`;
-      }
+      table += Array.from({ length: cols }, () => "      <th>ヘッダー</th>\n").join("");
       table += "    </tr>\n  </thead>\n";
     }
 
@@ -165,10 +197,9 @@ export function generateColorText(
   const property = isBackground ? "background-color" : "color";
 
   if (mode === "markdown") {
-    // Markdown doesn't support colors natively, use HTML span
-    return `<span style="${property}: ${color}">${text}</span>`;
+    return `<span style="${property}: ${escapeAttribute(color)}">${escapeHtml(text)}</span>`;
   } else {
-    return `<span style="${property}: ${color}">${text}</span>`;
+    return `<span style="${property}: ${escapeAttribute(color)}">${escapeHtml(text)}</span>`;
   }
 }
 
@@ -258,76 +289,13 @@ export function applyAlignment(
   return `${before}<div${style}>${selected}</div>${after}`;
 }
 
-/**
- * Parse Markdown to HTML for preview (basic implementation)
- */
 export function markdownToHtml(markdown: string): string {
-  let html = markdown;
-
-  // Escape HTML entities first (except for intentional HTML)
-  // html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-  // Headers
-  html = html.replace(/^###### (.+)$/gm, "<h6>$1</h6>");
-  html = html.replace(/^##### (.+)$/gm, "<h5>$1</h5>");
-  html = html.replace(/^#### (.+)$/gm, "<h4>$1</h4>");
-  html = html.replace(/^### (.+)$/gm, "<h3>$1</h3>");
-  html = html.replace(/^## (.+)$/gm, "<h2>$1</h2>");
-  html = html.replace(/^# (.+)$/gm, "<h1>$1</h1>");
-
-  // Bold and Italic
-  html = html.replace(/\*\*\*(.+?)\*\*\*/g, "<strong><em>$1</em></strong>");
-  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-  html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
-
-  // Strikethrough
-  html = html.replace(/~~(.+?)~~/g, "<del>$1</del>");
-
-  // Code blocks
-  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
-    return `<pre><code class="language-${lang || "plaintext"}">${code.trim()}</code></pre>`;
-  });
-
-  // Inline code
-  html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
-
-  // Blockquotes
-  html = html.replace(/^> (.+)$/gm, "<blockquote>$1</blockquote>");
-
-  // Horizontal rule
-  html = html.replace(/^---$/gm, "<hr>");
-
-  // Unordered lists
-  html = html.replace(/^- \[ \] (.+)$/gm, '<li><input type="checkbox" disabled> $1</li>');
-  html = html.replace(/^- \[x\] (.+)$/gm, '<li><input type="checkbox" checked disabled> $1</li>');
-  html = html.replace(/^[-*] (.+)$/gm, "<li>$1</li>");
-
-  // Ordered lists
-  html = html.replace(/^\d+\. (.+)$/gm, "<li>$1</li>");
-
-  // Links
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
-
-  // Images
-  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
-
-  // Line breaks
-  html = html.replace(/\n\n/g, "</p><p>");
-  html = "<p>" + html + "</p>";
-
-  // Clean up empty paragraphs
-  html = html.replace(/<p>\s*<\/p>/g, "");
-  html = html.replace(/<p>(<h[1-6]>)/g, "$1");
-  html = html.replace(/(<\/h[1-6]>)<\/p>/g, "$1");
-  html = html.replace(/<p>(<pre>)/g, "$1");
-  html = html.replace(/(<\/pre>)<\/p>/g, "$1");
-  html = html.replace(/<p>(<blockquote>)/g, "$1");
-  html = html.replace(/(<\/blockquote>)<\/p>/g, "$1");
-  html = html.replace(/<p>(<hr>)<\/p>/g, "$1");
-  html = html.replace(/<p>(<li>)/g, "<ul>$1");
-  html = html.replace(/(<\/li>)<\/p>/g, "$1</ul>");
-
-  return html;
+  try {
+    return renderMarkdownToHtml(markdown);
+  } catch (error) {
+    console.error("[Editor] Failed to render Markdown preview:", error);
+    return `<pre>${escapeHtml(markdown)}</pre>`;
+  }
 }
 
 /**
@@ -370,4 +338,3 @@ export const PRESET_COLORS = [
   "#dd7e6b", "#ea9999", "#f9cb9c", "#ffe599", "#b6d7a8", "#a2c4c9", "#a4c2f4", "#9fc5e8", "#b4a7d6", "#d5a6bd",
   "#cc4125", "#e06666", "#f6b26b", "#ffd966", "#93c47d", "#76a5af", "#6d9eeb", "#6fa8dc", "#8e7cc3", "#c27ba0",
 ];
-

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { X, Link as LinkIcon, Image, Table, ExternalLink } from "lucide-react";
+import { X, Link as LinkIcon, Image as ImageIcon, ExternalLink } from "lucide-react";
 import type { LinkDialogData, ImageDialogData, TableDialogData } from "./editor-types";
 
 interface DialogProps {
@@ -63,18 +63,17 @@ interface LinkDialogProps {
   initialText?: string;
 }
 
-export function LinkDialog({ isOpen, onClose, onInsert, initialText = "" }: LinkDialogProps) {
+export function LinkDialog(props: LinkDialogProps) {
+  if (!props.isOpen) return null;
+  return <LinkDialogContent {...props} />;
+}
+
+function LinkDialogContent({ onClose, onInsert, initialText = "" }: LinkDialogProps) {
   const [data, setData] = useState<LinkDialogData>({
     url: "",
     text: initialText,
     openInNewTab: true,
   });
-
-  useEffect(() => {
-    if (isOpen) {
-      setData((prev) => ({ ...prev, text: initialText }));
-    }
-  }, [isOpen, initialText]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,7 +85,7 @@ export function LinkDialog({ isOpen, onClose, onInsert, initialText = "" }: Link
   };
 
   return (
-    <Dialog isOpen={isOpen} onClose={onClose} title="リンクを挿入">
+    <Dialog isOpen onClose={onClose} title="リンクを挿入">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="mb-2 block text-sm font-medium text-gray-300">
@@ -164,7 +163,12 @@ interface ImageDialogProps {
   onInsert: (data: ImageDialogData) => void;
 }
 
-export function ImageDialog({ isOpen, onClose, onInsert }: ImageDialogProps) {
+export function ImageDialog(props: ImageDialogProps) {
+  if (!props.isOpen) return null;
+  return <ImageDialogContent {...props} />;
+}
+
+function ImageDialogContent({ onClose, onInsert }: ImageDialogProps) {
   const [data, setData] = useState<ImageDialogData>({
     url: "",
     alt: "",
@@ -183,7 +187,7 @@ export function ImageDialog({ isOpen, onClose, onInsert }: ImageDialogProps) {
   };
 
   return (
-    <Dialog isOpen={isOpen} onClose={onClose} title="画像を挿入">
+    <Dialog isOpen onClose={onClose} title="画像を挿入">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="mb-2 block text-sm font-medium text-gray-300">
@@ -240,7 +244,7 @@ export function ImageDialog({ isOpen, onClose, onInsert }: ImageDialogProps) {
             <div className="mb-2 text-xs text-gray-400">プレビュー</div>
             {previewError ? (
               <div className="flex items-center gap-2 text-gray-400">
-                <Image className="h-8 w-8" />
+                <ImageIcon className="h-8 w-8" />
                 <span className="text-sm">画像を読み込めません</span>
               </div>
             ) : (
@@ -283,7 +287,12 @@ interface TableDialogProps {
   onInsert: (data: TableDialogData) => void;
 }
 
-export function TableDialog({ isOpen, onClose, onInsert }: TableDialogProps) {
+export function TableDialog(props: TableDialogProps) {
+  if (!props.isOpen) return null;
+  return <TableDialogContent {...props} />;
+}
+
+function TableDialogContent({ onClose, onInsert }: TableDialogProps) {
   const [data, setData] = useState<TableDialogData>({
     rows: 3,
     cols: 3,
@@ -304,7 +313,7 @@ export function TableDialog({ isOpen, onClose, onInsert }: TableDialogProps) {
   };
 
   return (
-    <Dialog isOpen={isOpen} onClose={onClose} title="テーブルを挿入">
+    <Dialog isOpen onClose={onClose} title="テーブルを挿入">
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Visual grid selector */}
         <div>
@@ -451,4 +460,3 @@ export function TableDialog({ isOpen, onClose, onInsert }: TableDialogProps) {
     </Dialog>
   );
 }
-
