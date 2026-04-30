@@ -87,21 +87,6 @@ export async function GET(request: NextRequest) {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              padding: "12px 16px",
-              borderRadius: "999px",
-              border: "1px solid rgba(255,255,255,0.16)",
-              backgroundColor: "rgba(0,0,0,0.22)",
-              fontSize: "18px",
-              color: "rgba(255,255,255,0.80)",
-            }}
-          >
-            Mathematics as a daily practice
-          </div>
           <div style={{ fontSize: "18px", color: "rgba(255,255,255,0.55)" }}>www.akari0koutya.com</div>
         </div>
       </div>

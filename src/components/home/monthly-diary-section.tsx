@@ -19,7 +19,7 @@ export function MonthlyDiarySection({ entries }: MonthlyDiarySectionProps) {
         </div>
         <Link
           href="/monthly-diary"
-          className="inline-flex w-fit rounded-full bg-accent/10 px-4 py-2 text-sm text-white/85 transition hover:-translate-y-0.5 hover:bg-accent/14 hover:text-accent"
+          className="inline-flex w-fit border border-accent/20 bg-accent/10 px-4 py-2 text-sm text-white/85 transition hover:-translate-y-0.5 hover:bg-accent/14 hover:text-accent"
         >
           日記一覧へ
         </Link>
@@ -27,7 +27,7 @@ export function MonthlyDiarySection({ entries }: MonthlyDiarySectionProps) {
 
       <div className="relative mt-6 grid gap-5 lg:grid-cols-2">
         {entries.length === 0 ? (
-          <div className="rounded-3xl bg-[linear-gradient(155deg,rgba(10,20,37,0.94),rgba(12,26,48,0.9))] p-6 text-sm text-white/62">
+          <div className="rounded-[18px] border border-highlight/20 bg-black/15 p-6 text-sm text-white/62">
             日記を準備中です。
           </div>
         ) : (

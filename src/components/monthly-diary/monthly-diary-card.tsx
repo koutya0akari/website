@@ -24,7 +24,7 @@ export function MonthlyDiaryCard({ entry, compact = false }: MonthlyDiaryCardPro
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2 text-xs text-white/55">
-              <span className="rounded-full bg-accent/10 px-3 py-1 text-accent">
+              <span className="border border-accent/20 bg-accent/10 px-3 py-1 text-accent">
                 {monthLabel}
               </span>
               <span>{formatDate(entry.publishedAt, "yyyy.MM.dd")}</span>
@@ -45,7 +45,7 @@ export function MonthlyDiaryCard({ entry, compact = false }: MonthlyDiaryCardPro
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap gap-2 text-xs text-white/55">
               {visibleTags.map((tag) => (
-                <span key={tag} className="tag-chip !border-0 bg-white/5">
+                <span key={tag} className="tag-chip border-highlight/20 bg-black/15">
                   #{tag}
                 </span>
               ))}

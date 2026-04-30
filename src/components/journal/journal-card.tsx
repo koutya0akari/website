@@ -11,11 +11,11 @@ export function JournalCard({ children, className }: JournalCardProps) {
   return (
     <article
       className={cn(
-        "group relative h-full overflow-hidden rounded-3xl bg-[linear-gradient(165deg,rgba(8,18,36,0.97),rgba(12,25,47,0.95),rgba(7,13,24,0.98))] shadow-[0_18px_48px_rgba(2,8,20,0.32)] transition duration-200",
+        "group relative h-full overflow-hidden rounded-[18px] border border-highlight/20 bg-[linear-gradient(90deg,transparent_0_3.25rem,var(--notebook-margin)_3.25rem_3.32rem,transparent_3.32rem),repeating-linear-gradient(0deg,transparent_0_1.85rem,var(--notebook-line)_1.85rem_1.91rem),rgba(12,27,23,0.68)] shadow-[0_16px_42px_rgba(2,9,7,0.24)] transition duration-200",
         className,
       )}
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_18%,rgba(100,210,255,0.16),transparent_34%),radial-gradient(circle_at_86%_0%,rgba(247,181,0,0.1),transparent_28%),linear-gradient(180deg,rgba(13,34,62,0.34),transparent_40%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.045),transparent_22%),linear-gradient(180deg,rgba(255,255,255,0.04),transparent_32%)]" />
       <div className="relative h-full">{children}</div>
     </article>
   );
