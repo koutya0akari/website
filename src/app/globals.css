@@ -7,33 +7,39 @@
 :root,
 html.dark {
   color-scheme: dark;
-  --bg-primary: #030817;
-  --bg-secondary: #0a1730;
-  --bg-tertiary: #132642;
-  --text-primary: #f6fbff;
-  --text-secondary: rgba(246, 251, 255, 0.8);
-  --text-muted: rgba(246, 251, 255, 0.6);
-  --border-color: rgba(255, 255, 255, 0.1);
-  --accent-color: #64d2ff;
-  --highlight-color: #f7b500;
-  --glass-bg: rgba(6, 22, 44, 0.85);
-  --card-shadow: 0 20px 50px rgba(2, 6, 23, 0.4);
+  --bg-primary: #08110f;
+  --bg-secondary: #10231f;
+  --bg-tertiary: #1e312c;
+  --text-primary: #f8fbf2;
+  --text-secondary: rgba(248, 251, 242, 0.8);
+  --text-muted: rgba(248, 251, 242, 0.6);
+  --border-color: rgba(234, 221, 183, 0.18);
+  --accent-color: #61e3ba;
+  --highlight-color: #efc968;
+  --notebook-line: rgba(122, 178, 171, 0.16);
+  --notebook-margin: rgba(255, 118, 118, 0.28);
+  --notebook-paper: rgba(12, 27, 23, 0.82);
+  --glass-bg: rgba(12, 27, 23, 0.82);
+  --card-shadow: 0 22px 64px rgba(2, 9, 7, 0.42);
 }
 
 /* Light Theme */
 html.light {
   color-scheme: light;
-  --bg-primary: #f8fafc;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f1f5f9;
-  --text-primary: #0f172a;
-  --text-secondary: #334155;
-  --text-muted: #64748b;
-  --border-color: rgba(0, 0, 0, 0.1);
-  --accent-color: #0ea5e9;
-  --highlight-color: #f59e0b;
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --card-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+  --bg-primary: #fbf4df;
+  --bg-secondary: #fffdf6;
+  --bg-tertiary: #efe4c9;
+  --text-primary: #18221f;
+  --text-secondary: #43514b;
+  --text-muted: #68756e;
+  --border-color: rgba(63, 51, 30, 0.14);
+  --accent-color: #047d67;
+  --highlight-color: #b87d0b;
+  --notebook-line: rgba(45, 122, 151, 0.17);
+  --notebook-margin: rgba(201, 69, 69, 0.24);
+  --notebook-paper: rgba(255, 253, 246, 0.88);
+  --glass-bg: rgba(255, 253, 246, 0.88);
+  --card-shadow: 0 22px 58px rgba(78, 54, 16, 0.12);
 }
 
 body {
@@ -46,13 +52,19 @@ body {
 }
 
 html.dark body {
-  background-image: radial-gradient(circle at top, rgba(100, 210, 255, 0.23), transparent 45%),
-    radial-gradient(circle at 20% 20%, rgba(247, 181, 0, 0.12), transparent 35%);
+  background-image:
+    linear-gradient(90deg, transparent 0 72px, var(--notebook-margin) 72px 74px, transparent 74px),
+    repeating-linear-gradient(0deg, transparent 0 31px, var(--notebook-line) 31px 32px),
+    linear-gradient(135deg, rgba(97, 227, 186, 0.08), transparent 30%, rgba(239, 201, 104, 0.06) 72%, transparent);
+  background-attachment: fixed;
 }
 
 html.light body {
-  background-image: radial-gradient(circle at top, rgba(14, 165, 233, 0.08), transparent 45%),
-    radial-gradient(circle at 20% 20%, rgba(245, 158, 11, 0.06), transparent 35%);
+  background-image:
+    linear-gradient(90deg, transparent 0 72px, var(--notebook-margin) 72px 74px, transparent 74px),
+    repeating-linear-gradient(0deg, transparent 0 31px, var(--notebook-line) 31px 32px),
+    linear-gradient(135deg, rgba(4, 125, 103, 0.08), transparent 30%, rgba(184, 125, 11, 0.08) 72%, transparent);
+  background-attachment: fixed;
 }
 
 .glass-panel {
@@ -70,6 +82,46 @@ html.light body {
   padding: 2rem;
   box-shadow: var(--card-shadow);
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.notebook-sheet {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  background:
+    linear-gradient(90deg, transparent 0 4.25rem, var(--notebook-margin) 4.25rem calc(4.25rem + 1px), transparent calc(4.25rem + 1px)),
+    repeating-linear-gradient(0deg, transparent 0 1.85rem, var(--notebook-line) 1.85rem calc(1.85rem + 1px)),
+    var(--notebook-paper);
+  box-shadow: var(--card-shadow);
+}
+
+.notebook-sheet::before {
+  content: "";
+  position: absolute;
+  left: 1.25rem;
+  top: 1.25rem;
+  bottom: 1.25rem;
+  width: 0.72rem;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.3) 0 0.18rem, rgba(0, 0, 0, 0.28) 0.2rem 0.36rem, transparent 0.38rem)
+      0 0 / 0.72rem 5.25rem repeat-y;
+  opacity: 0.75;
+}
+
+.notebook-sheet::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04), transparent 18%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 14%);
+}
+
+.notebook-content {
+  position: relative;
+  z-index: 1;
+  padding-left: clamp(1.25rem, 4vw, 3.25rem);
 }
 
 .tag-chip {

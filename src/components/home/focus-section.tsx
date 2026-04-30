@@ -11,14 +11,9 @@ export function FocusSection({ focuses }: FocusSectionProps) {
   return (
     <section
       id="focus"
-      className="relative overflow-hidden rounded-[32px] border border-transparent bg-gradient-to-br from-night-soft via-night to-night-muted p-6 sm:p-8"
+      className="notebook-sheet rounded-[22px] p-6 sm:p-8"
     >
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-3 rounded-[28px] border border-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_30%,rgba(100,210,255,0.12),transparent_35%),radial-gradient(circle_at_92%_10%,rgba(247,181,0,0.12),transparent_30%)]" />
-        <div className="absolute left-10 top-0 h-full w-px bg-gradient-to-b from-white/15 via-white/5 to-transparent" />
-      </div>
-      <div className="relative grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+      <div className="notebook-content grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
         <div className="flex flex-col gap-3">
           <div>
             <p className="text-[11px] uppercase tracking-[0.32em] text-white/60">Research Tracks</p>
@@ -27,15 +22,17 @@ export function FocusSection({ focuses }: FocusSectionProps) {
           </div>
         </div>
         <div className="relative grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {focuses.map((focus) => (
+          {focuses.map((focus, index) => (
             <article
               key={focus.id}
-              className="group relative overflow-hidden rounded-2xl border border-transparent bg-white/5 p-5 transition hover:-translate-y-1 hover:border-accent/60"
+              className="group relative overflow-hidden border border-highlight/20 bg-black/20 p-5 transition hover:-translate-y-1 hover:border-accent/60"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 opacity-0 transition duration-500 group-hover:opacity-100" />
               <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-accent via-highlight to-accent/40" />
+              <span className="absolute right-4 top-3 font-display text-4xl text-white/[0.05]">
+                {(index + 1).toString().padStart(2, "0")}
+              </span>
               <div className="flex items-start justify-between gap-3">
-                <span className="rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-[11px] uppercase tracking-[0.26em] text-accent">
+                <span className="border border-accent/30 bg-accent/10 px-3 py-1 text-[11px] uppercase tracking-[0.26em] text-accent">
                   {focus.id}
                 </span>
               </div>

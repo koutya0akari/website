@@ -28,7 +28,7 @@ export default async function MonthlyDiaryPage() {
       </JournalSection>
 
       {entries.length === 0 ? (
-        <div className="rounded-3xl bg-[linear-gradient(155deg,rgba(10,20,37,0.94),rgba(12,26,48,0.9))] p-8 text-white/62">
+        <div className="notebook-sheet rounded-[20px] p-8 text-white/62">
           日記を準備中です。
         </div>
       ) : (

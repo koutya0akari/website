@@ -24,13 +24,13 @@ export function PopularDiaries({ entries }: PopularDiariesProps) {
 
   return (
     <aside>
-      <div className="overflow-hidden rounded-[24px] bg-[linear-gradient(165deg,rgba(8,18,36,0.97),rgba(12,25,47,0.95),rgba(7,13,24,0.98))] p-5 shadow-card">
+      <div className="notebook-sheet rounded-[20px] p-5">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="space-y-1">
             <p className="text-[11px] uppercase tracking-[0.28em] text-white/50">Popular</p>
             <h2 className="text-lg font-semibold text-white">よく読まれている記事</h2>
           </div>
-          <span className="rounded-full bg-accent/20 px-3 py-1 text-xs font-semibold text-accent">Views</span>
+          <span className="border border-accent/25 bg-accent/12 px-3 py-1 text-xs font-semibold text-accent">Views</span>
         </div>
         <div className="space-y-3">
           {entries.map((entry, index) => {
@@ -39,10 +39,10 @@ export function PopularDiaries({ entries }: PopularDiariesProps) {
               <Link
                 key={entry.id}
                 href={`/diary/${entry.slug}`}
-                className="group block rounded-2xl bg-[linear-gradient(160deg,rgba(8,18,36,0.9),rgba(11,21,38,0.95))] px-4 py-3 transition duration-150 hover:-translate-y-0.5"
+                className="group block border border-highlight/20 bg-black/20 px-4 py-3 transition duration-150 hover:-translate-y-0.5 hover:border-accent/40"
               >
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-b from-accent/90 to-highlight/80 text-sm font-semibold text-night shadow-card">
+                  <div className="flex h-10 w-10 items-center justify-center border border-highlight/25 bg-accent/85 text-sm font-semibold text-night shadow-[0_10px_24px_rgba(2,9,7,0.22)]">
                     #{index + 1}
                   </div>
                   <div className="flex-1 space-y-1">
@@ -52,9 +52,9 @@ export function PopularDiaries({ entries }: PopularDiariesProps) {
                     <h3 className="text-sm font-semibold text-white transition group-hover:text-accent">{entry.title}</h3>
                     <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
                       {views ? (
-                        <span className="rounded-full bg-accent/10 px-2 py-1 text-[11px] text-accent">{views}</span>
+                        <span className="border border-accent/20 bg-accent/10 px-2 py-1 text-[11px] text-accent">{views}</span>
                       ) : (
-                        <span className="rounded-full bg-accent/10 px-2 py-1 text-[11px] text-white/70">PV集計中</span>
+                        <span className="border border-accent/20 bg-accent/10 px-2 py-1 text-[11px] text-white/70">PV集計中</span>
                       )}
                       <time className="text-white/50">{formatDate(entry.publishedAt)}</time>
                     </div>
@@ -82,7 +82,7 @@ export function PopularDiariesGrid({ entries }: PopularDiariesProps) {
           <p className="text-[11px] uppercase tracking-[0.28em] text-white/50">Popular</p>
           <h2 className="text-xl font-semibold text-white">よく読まれている記事</h2>
         </div>
-        <span className="rounded-full bg-accent/20 px-3 py-1 text-xs font-semibold text-accent">Views</span>
+        <span className="border border-accent/25 bg-accent/12 px-3 py-1 text-xs font-semibold text-accent">Views</span>
       </div>
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {entries.map((entry, index) => {
@@ -94,7 +94,7 @@ export function PopularDiariesGrid({ entries }: PopularDiariesProps) {
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 {/* ランキングバッジ */}
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-b from-accent/90 to-highlight/80 text-xs font-bold text-night shadow-lg">
+                <div className="flex h-8 w-8 items-center justify-center border border-highlight/25 bg-accent/85 text-xs font-bold text-night shadow-[0_10px_24px_rgba(2,9,7,0.22)]">
                   #{index + 1}
                 </div>
                 <span className="text-xs uppercase tracking-[0.2em] text-white/60">
@@ -104,11 +104,11 @@ export function PopularDiariesGrid({ entries }: PopularDiariesProps) {
               <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-white/60">
                 <time className="text-sm text-white/60">{formatDate(entry.publishedAt)}</time>
                 {views ? (
-                  <span className="rounded-full bg-accent/10 px-2 py-1 text-[11px] font-medium text-accent">
+                  <span className="border border-accent/20 bg-accent/10 px-2 py-1 text-[11px] font-medium text-accent">
                     {views}
                   </span>
                 ) : (
-                  <span className="rounded-full bg-accent/10 px-2 py-1 text-[11px] text-white/70">
+                  <span className="border border-accent/20 bg-accent/10 px-2 py-1 text-[11px] text-white/70">
                     PV集計中
                   </span>
                 )}

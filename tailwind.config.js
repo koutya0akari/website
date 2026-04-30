@@ -9,11 +9,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        night: "#040b16",
-        "night-soft": "#0a1730",
-        "night-muted": "#132642",
-        accent: "#64d2ff",
-        highlight: "#f7b500",
+        night: "#08110f",
+        "night-soft": "#10231f",
+        "night-muted": "#1e312c",
+        accent: "#61e3ba",
+        highlight: "#efc968",
         parchment: "#fdf5e7",
       },
       fontFamily: {

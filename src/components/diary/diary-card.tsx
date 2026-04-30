@@ -35,7 +35,7 @@ export function DiaryCard({
         <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
           <time className="text-sm text-white/60">{formatDate(entry.publishedAt)}</time>
           {showViewCount && (
-            <span className="rounded-full bg-accent/10 px-2 py-1 text-[11px] text-white/78">
+            <span className="border border-accent/20 bg-accent/10 px-2 py-1 text-[11px] text-white/78">
               {viewCountLabel ?? "PV集計中"}
             </span>
           )}
@@ -53,7 +53,7 @@ export function DiaryCard({
       {!compact && entry.tags?.length > 0 && (
         <div className="flex flex-wrap gap-2 text-xs text-white/60">
           {entry.tags.map((tag) => (
-            <span key={tag} className="tag-chip !border-0 bg-white/5">
+            <span key={tag} className="tag-chip border-highlight/20 bg-black/15">
               #{tag}
             </span>
           ))}
