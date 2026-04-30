@@ -22,8 +22,8 @@ export function HeroSection({ site, diaries }: HeroSectionProps) {
       };
 
   return (
-    <section className="notebook-sheet rounded-[22px] p-5 text-white sm:p-7 lg:p-9">
-      <div className="notebook-content grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+    <section className="glass-panel rounded-[22px] p-5 text-white shadow-[var(--card-shadow)] sm:p-7 lg:p-9">
+      <div className="relative z-10 grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
         <div className="space-y-7">
           <div className="space-y-3">
             <RichText
@@ -67,7 +67,6 @@ export function HeroSection({ site, diaries }: HeroSectionProps) {
           </div>
         </div>
         <div className="relative space-y-4 overflow-hidden border border-highlight/20 bg-black/20 p-5 backdrop-blur sm:p-6">
-          <div className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent_0_29px,var(--notebook-line)_29px_30px)]" />
           <div className="relative flex items-baseline justify-between gap-3">
             <div>
               <p className="text-[11px] uppercase tracking-[0.3em] text-white/60">{MATH_DIARY_OVERLINE}</p>

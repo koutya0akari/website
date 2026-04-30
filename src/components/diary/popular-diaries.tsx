@@ -24,7 +24,7 @@ export function PopularDiaries({ entries }: PopularDiariesProps) {
 
   return (
     <aside>
-      <div className="notebook-sheet rounded-[20px] p-5">
+      <div className="glass-panel rounded-[20px] p-5 shadow-[var(--card-shadow)]">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="space-y-1">
             <p className="text-[11px] uppercase tracking-[0.28em] text-white/50">Popular</p>

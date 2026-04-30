@@ -11,9 +11,9 @@ export function FocusSection({ focuses }: FocusSectionProps) {
   return (
     <section
       id="focus"
-      className="notebook-sheet rounded-[22px] p-6 sm:p-8"
+      className="glass-panel rounded-[22px] p-6 shadow-[var(--card-shadow)] sm:p-8"
     >
-      <div className="notebook-content grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+      <div className="relative z-10 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
         <div className="flex flex-col gap-3">
           <div>
             <p className="text-[11px] uppercase tracking-[0.32em] text-white/60">Research Tracks</p>

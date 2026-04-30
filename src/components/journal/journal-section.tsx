@@ -25,12 +25,12 @@ export function JournalSection({
   return (
     <section
       className={cn(
-        "notebook-sheet",
+        "glass-panel relative overflow-hidden shadow-[var(--card-shadow)]",
         variantClasses[variant],
         className,
       )}
     >
-      <div className="notebook-content">{children}</div>
+      <div className="relative z-10">{children}</div>
     </section>
   );
 }
