@@ -61,7 +61,12 @@ export interface Database {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      increment_diary_view: {
+        Args: {
+          p_slug: string;
+        };
+        Returns: number | null;
+      };
     };
     Enums: {
       [_ in never]: never;

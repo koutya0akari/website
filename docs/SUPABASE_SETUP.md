@@ -59,7 +59,38 @@ CREATE POLICY "Authenticated users full access" ON diary
   WITH CHECK (auth.role() = 'authenticated');
 ```
 
-### 2.2 コンテンツ分類
+### 2.2 PV カウント用 RPC
+
+公開記事のPVは、サーバーAPIから `service_role` でRPCを呼び出して原子的に加算します。
+
+```sql
+CREATE OR REPLACE FUNCTION public.increment_diary_view(p_slug TEXT)
+RETURNS INTEGER
+LANGUAGE plpgsql
+SET search_path = public
+AS $$
+DECLARE
+  next_view_count INTEGER;
+BEGIN
+  UPDATE public.diary
+  SET view_count = COALESCE(view_count, 0) + 1
+  WHERE slug = BTRIM(p_slug)
+    AND status = 'published'
+  RETURNING view_count INTO next_view_count;
+
+  RETURN next_view_count;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.increment_diary_view(TEXT) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.increment_diary_view(TEXT) FROM anon;
+REVOKE ALL ON FUNCTION public.increment_diary_view(TEXT) FROM authenticated;
+GRANT EXECUTE ON FUNCTION public.increment_diary_view(TEXT) TO service_role;
+```
+
+本番環境へ適用する場合は、Supabase SQL Editorで上記SQLを実行し、Vercel側に `SUPABASE_SERVICE_ROLE_KEY` が設定されていることを確認してください。
+
+### 2.3 コンテンツ分類
 
 追加テーブルは作らず、`diary` テーブルの `folder` で公開ページを分けます。
 
@@ -70,7 +101,7 @@ CREATE POLICY "Authenticated users full access" ON diary
 | 日記 | `Monthly Diary` | `/admin/monthly-diary` | `/monthly-diary` |
 | 旧週間日記 | `Weekly Diary` | `/admin/weekly-diary` から日記管理へリダイレクト | `/weekly-diary` から日記へリダイレクト |
 
-### 2.3 Site テーブル（サイト設定）
+### 2.4 Site テーブル（サイト設定）
 
 ```sql
 -- Site テーブル（シングルトン）
@@ -105,7 +136,7 @@ INSERT INTO site (key, hero_title, hero_lead, hero_primary_cta_label, hero_prima
 VALUES ('default', 'Mathematics as a daily practice', '代数幾何・圏論を軸に学習しています。数学ノートやメモなどの保管場所。', 'Math Diary を見る', '/diary');
 ```
 
-### 2.4 About テーブル（プロフィール）
+### 2.5 About テーブル（プロフィール）
 
 ```sql
 -- About テーブル（シングルトン）
@@ -131,7 +162,7 @@ INSERT INTO about (key, intro, mission, skills)
 VALUES ('default', 'Akari Math Lab へようこそ', '数学の美しさを探求し、学びを共有することを目指しています。', ARRAY['代数幾何', '圏論', 'LaTeX', 'プログラミング']);
 ```
 
-### 2.5 Resources テーブル（公開資料）
+### 2.6 Resources テーブル（公開資料）
 
 ```sql
 -- Resources テーブル
@@ -153,7 +184,7 @@ CREATE POLICY "Authenticated users full access resources" ON resources
   WITH CHECK (auth.role() = 'authenticated');
 ```
 
-### 2.6 自動更新トリガー
+### 2.7 自動更新トリガー
 
 ```sql
 -- updated_at 自動更新関数

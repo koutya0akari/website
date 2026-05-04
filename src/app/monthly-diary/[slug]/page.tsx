@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 
 import { DiaryBody } from "@/components/diary/diary-body";
 import { TableOfContents } from "@/components/diary/table-of-contents";
+import { DiaryViewBadge } from "@/components/diary/view-badge";
 import { JournalSection } from "@/components/journal/journal-section";
 import { ShareToX } from "@/components/share-to-x";
 import { MONTHLY_DIARY_LABEL, MONTHLY_DIARY_OVERLINE } from "@/lib/diary-labels";
@@ -96,6 +97,8 @@ export default async function MonthlyDiaryDetailPage({ params }: PageProps) {
                   <span className="text-white/45"> （更新 {formatDate(entry.updatedAt)}）</span>
                 )}
               </time>
+              <span className="text-white/30">•</span>
+              <DiaryViewBadge slug={entry.slug} initialCount={entry.viewCount} />
               <ShareToX url={shareUrl} text={shareText} hashtags={shareTags} via="akari0koutya" />
             </div>
 

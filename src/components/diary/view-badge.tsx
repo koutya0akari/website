@@ -20,6 +20,7 @@ export function DiaryViewBadge({ slug, initialCount }: DiaryViewBadgeProps) {
         const res = await fetch("/api/diary/view", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          cache: "no-store",
           body: JSON.stringify({ slug }),
         });
         if (!res.ok) return;

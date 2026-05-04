@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 
 import { DiaryBody } from "@/components/diary/diary-body";
 import { TableOfContents } from "@/components/diary/table-of-contents";
+import { DiaryViewBadge } from "@/components/diary/view-badge";
 import { JournalSection } from "@/components/journal/journal-section";
 import { ReadingTime } from "@/components/reading-time";
 import { ShareToX } from "@/components/share-to-x";
@@ -96,6 +97,8 @@ export default async function MemoDetailPage({ params }: PageProps) {
               </time>
               <span className="text-white/30">•</span>
               <ReadingTime content={entry.body} />
+              <span className="text-white/30">•</span>
+              <DiaryViewBadge slug={entry.slug} initialCount={entry.viewCount} />
               <ShareToX url={shareUrl} text={shareText} hashtags={shareTags} via="akari0koutya" />
             </div>
 

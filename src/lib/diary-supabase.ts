@@ -3,7 +3,7 @@ import "server-only";
 import type { DiaryEntry } from "@/lib/types";
 import { normalizeRichTextToHtml } from "@/lib/markdown";
 import { RESERVED_DIARY_FOLDER_EXCLUSION_FILTER } from "@/lib/monthly-diary-config";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient, createClient } from "@/lib/supabase/server";
 import { createExcerpt, escapeHtml } from "@/lib/utils";
 
 const MATH_DIARY_FOLDER = "Math Diary";
@@ -120,35 +120,18 @@ export async function getDiaryBySlug(slug: string): Promise<DiaryEntry | undefin
 }
 
 export async function incrementDiaryView(slug: string): Promise<number | undefined> {
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
 
-  // First get the current diary entry
-  const { data: diary, error: fetchError } = await supabase
-    .from("diary")
-    .select("id, view_count")
-    .eq("slug", slug)
-    .eq("status", "published")
-    .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
-    .maybeSingle();
+  const { data, error } = await supabase.rpc("increment_diary_view", {
+    p_slug: slug,
+  });
 
-  if (fetchError || !diary) {
-    console.error("[Supabase] Failed to fetch diary for view increment:", fetchError);
+  if (error) {
+    console.error("[Supabase] Failed to increment diary view:", error);
     return undefined;
   }
 
-  const nextCount = (diary.view_count || 0) + 1;
-
-  const { error: updateError } = await supabase
-    .from("diary")
-    .update({ view_count: nextCount })
-    .eq("id", diary.id);
-
-  if (updateError) {
-    console.error("[Supabase] Failed to increment view count:", updateError);
-    return undefined;
-  }
-
-  return nextCount;
+  return typeof data === "number" && Number.isFinite(data) ? data : undefined;
 }
 
 export const supabaseReady = Boolean(
