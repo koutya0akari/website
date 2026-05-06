@@ -5,7 +5,7 @@ const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-eval' 'unsafe-inline' https://giscus.app https://platform.twitter.com;
   style-src 'self' 'unsafe-inline';
-  img-src 'self' blob: data: https://images.microcms-assets.io https://*.githubusercontent.com https://abs.twimg.com https://pbs.twimg.com;
+  img-src 'self' blob: data: https://images.microcms-assets.io https://*.githubusercontent.com https://abs.twimg.com https://pbs.twimg.com https://*.supabase.co;
   font-src 'self';
   connect-src 'self' https://giscus.app https://api.github.com https://vitals.vercel-insights.com https://*.supabase.co;
   worker-src 'self' blob:;
@@ -29,6 +29,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "images.microcms-assets.io",
+      },
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
       },
     ],
   },
