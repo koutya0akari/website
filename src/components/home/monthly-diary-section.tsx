@@ -19,7 +19,7 @@ export function MonthlyDiarySection({ entries }: MonthlyDiarySectionProps) {
         </div>
         <Link
           href="/monthly-diary"
-          className="inline-flex w-fit border border-accent/20 bg-accent/10 px-4 py-2 text-sm text-white/85 transition hover:-translate-y-0.5 hover:bg-accent/14 hover:text-accent"
+          className="inline-flex w-full justify-center border border-accent/20 bg-accent/10 px-4 py-2 text-sm text-white/85 transition hover:-translate-y-0.5 hover:bg-accent/14 hover:text-accent sm:w-fit"
         >
           日記一覧へ
         </Link>

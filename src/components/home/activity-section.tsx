@@ -55,10 +55,10 @@ export async function ActivitySection() {
   const mergedActivities = mergeActivities(manualActivities, githubActivity);
 
   return (
-    <section className="relative overflow-hidden rounded-[32px] border border-transparent bg-night-soft/80 p-6 sm:p-8">
+    <section className="relative overflow-hidden rounded-[22px] border border-transparent bg-night-soft/80 p-5 sm:rounded-[32px] sm:p-8">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-3 rounded-[28px] border border-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(100,210,255,0.12),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(247,181,0,0.08),transparent_35%)]" />
+        <div className="absolute inset-3 rounded-[22px] border border-transparent sm:rounded-[28px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(100,210,255,0.08),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(247,181,0,0.06),transparent_35%)] sm:bg-[radial-gradient(circle_at_20%_20%,rgba(100,210,255,0.12),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(247,181,0,0.08),transparent_35%)]" />
         <div className="absolute left-1/2 top-16 hidden h-[calc(100%-4rem)] w-px -translate-x-1/2 bg-gradient-to-b from-accent/60 via-white/25 to-transparent lg:block" />
       </div>
       <div className="relative space-y-6">
@@ -71,7 +71,7 @@ export async function ActivitySection() {
         <div className="relative space-y-8">
           {mergedActivities.map((activity, index) => {
             const card = (
-              <SpotlightCard className="h-full p-6">
+              <SpotlightCard className="h-full p-5 sm:p-6">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h3 className="text-xl font-semibold text-white">{activity.year}</h3>
                 </div>
@@ -79,14 +79,14 @@ export async function ActivitySection() {
                   {/* 手動で追加した活動 */}
                   {activity.manualItems.map((item) => (
                     <li key={item} className="flex items-start gap-2 text-sm">
-                      <span className="mt-1 block h-1.5 w-1.5 rounded-full bg-accent" />
+                      <span className="mt-1 block h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                       <span>{item}</span>
                     </li>
                   ))}
                   {/* GitHub コミット */}
                   {activity.commits.slice(0, 3).map((commit) => (
                     <li key={commit.sha} className="flex items-start gap-2 text-sm">
-                      <span className="mt-1 block h-1.5 w-1.5 rounded-full bg-purple-400" />
+                      <span className="mt-1 block h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" />
                       <a
                         href={commit.url}
                         target="_blank"

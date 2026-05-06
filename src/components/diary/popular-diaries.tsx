@@ -77,10 +77,10 @@ export function PopularDiariesGrid({ entries }: PopularDiariesProps) {
 
   return (
     <section>
-      <div className="mb-6 flex items-center justify-between gap-3">
+      <div className="mb-4 flex items-center justify-between gap-3 sm:mb-6">
         <div className="space-y-1">
           <p className="text-[11px] uppercase tracking-[0.28em] text-white/50">Popular</p>
-          <h2 className="text-xl font-semibold text-white">よく読まれている記事</h2>
+          <h2 className="text-lg font-semibold text-white sm:text-xl">よく読まれている記事</h2>
         </div>
         <span className="border border-accent/25 bg-accent/12 px-3 py-1 text-xs font-semibold text-accent">Views</span>
       </div>
@@ -90,7 +90,7 @@ export function PopularDiariesGrid({ entries }: PopularDiariesProps) {
           return (
             <JournalCard
               key={entry.id}
-              className="relative flex flex-col gap-4 p-6 hover:-translate-y-0.5"
+              className="relative flex flex-col gap-4 p-5 hover:-translate-y-0.5 sm:p-6"
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 {/* ランキングバッジ */}

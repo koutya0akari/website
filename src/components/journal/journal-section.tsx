@@ -11,10 +11,10 @@ type JournalSectionProps = {
 };
 
 const variantClasses: Record<JournalSectionVariant, string> = {
-  home: "rounded-[22px] p-6 sm:p-8",
-  page: "rounded-[36px] p-8 sm:p-10",
-  listing: "rounded-[32px] p-8",
-  detail: "rounded-[32px] p-8 sm:p-9",
+  home: "rounded-[22px] p-5 sm:p-8",
+  page: "rounded-[22px] p-5 sm:rounded-[36px] sm:p-10",
+  listing: "rounded-[22px] p-5 sm:rounded-[32px] sm:p-8",
+  detail: "rounded-[22px] p-5 sm:rounded-[32px] sm:p-9",
 };
 
 export function JournalSection({

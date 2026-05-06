@@ -55,7 +55,7 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div className="relative"> 
-        <main className="relative mx-auto flex max-w-content flex-col gap-10 px-4 py-10 sm:gap-12 sm:px-6 sm:py-12">
+        <main className="relative mx-auto flex max-w-content flex-col gap-8 px-4 py-8 sm:gap-12 sm:px-6 sm:py-12">
           <FadeIn>
             <HeroSection site={site} diaries={diaries} />
           </FadeIn>

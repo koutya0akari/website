@@ -14,12 +14,12 @@ export function ContactSection({ site, resources }: ContactSectionProps) {
   const contactEntries = [...site.contactLinks, ...additionalContactLinks];
 
   return (
-    <section className="relative grid gap-6 overflow-hidden rounded-[32px] border border-transparent bg-white/5 p-6 sm:p-8 md:grid-cols-[1.15fr_0.85fr]">
+    <section className="relative grid gap-5 overflow-hidden rounded-[22px] border border-transparent bg-white/5 p-5 sm:gap-6 sm:rounded-[32px] sm:p-8 md:grid-cols-[1.15fr_0.85fr]">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-3 rounded-[28px] border border-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(100,210,255,0.12),transparent_40%),radial-gradient(circle_at_85%_10%,rgba(247,181,0,0.12),transparent_35%)]" />
+        <div className="absolute inset-3 rounded-[22px] border border-transparent sm:rounded-[28px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(100,210,255,0.08),transparent_40%),radial-gradient(circle_at_85%_10%,rgba(247,181,0,0.08),transparent_35%)] sm:bg-[radial-gradient(circle_at_20%_20%,rgba(100,210,255,0.12),transparent_40%),radial-gradient(circle_at_85%_10%,rgba(247,181,0,0.12),transparent_35%)]" />
       </div>
-      <div className="relative space-y-4 rounded-[28px] border border-transparent bg-black/10 p-5 sm:p-6">
+      <div className="relative space-y-4 rounded-[20px] border border-transparent bg-black/10 p-4 sm:rounded-[28px] sm:p-6">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-[11px] uppercase tracking-[0.35em] text-white/60">Resources</p>
@@ -29,7 +29,7 @@ export function ContactSection({ site, resources }: ContactSectionProps) {
         </div>
         <ResourceGrid resources={resources} />
       </div>
-      <div className="relative space-y-4 rounded-[28px] border border-transparent bg-gradient-to-b from-night-soft to-night p-5 sm:p-6">
+      <div className="relative space-y-4 rounded-[20px] border border-transparent bg-gradient-to-b from-night-soft to-night p-4 sm:rounded-[28px] sm:p-6">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-3 rounded-[22px] border border-transparent" />
           <div className="absolute -right-10 top-0 h-28 w-28 rounded-full bg-accent/15 blur-3xl" />
@@ -42,7 +42,7 @@ export function ContactSection({ site, resources }: ContactSectionProps) {
             <SmartLink
               key={link.id}
               href={link.url}
-              className="rounded-full border border-transparent px-4 py-2 text-sm text-white transition hover:-translate-y-0.5 hover:border-accent hover:text-accent active:translate-y-0"
+              className="rounded-full border border-transparent px-3 py-2 text-sm text-white transition hover:-translate-y-0.5 hover:border-accent hover:text-accent active:translate-y-0 sm:px-4"
             >
               {link.label}
             </SmartLink>

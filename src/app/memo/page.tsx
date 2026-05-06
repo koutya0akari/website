@@ -17,10 +17,10 @@ export default async function MemoPage() {
   const entries = await getMemoEntries(100);
 
   return (
-    <div className="mx-auto max-w-content space-y-10 px-6 py-12">
+    <div className="mx-auto max-w-content space-y-8 px-4 py-8 sm:space-y-10 sm:px-6 sm:py-12">
       <JournalSection variant="listing">
         <p className="text-xs uppercase tracking-[0.4em] text-white/60">{MEMO_OVERLINE}</p>
-        <h1 className="mt-3 text-4xl font-semibold text-white">{MEMO_LABEL}</h1>
+        <h1 className="mt-3 text-3xl font-semibold leading-tight text-white sm:text-4xl">{MEMO_LABEL}</h1>
       </JournalSection>
 
       <DiaryFilter

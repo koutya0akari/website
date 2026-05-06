@@ -9,10 +9,10 @@ type ProjectSectionProps = {
 
 export function ProjectSection({ projects }: ProjectSectionProps) {
   return (
-    <section id="projects" className="relative overflow-hidden rounded-[32px] border border-transparent bg-white/5 p-6 sm:p-8">
+    <section id="projects" className="relative overflow-hidden rounded-[22px] border border-transparent bg-white/5 p-5 sm:rounded-[32px] sm:p-8">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-3 rounded-[28px] border border-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_30%,rgba(100,210,255,0.12),transparent_40%),radial-gradient(circle_at_85%_20%,rgba(247,181,0,0.08),transparent_35%)]" />
+        <div className="absolute inset-3 rounded-[22px] border border-transparent sm:rounded-[28px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_30%,rgba(100,210,255,0.08),transparent_40%),radial-gradient(circle_at_85%_20%,rgba(247,181,0,0.06),transparent_35%)] sm:bg-[radial-gradient(circle_at_12%_30%,rgba(100,210,255,0.12),transparent_40%),radial-gradient(circle_at_85%_20%,rgba(247,181,0,0.08),transparent_35%)]" />
       </div>
       <div className="relative flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -25,7 +25,7 @@ export function ProjectSection({ projects }: ProjectSectionProps) {
         {projects.map((project) => (
           <SpotlightCard
             key={project.id}
-            className="relative h-full space-y-3 overflow-hidden bg-white/5 p-6"
+            className="relative h-full space-y-3 overflow-hidden bg-white/5 p-5 sm:p-6"
             spotlightColor="rgba(100, 210, 255, 0.2)"
           >
             <div className="absolute -right-14 top-0 h-24 w-24 rotate-12 rounded-full bg-accent/15 blur-3xl" />
@@ -34,7 +34,7 @@ export function ProjectSection({ projects }: ProjectSectionProps) {
             <div className="space-y-2 text-sm text-white/70">
               {project.highlights.map((item) => (
                 <div key={item} className="flex items-start gap-2">
-                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-highlight" />
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-highlight" />
                   <RichText
                     content={item}
                     as="span"

@@ -19,10 +19,10 @@ export default async function DiaryPage() {
   const [diaries, popularDiaries] = await Promise.all([getDiaryEntries(100), getPopularDiaryEntries(6)]);
 
   return (
-    <div className="mx-auto max-w-content px-6 py-12 space-y-10">
+    <div className="mx-auto max-w-content space-y-8 px-4 py-8 sm:space-y-10 sm:px-6 sm:py-12">
       <JournalSection variant="listing">
         <p className="text-xs uppercase tracking-[0.4em] text-white/60">{MATH_DIARY_OVERLINE}</p>
-        <h1 className="mt-3 text-4xl font-semibold">{MATH_DIARY_LABEL}</h1>
+        <h1 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">{MATH_DIARY_LABEL}</h1>
         <Link href="/resources" className="mt-5 inline-flex text-sm text-accent underline underline-offset-4">
           公開資料を見る
         </Link>

@@ -76,28 +76,28 @@ export default async function MemoDetailPage({ params }: PageProps) {
   const shareText = [entry.title, tagText].filter(Boolean).join(" ");
 
   return (
-    <div className="mx-auto max-w-content px-6 py-12">
+    <div className="mx-auto max-w-content px-4 py-8 sm:px-6 sm:py-12">
       <Link href="/memo" className="text-sm text-accent underline-offset-4 hover:underline">
         ← {MEMO_LABEL} 一覧へ戻る
       </Link>
 
-      <div className="mt-6 grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <article className="space-y-8">
+      <div className="mt-5 grid gap-6 sm:mt-6 sm:gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <article className="min-w-0 space-y-6 sm:space-y-8">
           <JournalSection variant="detail">
             <p className="text-xs uppercase tracking-[0.4em] text-white/60">{MEMO_OVERLINE}</p>
-            <h1 className="mt-3 text-4xl font-semibold leading-tight text-white sm:text-5xl">{entry.title}</h1>
-            {summary && <p className="mt-5 max-w-3xl text-base leading-8 text-white/72 sm:text-lg">{summary}</p>}
+            <h1 className="mt-3 text-3xl font-semibold leading-tight text-white sm:text-5xl">{entry.title}</h1>
+            {summary && <p className="mt-4 max-w-3xl text-sm leading-7 text-white/72 sm:mt-5 sm:text-lg sm:leading-8">{summary}</p>}
 
-            <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-white/70">
+            <div className="mt-5 flex flex-wrap items-center gap-2 text-xs text-white/70 sm:mt-6 sm:gap-3 sm:text-sm">
               <time>
                 Published {formatDate(entry.publishedAt)}
                 {entry.updatedAt && (
                   <span className="text-white/45"> （更新 {formatDate(entry.updatedAt)}）</span>
                 )}
               </time>
-              <span className="text-white/30">•</span>
+              <span className="hidden text-white/30 sm:inline">•</span>
               <ReadingTime content={entry.body} />
-              <span className="text-white/30">•</span>
+              <span className="hidden text-white/30 sm:inline">•</span>
               <DiaryViewBadge slug={entry.slug} initialCount={entry.viewCount} />
               <ShareToX url={shareUrl} text={shareText} hashtags={shareTags} via="akari0koutya" />
             </div>
@@ -114,7 +114,7 @@ export default async function MemoDetailPage({ params }: PageProps) {
           </JournalSection>
 
           {entry.heroImage?.url && (
-            <div className="relative overflow-hidden rounded-3xl shadow-[0_18px_48px_rgba(2,8,20,0.22)]">
+            <div className="relative overflow-hidden rounded-2xl shadow-[0_18px_48px_rgba(2,8,20,0.22)] sm:rounded-3xl">
               <Image
                 src={entry.heroImage.url}
                 alt={entry.heroImage.alt ?? entry.title}
@@ -126,7 +126,7 @@ export default async function MemoDetailPage({ params }: PageProps) {
             </div>
           )}
 
-          <section className="rounded-[32px] bg-night-soft/75 p-6 shadow-[0_18px_48px_rgba(2,8,20,0.18)] sm:p-8">
+          <section className="min-w-0 rounded-[22px] bg-night-soft/75 p-4 shadow-[0_18px_48px_rgba(2,8,20,0.18)] sm:rounded-[32px] sm:p-8">
             <DiaryBody html={entry.body} />
           </section>
         </article>

@@ -20,7 +20,7 @@ export function MonthlyDiaryCard({ entry, compact = false }: MonthlyDiaryCardPro
 
   return (
     <JournalCard className="h-full hover:-translate-y-0.5">
-      <div className="flex h-full flex-col gap-5 p-6 sm:p-7">
+      <div className="flex h-full flex-col gap-4 p-5 sm:gap-5 sm:p-7">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2 text-xs text-white/55">
@@ -33,7 +33,7 @@ export function MonthlyDiaryCard({ entry, compact = false }: MonthlyDiaryCardPro
         </div>
 
         <div className="space-y-3">
-          <h3 className={`${compact ? "text-2xl" : "text-3xl"} font-semibold text-white`}>
+          <h3 className={`${compact ? "text-xl sm:text-2xl" : "text-2xl sm:text-3xl"} font-semibold leading-tight text-white`}>
             <Link href={detailHref} className="transition hover:text-accent">
               {entry.title}
             </Link>
@@ -43,7 +43,7 @@ export function MonthlyDiaryCard({ entry, compact = false }: MonthlyDiaryCardPro
 
         <div className="mt-auto flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap gap-2 text-xs text-white/55">
+            <div className="flex flex-wrap gap-2 text-[11px] text-white/55 sm:text-xs">
               {visibleTags.map((tag) => (
                 <span key={tag} className="tag-chip border-highlight/20 bg-black/15">
                   #{tag}

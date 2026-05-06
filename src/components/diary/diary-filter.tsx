@@ -44,21 +44,21 @@ export function DiaryFilter({
   }, [entries, query, folder, tag]);
 
   return (
-    <div className="space-y-6">
-      <div className="glass-panel rounded-3xl !border-0 p-6">
+    <div className="space-y-5 sm:space-y-6">
+      <div className="glass-panel rounded-[22px] !border-0 p-4 sm:rounded-3xl sm:p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center">
           <input
             type="search"
             placeholder="キーワードで検索"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="w-full rounded-2xl bg-black/30 px-4 py-3 text-sm text-white placeholder:text-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="w-full rounded-xl bg-black/30 px-4 py-3 text-sm text-white placeholder:text-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:rounded-2xl"
           />
-          <div className="flex flex-wrap gap-3 text-sm">
+          <div className="flex flex-wrap gap-2 text-xs sm:gap-3 sm:text-sm">
             <button
               type="button"
               onClick={() => setFolder(null)}
-              className={`rounded-full px-4 py-1 ${!folder ? "bg-accent text-black" : "bg-white/10 text-white/70"}`}
+              className={`rounded-full px-3 py-1.5 sm:px-4 sm:py-1 ${!folder ? "bg-accent text-black" : "bg-white/10 text-white/70"}`}
             >
               All folders
             </button>
@@ -67,7 +67,7 @@ export function DiaryFilter({
                 key={name}
                 type="button"
                 onClick={() => setFolder((prev) => (prev === name ? null : name))}
-                className={`rounded-full px-4 py-1 ${folder === name ? "bg-accent text-black" : "bg-white/10 text-white/70"}`}
+                className={`rounded-full px-3 py-1.5 sm:px-4 sm:py-1 ${folder === name ? "bg-accent text-black" : "bg-white/10 text-white/70"}`}
               >
                 {getDiaryDisplayLabel(name, name)}
               </button>
@@ -75,11 +75,11 @@ export function DiaryFilter({
           </div>
         </div>
         {tags.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2 text-xs">
+          <div className="mt-4 flex flex-wrap gap-2 text-[11px] sm:text-xs">
             <button
               type="button"
               onClick={() => setTag(null)}
-              className={`rounded-full px-3 py-1 ${!tag ? "bg-accent/12 text-accent" : "bg-white/5 text-white/60"}`}
+              className={`rounded-full px-2.5 py-1 sm:px-3 ${!tag ? "bg-accent/12 text-accent" : "bg-white/5 text-white/60"}`}
             >
               All tags
             </button>
@@ -88,7 +88,7 @@ export function DiaryFilter({
                 key={item}
                 type="button"
                 onClick={() => setTag((prev) => (prev === item ? null : item))}
-                className={`rounded-full px-3 py-1 ${
+                className={`rounded-full px-2.5 py-1 sm:px-3 ${
                   tag === item ? "bg-accent/12 text-accent" : "bg-white/5 text-white/60"
                 }`}
               >

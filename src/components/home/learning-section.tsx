@@ -11,10 +11,10 @@ export function LearningSection({ learningThemes }: LearningSectionProps) {
   const themes = learningThemes && learningThemes.length > 0 ? learningThemes : defaultLearningThemes.map((t, i) => ({ ...t, id: String(i) }));
 
   return (
-    <section className="relative overflow-hidden rounded-[32px] border border-transparent bg-gradient-to-br from-night-muted/70 via-night/60 to-night-soft/80 p-6 sm:p-8">
+    <section className="relative overflow-hidden rounded-[22px] border border-transparent bg-gradient-to-br from-night-muted/70 via-night/60 to-night-soft/80 p-5 sm:rounded-[32px] sm:p-8">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-3 rounded-[28px] border border-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(100,210,255,0.15),transparent_40%),radial-gradient(circle_at_85%_15%,rgba(247,181,0,0.12),transparent_35%)]" />
+        <div className="absolute inset-3 rounded-[22px] border border-transparent sm:rounded-[28px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(100,210,255,0.1),transparent_40%),radial-gradient(circle_at_85%_15%,rgba(247,181,0,0.08),transparent_35%)] sm:bg-[radial-gradient(circle_at_15%_20%,rgba(100,210,255,0.15),transparent_40%),radial-gradient(circle_at_85%_15%,rgba(247,181,0,0.12),transparent_35%)]" />
       </div>
       <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -29,7 +29,7 @@ export function LearningSection({ learningThemes }: LearningSectionProps) {
           return (
             <SpotlightCard
               key={theme.title}
-              className={`relative h-full overflow-hidden p-6 ${spanClass} bg-white/5`}
+              className={`relative h-full overflow-hidden p-5 sm:p-6 ${spanClass} bg-white/5`}
               spotlightColor="rgba(100, 210, 255, 0.25)"
             >
               <div className="absolute -right-14 top-1/2 h-32 w-32 -translate-y-1/2 rotate-12 rounded-full bg-highlight/10 blur-3xl" />

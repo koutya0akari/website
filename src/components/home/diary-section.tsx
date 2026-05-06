@@ -20,7 +20,7 @@ export function DiarySection({ diaries }: DiarySectionProps) {
         <div className="flex flex-wrap items-center gap-2">
           <Link
             href="/diary"
-            className="rounded-full bg-accent/10 px-4 py-2 text-sm text-white/85 transition hover:-translate-y-0.5 hover:bg-accent/14 hover:text-accent"
+            className="w-full rounded-full bg-accent/10 px-4 py-2 text-center text-sm text-white/85 transition hover:-translate-y-0.5 hover:bg-accent/14 hover:text-accent sm:w-auto"
           >
             すべて見る
           </Link>

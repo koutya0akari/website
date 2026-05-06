@@ -27,8 +27,8 @@ export function DiaryCard({
       : null;
 
   return (
-    <JournalCard className="flex flex-col gap-4 p-6 hover:-translate-y-0.5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <JournalCard className="flex flex-col gap-4 p-5 hover:-translate-y-0.5 sm:p-6">
+      <div className="flex flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
         <span className="text-xs uppercase tracking-[0.2em] text-white/60">
           {getDiaryDisplayLabel(entry.folder, MATH_DIARY_LABEL)}
         </span>
@@ -42,7 +42,7 @@ export function DiaryCard({
         </div>
       </div>
       <div>
-        <h3 className="text-xl font-semibold text-white">
+        <h3 className="text-lg font-semibold leading-snug text-white sm:text-xl">
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           <Link href={`${hrefBase}/${entry.slug}` as any} className="hover:text-accent">
             {entry.title}
@@ -51,7 +51,7 @@ export function DiaryCard({
         <div className="prose-custom prose-preserve-whitespace mt-2 text-white/70" dangerouslySetInnerHTML={{ __html: summaryHtml }} />
       </div>
       {!compact && entry.tags?.length > 0 && (
-        <div className="flex flex-wrap gap-2 text-xs text-white/60">
+        <div className="flex flex-wrap gap-2 text-[11px] text-white/60 sm:text-xs">
           {entry.tags.map((tag) => (
             <span key={tag} className="tag-chip border-highlight/20 bg-black/15">
               #{tag}

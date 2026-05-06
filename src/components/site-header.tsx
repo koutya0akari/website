@@ -23,7 +23,7 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-transparent bg-[#030817]/80 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-content items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-content items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         <Link href="/" className="flex items-center gap-2 text-lg font-semibold tracking-wide">
           <span className="rounded-full bg-accent/20 px-3 py-1 text-sm font-medium text-accent">Akari</span>
           <span className="font-display text-white">Math Lab</span>
@@ -84,7 +84,7 @@ export function SiteHeader() {
             exit={{ opacity: 0, height: 0 }}
             className="border-b border-transparent bg-[#030817] md:hidden"
           >
-            <nav className="flex flex-col gap-4 p-6">
+            <nav className="flex flex-col gap-3 p-4 sm:gap-4 sm:p-6">
               {NAV_ITEMS.map((item) => (
                 <SmartLink
                   key={item.href}

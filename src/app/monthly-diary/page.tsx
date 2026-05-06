@@ -17,18 +17,18 @@ export default async function MonthlyDiaryPage() {
   const entries = await getMonthlyDiaryEntries(100);
 
   return (
-    <div className="mx-auto max-w-content space-y-10 px-6 py-12">
+    <div className="mx-auto max-w-content space-y-8 px-4 py-8 sm:space-y-10 sm:px-6 sm:py-12">
       <JournalSection variant="page">
         <div className="relative">
           <div>
             <p className="text-xs uppercase tracking-[0.4em] text-white/60">{MONTHLY_DIARY_OVERLINE}</p>
-            <h1 className="mt-3 text-4xl font-semibold leading-tight text-white sm:text-5xl">{MONTHLY_DIARY_LABEL}</h1>
+            <h1 className="mt-3 text-3xl font-semibold leading-tight text-white sm:text-5xl">{MONTHLY_DIARY_LABEL}</h1>
           </div>
         </div>
       </JournalSection>
 
       {entries.length === 0 ? (
-        <div className="glass-panel rounded-[20px] p-8 text-white/62 shadow-[var(--card-shadow)]">
+        <div className="glass-panel rounded-[20px] p-5 text-white/62 shadow-[var(--card-shadow)] sm:p-8">
           日記を準備中です。
         </div>
       ) : (
