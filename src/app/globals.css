@@ -149,6 +149,67 @@ html.light .glass-panel {
   border-color: rgba(0, 0, 0, 0.08);
 }
 
+/* Mathematical callout blocks for article bodies */
+.prose .math-callout {
+  --math-callout-bg: rgba(45, 212, 191, 0.08);
+  --math-callout-border: rgba(45, 212, 191, 0.74);
+  --math-callout-title: #99f6e4;
+
+  margin: 1.25rem 0;
+  border: 1px solid var(--math-callout-border);
+  border-left-width: 4px;
+  border-radius: 6px;
+  background: var(--math-callout-bg);
+  padding: 1rem 1.1rem;
+  box-shadow: 0 12px 32px rgba(2, 9, 7, 0.16);
+}
+
+.prose .math-callout--proposition {
+  --math-callout-bg: rgba(34, 197, 94, 0.08);
+  --math-callout-border: rgba(34, 197, 94, 0.68);
+  --math-callout-title: #bbf7d0;
+}
+
+.prose .math-callout__title {
+  margin: 0 0 0.65rem;
+  color: var(--math-callout-title);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.prose .math-callout > :last-child {
+  margin-bottom: 0;
+}
+
+.prose .math-callout :where(p, ul, ol, blockquote, pre, table, .katex-display) {
+  margin-top: 0.65rem;
+  margin-bottom: 0.65rem;
+}
+
+.prose .math-callout :where(ul, ol) {
+  padding-left: 1.35rem;
+}
+
+.prose .math-callout .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.15rem;
+}
+
+html.light .prose .math-callout {
+  --math-callout-bg: rgba(20, 184, 166, 0.08);
+  --math-callout-border: rgba(13, 148, 136, 0.74);
+  --math-callout-title: #0f766e;
+
+  box-shadow: 0 12px 30px rgba(15, 118, 110, 0.1);
+}
+
+html.light .prose .math-callout--proposition {
+  --math-callout-bg: rgba(22, 163, 74, 0.08);
+  --math-callout-border: rgba(21, 128, 61, 0.68);
+  --math-callout-title: #166534;
+}
+
 /* Selection colors */
 ::selection {
   background: var(--accent-color);
