@@ -100,6 +100,7 @@ src/
 
 - [Supabase セットアップ](docs/SUPABASE_SETUP.md)
 - [実装サマリー](docs/IMPLEMENTATION_SUMMARY.md)
+- [Body Markdown の使い方](docs/BODY_MARKDOWN.md)
 - [定理・命題ブロックの使い方](docs/MATH_BLOCKS.md)
 - [デプロイチェックリスト](DEPLOYMENT_CHECKLIST.md)
 
