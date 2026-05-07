@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { Comments } from "@/components/diary/comments";
 import { DiaryBody } from "@/components/diary/diary-body";
 import { TableOfContents } from "@/components/diary/table-of-contents";
 import { DiaryViewBadge } from "@/components/diary/view-badge";
@@ -129,6 +130,7 @@ export default async function MemoDetailPage({ params }: PageProps) {
           <section className="min-w-0 rounded-[22px] bg-night-soft/75 p-4 shadow-[0_18px_48px_rgba(2,8,20,0.18)] sm:rounded-[32px] sm:p-8">
             <DiaryBody html={entry.body} />
           </section>
+          <Comments />
         </article>
 
         <aside className="hidden xl:block">

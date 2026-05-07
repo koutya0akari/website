@@ -2,36 +2,23 @@
 
 import Giscus from '@giscus/react';
 
-export function Comments() {
-  const repoId = process.env.NEXT_PUBLIC_GISCUS_REPO_ID;
-  const categoryId = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID;
+const GISCUS_REPO = "koutya0akari/website";
+const GISCUS_REPO_ID = "R_kgDOP878Hw";
+const GISCUS_CATEGORY = "General";
+const GISCUS_CATEGORY_ID = "DIC_kwDOP878H84Cx8Ub";
 
-  if (!repoId || !categoryId) {
-    if (process.env.NODE_ENV === "development") {
-      return (
-        <div className="mt-10 border-t border-transparent pt-10">
-          <h2 className="mb-6 text-2xl font-semibold text-white">Comments</h2>
-          <div className="rounded-xl border border-yellow-500/50 bg-yellow-500/10 p-4 text-yellow-200">
-            <p className="font-semibold">Giscus Configuration Missing</p>
-            <p className="mt-1 text-sm">
-              Please set <code>NEXT_PUBLIC_GISCUS_REPO_ID</code> and <code>NEXT_PUBLIC_GISCUS_CATEGORY_ID</code> in your
-              environment variables.
-            </p>
-          </div>
-        </div>
-      );
-    }
-    return null;
-  }
+export function Comments() {
+  const repoId = process.env.NEXT_PUBLIC_GISCUS_REPO_ID || GISCUS_REPO_ID;
+  const categoryId = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || GISCUS_CATEGORY_ID;
 
   return (
     <div className="mt-10 border-t border-transparent pt-10">
       <h2 className="mb-6 text-2xl font-semibold text-white">Comments</h2>
       <Giscus
         id="comments"
-        repo="koutya0akari/website"
+        repo={GISCUS_REPO}
         repoId={repoId}
-        category="Announcements"
+        category={GISCUS_CATEGORY}
         categoryId={categoryId}
         mapping="pathname"
         strict="0"
