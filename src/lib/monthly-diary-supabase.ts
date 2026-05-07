@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { DiaryEntry } from "@/lib/types";
+import { getSortCandidateLimit, sortByPublishedDesc } from "@/lib/diary-order";
 import { normalizeRichTextToHtml } from "@/lib/markdown";
 import { MONTHLY_DIARY_FOLDER, MONTHLY_DIARY_FOLDERS } from "@/lib/monthly-diary-config";
 import { createClient } from "@/lib/supabase/server";
@@ -54,15 +55,15 @@ export async function getMonthlyDiaryEntries(limit = 50): Promise<DiaryEntry[]> 
     .select("*")
     .eq("status", "published")
     .in("folder", [...MONTHLY_DIARY_FOLDERS])
-    .order("published_at", { ascending: false })
-    .limit(limit);
+    .order("created_at", { ascending: false })
+    .limit(getSortCandidateLimit(limit));
 
   if (error) {
     console.error("[Supabase] Failed to fetch monthly diary entries:", error);
     return [];
   }
 
-  return (data || []).map(normalizeMonthlyDiary);
+  return sortByPublishedDesc((data || []).map(normalizeMonthlyDiary)).slice(0, limit);
 }
 
 export async function getMonthlyDiaryBySlug(slug: string): Promise<DiaryEntry | undefined> {

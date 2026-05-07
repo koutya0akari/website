@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { DiaryEntry } from "@/lib/types";
+import { getSortCandidateLimit, sortByPopularityDesc, sortByPublishedDesc } from "@/lib/diary-order";
 import { normalizeRichTextToHtml } from "@/lib/markdown";
 import { RESERVED_DIARY_FOLDER_EXCLUSION_FILTER } from "@/lib/monthly-diary-config";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
@@ -56,15 +57,15 @@ export async function getDiaryEntries(limit = 50): Promise<DiaryEntry[]> {
     .select("*")
     .eq("status", "published")
     .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
-    .order("published_at", { ascending: false })
-    .limit(limit);
+    .order("created_at", { ascending: false })
+    .limit(getSortCandidateLimit(limit));
 
   if (error) {
     console.error("[Supabase] Failed to fetch diary entries:", error);
     return [];
   }
 
-  return (data || []).map(normalizeDiary);
+  return sortByPublishedDesc((data || []).map(normalizeDiary)).slice(0, limit);
 }
 
 export async function getPopularDiaryEntries(
@@ -79,8 +80,8 @@ export async function getPopularDiaryEntries(
     .eq("status", "published")
     .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
     .order("view_count", { ascending: false })
-    .order("published_at", { ascending: false })
-    .limit(limit);
+    .order("created_at", { ascending: false })
+    .limit(getSortCandidateLimit(limit));
 
   if (excludeSlug) {
     query = query.neq("slug", excludeSlug);
@@ -93,7 +94,7 @@ export async function getPopularDiaryEntries(
     return [];
   }
 
-  return (data || []).map(normalizeDiary);
+  return sortByPopularityDesc((data || []).map(normalizeDiary)).slice(0, limit);
 }
 
 export async function getDiaryBySlug(slug: string): Promise<DiaryEntry | undefined> {

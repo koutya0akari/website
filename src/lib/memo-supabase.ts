@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { DiaryEntry } from "@/lib/types";
+import { getSortCandidateLimit, sortByPublishedDesc } from "@/lib/diary-order";
 import { normalizeRichTextToHtml } from "@/lib/markdown";
 import { MEMO_FOLDER } from "@/lib/monthly-diary-config";
 import { createClient } from "@/lib/supabase/server";
@@ -54,15 +55,15 @@ export async function getMemoEntries(limit = 50): Promise<DiaryEntry[]> {
     .select("*")
     .eq("status", "published")
     .eq("folder", MEMO_FOLDER)
-    .order("published_at", { ascending: false })
-    .limit(limit);
+    .order("created_at", { ascending: false })
+    .limit(getSortCandidateLimit(limit));
 
   if (error) {
     console.error("[Supabase] Failed to fetch memo entries:", error);
     return [];
   }
 
-  return (data || []).map(normalizeMemo);
+  return sortByPublishedDesc((data || []).map(normalizeMemo)).slice(0, limit);
 }
 
 export async function getMemoBySlug(slug: string): Promise<DiaryEntry | undefined> {
