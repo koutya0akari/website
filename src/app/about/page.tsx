@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 
 import { Changelog } from "@/components/changelog";
 import { GitHubStats } from "@/components/github-stats";
+import { ActivitySection } from "@/components/home/activity-section";
+import { ContactSection } from "@/components/home/contact-section";
 import { FadeIn } from "@/components/motion/fade-in";
 import { RichText } from "@/components/rich-text";
-import { getAboutContent } from "@/lib/content";
+import { getAboutContent, getSiteContent } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "About",
@@ -12,7 +14,10 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const about = await getAboutContent();
+  const [about, site] = await Promise.all([
+    getAboutContent(),
+    getSiteContent(),
+  ]);
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-12 space-y-10">
@@ -30,16 +35,8 @@ export default async function AboutPage() {
         </section>
       </FadeIn>
 
-      {/* GitHub Stats */}
-      <FadeIn delay={0.1}>
-        <section className="section-card">
-          <h2 className="mb-6 text-2xl font-semibold">GitHub アクティビティ</h2>
-          <GitHubStats username="koutya0akari" />
-        </section>
-      </FadeIn>
-
       {/* Sections */}
-      <FadeIn delay={0.2}>
+      <FadeIn delay={0.1}>
         <section className="section-card space-y-6">
           {about.sections.map((section) => (
             <article key={section.heading} className="space-y-2">
@@ -52,7 +49,7 @@ export default async function AboutPage() {
 
       {/* Skills Tags */}
       {about.skills.length > 0 && (
-        <FadeIn delay={0.3}>
+        <FadeIn delay={0.2}>
           <section className="section-card">
             <h2 className="text-2xl font-semibold">🛠️ Skills / Tools</h2>
             <div className="mt-4 flex flex-wrap gap-3">
@@ -66,8 +63,24 @@ export default async function AboutPage() {
         </FadeIn>
       )}
 
-      {/* Changelog */}
+      <FadeIn delay={0.3}>
+        <ActivitySection />
+      </FadeIn>
+
       <FadeIn delay={0.4}>
+        <ContactSection site={site} />
+      </FadeIn>
+
+      {/* GitHub Stats */}
+      <FadeIn delay={0.5}>
+        <section className="section-card">
+          <h2 className="mb-6 text-2xl font-semibold">GitHub アクティビティ</h2>
+          <GitHubStats username="koutya0akari" />
+        </section>
+      </FadeIn>
+
+      {/* Changelog */}
+      <FadeIn delay={0.6}>
         <section className="section-card">
           <h2 className="mb-6 text-2xl font-semibold">📋 サイト変更履歴</h2>
           <Changelog username="koutya0akari" repo="website" />

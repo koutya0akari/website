@@ -1,6 +1,5 @@
 import { SmartLink } from "@/components/smart-link";
 import { RichText } from "@/components/rich-text";
-import { personalIntro as defaultPersonalIntro } from "@/data/home";
 import { MATH_DIARY_OVERLINE } from "@/lib/diary-labels";
 import type { SiteContent, DiaryEntry } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
@@ -12,14 +11,6 @@ type HeroSectionProps = {
 
 export function HeroSection({ site, diaries }: HeroSectionProps) {
   const timelinePreview = diaries.slice(0, 4);
-  
-  // 動的データがない場合は静的データにフォールバック
-  const profile = site.profile && site.profile.description
-    ? site.profile
-    : {
-        description: defaultPersonalIntro.description,
-        details: defaultPersonalIntro.details.map((d, i) => ({ ...d, id: String(i) })),
-      };
 
   return (
     <section className="glass-panel rounded-[22px] p-5 text-white shadow-[var(--card-shadow)] sm:p-7 lg:p-9">
@@ -42,28 +33,14 @@ export function HeroSection({ site, diaries }: HeroSectionProps) {
             >
               {site.heroPrimaryCtaLabel || "数学メモを見る"}
             </SmartLink>
-          {site.heroSecondaryCtaLabel && site.heroSecondaryCtaUrl && (
-            <SmartLink
-              href={site.heroSecondaryCtaUrl}
-              className="w-full border border-highlight/30 px-5 py-3 text-center text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:border-accent hover:text-accent active:translate-y-0 sm:w-auto sm:px-6"
-            >
-              {site.heroSecondaryCtaLabel}
-            </SmartLink>
-          )}
-        </div>
-          <div className="grid gap-4">
-            <div className="relative overflow-hidden border border-highlight/20 bg-black/20 p-4 sm:p-6">
-              <p className="text-[11px] uppercase tracking-[0.3em] text-white/60">Profile</p>
-              <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-white/85">{profile.description}</p>
-              <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                {profile.details.map((detail) => (
-                  <span key={detail.id || detail.label} className="inline-flex max-w-full items-center gap-1.5 border border-highlight/20 bg-white/5 px-2.5 py-1 sm:px-3">
-                    <span className="bg-accent/20 px-1.5 py-0.5 text-[10px] font-medium text-accent">{detail.label}</span>
-                    <span className="min-w-0 break-words text-white/90">{detail.value}</span>
-                  </span>
-                ))}
-              </div>
-            </div>
+            {site.heroSecondaryCtaLabel && site.heroSecondaryCtaUrl && (
+              <SmartLink
+                href={site.heroSecondaryCtaUrl}
+                className="w-full border border-highlight/30 px-5 py-3 text-center text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:border-accent hover:text-accent active:translate-y-0 sm:w-auto sm:px-6"
+              >
+                {site.heroSecondaryCtaLabel}
+              </SmartLink>
+            )}
           </div>
         </div>
         <div className="relative space-y-4 overflow-hidden border border-highlight/20 bg-black/20 p-4 backdrop-blur sm:p-6">
