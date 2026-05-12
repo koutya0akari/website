@@ -1,21 +1,16 @@
 import { SmartLink } from "@/components/smart-link";
 import { RichText } from "@/components/rich-text";
-import { MATH_DIARY_OVERLINE } from "@/lib/diary-labels";
-import type { SiteContent, DiaryEntry } from "@/lib/types";
-import { formatDate } from "@/lib/utils";
+import type { SiteContent } from "@/lib/types";
 
 type HeroSectionProps = {
   site: SiteContent;
-  diaries: DiaryEntry[];
 };
 
-export function HeroSection({ site, diaries }: HeroSectionProps) {
-  const timelinePreview = diaries.slice(0, 4);
-
+export function HeroSection({ site }: HeroSectionProps) {
   return (
     <section className="glass-panel rounded-[22px] p-5 text-white shadow-[var(--card-shadow)] sm:p-7 lg:p-9">
-      <div className="relative z-10 grid gap-6 sm:gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="space-y-5 sm:space-y-7">
+      <div className="relative z-10">
+        <div className="max-w-3xl space-y-5 sm:space-y-7">
           <div className="space-y-3">
             <RichText
               content={
@@ -41,49 +36,6 @@ export function HeroSection({ site, diaries }: HeroSectionProps) {
                 {site.heroSecondaryCtaLabel}
               </SmartLink>
             )}
-          </div>
-        </div>
-        <div className="relative space-y-4 overflow-hidden border border-highlight/20 bg-black/20 p-4 backdrop-blur sm:p-6">
-          <div className="relative flex items-baseline justify-between gap-3">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.3em] text-white/60">{MATH_DIARY_OVERLINE}</p>
-              <h2 className="text-xl font-semibold">最近の足跡</h2>
-            </div>
-          </div>
-          <div className="relative">
-            <div className="absolute left-5 top-1 bottom-1 w-px bg-gradient-to-b from-accent/70 via-accent/20 to-transparent" />
-            <ul className="space-y-4">
-              {timelinePreview.map((entry, index) => (
-                <li
-                  key={entry.id}
-                  className="relative overflow-hidden border border-accent/15 bg-[#081410]/85 p-4 pl-10 shadow-[0_10px_30px_rgba(4,11,22,0.28)] sm:pl-12"
-                >
-                  <div className="absolute left-3 top-5 flex h-6 w-6 items-center justify-center border border-accent/35 bg-black/70">
-                    <span className="h-2 w-2 bg-accent shadow-[0_0_0_6px_rgba(97,227,186,0.18)]" />
-                  </div>
-                  <div className="relative flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div className="min-w-0">
-                      <p className="text-[11px] uppercase tracking-[0.2em] text-white/55">{formatDate(entry.publishedAt)}</p>
-                      <p className="text-sm font-semibold text-white">{entry.title}</p>
-                      <p className="text-xs text-white/65">{entry.summary}</p>
-                    </div>
-                    <div className="flex items-center gap-2 text-left sm:flex-col sm:items-end sm:gap-1 sm:text-right">
-                      <span className="border border-accent/25 bg-accent/10 px-3 py-1 text-[11px] font-semibold text-white/80">
-                        PV {entry.viewCount ?? 0}
-                      </span>
-                      <span className="text-[11px] uppercase tracking-[0.2em] text-white/40">#{index + 1}</span>
-                    </div>
-                  </div>
-                  <SmartLink
-                    href={`/diary/${entry.slug}`}
-                    className="relative mt-2 inline-flex text-xs text-accent underline underline-offset-4"
-                  >
-                    詳細
-                  </SmartLink>
-                </li>
-              ))}
-              {timelinePreview.length === 0 && <p className="text-sm text-white/60">学習記録を準備中です。</p>}
-            </ul>
           </div>
         </div>
       </div>
