@@ -36,20 +36,20 @@ export default async function AboutPage() {
       </FadeIn>
 
       {/* Sections */}
-      <FadeIn delay={0.1}>
-        <section className="section-card space-y-6">
-          {about.sections.map((section) => (
-            <article key={section.heading} className="space-y-2">
+      {about.sections.map((section, index) => (
+        <FadeIn key={section.heading} delay={0.1 + index * 0.04}>
+          <section className="section-card">
+            <article className="space-y-2">
               <h2 className="text-2xl font-semibold">{section.heading}</h2>
               <RichText content={section.body} className="text-white/70" prose />
             </article>
-          ))}
-        </section>
-      </FadeIn>
+          </section>
+        </FadeIn>
+      ))}
 
       {/* Skills Tags */}
       {about.skills.length > 0 && (
-        <FadeIn delay={0.2}>
+        <FadeIn delay={0.2 + about.sections.length * 0.04}>
           <section className="section-card">
             <h2 className="text-2xl font-semibold">🛠️ Skills / Tools</h2>
             <div className="mt-4 flex flex-wrap gap-3">
