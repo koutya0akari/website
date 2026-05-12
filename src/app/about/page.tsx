@@ -82,7 +82,7 @@ export default async function AboutPage() {
       {/* Changelog */}
       <FadeIn delay={0.6}>
         <section className="section-card">
-          <h2 className="mb-6 text-2xl font-semibold">📋 サイト変更履歴</h2>
+          <h2 className="mb-6 text-2xl font-semibold">サイト変更履歴</h2>
           <Changelog username="koutya0akari" repo="website" />
         </section>
       </FadeIn>
