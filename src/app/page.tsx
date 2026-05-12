@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 
-import { ActivitySection } from "@/components/home/activity-section";
-import { ContactSection } from "@/components/home/contact-section";
 import { DiarySection } from "@/components/home/diary-section";
 import { FocusSection } from "@/components/home/focus-section";
 import { HeroSection } from "@/components/home/hero-section";
@@ -11,7 +9,7 @@ import { ProjectSection } from "@/components/home/project-section";
 import { SeminarSection } from "@/components/home/seminar-section";
 import { FadeIn } from "@/components/motion/fade-in";
 import { directContacts, personalIntro as defaultPersonalIntro } from "@/data/home";
-import { getResourceItems, getSiteContent } from "@/lib/content";
+import { getSiteContent } from "@/lib/content";
 import { getDiaryEntries } from "@/lib/diary";
 import { getMonthlyDiaryEntries } from "@/lib/monthly-diary";
 
@@ -26,11 +24,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [site, diaries, monthlyDiaries, resources] = await Promise.all([
+  const [site, diaries, monthlyDiaries] = await Promise.all([
     getSiteContent(),
     getDiaryEntries(3),
     getMonthlyDiaryEntries(2),
-    getResourceItems(3),
   ]);
 
   const profileDescription = site.profile?.description || defaultPersonalIntro.description;
@@ -76,13 +73,7 @@ export default async function HomePage() {
             <SeminarSection seminars={site.seminars} />
           </FadeIn>
           <FadeIn delay={0.1}>
-            <ActivitySection />
-          </FadeIn>
-          <FadeIn delay={0.1}>
             <ProjectSection projects={site.projects} />
-          </FadeIn>
-          <FadeIn delay={0.1}>
-            <ContactSection site={site} resources={resources} />
           </FadeIn>
         </main>
       </div>

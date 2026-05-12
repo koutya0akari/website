@@ -5,21 +5,20 @@ import type { SiteContent, ResourceItem } from "@/lib/types";
 
 type ContactSectionProps = {
   site: SiteContent;
+};
+
+type ResourceSectionProps = {
   resources: ResourceItem[];
 };
 
-export function ContactSection({ site, resources }: ContactSectionProps) {
-  const existingContactIds = new Set(site.contactLinks.map((link) => link.id));
-  const additionalContactLinks = directContacts.filter((contact) => !existingContactIds.has(contact.id));
-  const contactEntries = [...site.contactLinks, ...additionalContactLinks];
-
+export function ResourceSection({ resources }: ResourceSectionProps) {
   return (
-    <section className="relative grid gap-5 overflow-hidden rounded-[22px] border border-transparent bg-white/5 p-5 sm:gap-6 sm:rounded-[32px] sm:p-8 md:grid-cols-[1.15fr_0.85fr]">
+    <section className="relative overflow-hidden rounded-[22px] border border-transparent bg-white/5 p-5 sm:rounded-[32px] sm:p-8">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-3 rounded-[22px] border border-transparent sm:rounded-[28px]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(100,210,255,0.08),transparent_40%),radial-gradient(circle_at_85%_10%,rgba(247,181,0,0.08),transparent_35%)] sm:bg-[radial-gradient(circle_at_20%_20%,rgba(100,210,255,0.12),transparent_40%),radial-gradient(circle_at_85%_10%,rgba(247,181,0,0.12),transparent_35%)]" />
       </div>
-      <div className="relative space-y-4 rounded-[20px] border border-transparent bg-black/10 p-4 sm:rounded-[28px] sm:p-6">
+      <div className="relative space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-[11px] uppercase tracking-[0.35em] text-white/60">Resources</p>
@@ -29,11 +28,22 @@ export function ContactSection({ site, resources }: ContactSectionProps) {
         </div>
         <ResourceGrid resources={resources} />
       </div>
-      <div className="relative space-y-4 rounded-[20px] border border-transparent bg-gradient-to-b from-night-soft to-night p-4 sm:rounded-[28px] sm:p-6">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-3 rounded-[22px] border border-transparent" />
-          <div className="absolute -right-10 top-0 h-28 w-28 rounded-full bg-accent/15 blur-3xl" />
-        </div>
+    </section>
+  );
+}
+
+export function ContactSection({ site }: ContactSectionProps) {
+  const existingContactIds = new Set(site.contactLinks.map((link) => link.id));
+  const additionalContactLinks = directContacts.filter((contact) => !existingContactIds.has(contact.id));
+  const contactEntries = [...site.contactLinks, ...additionalContactLinks];
+
+  return (
+    <section className="relative overflow-hidden rounded-[22px] border border-transparent bg-gradient-to-b from-night-soft to-night p-5 sm:rounded-[32px] sm:p-8">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-3 rounded-[22px] border border-transparent" />
+        <div className="absolute -right-10 top-0 h-28 w-28 rounded-full bg-accent/15 blur-3xl" />
+      </div>
+      <div className="relative space-y-4">
         <div className="relative flex items-center justify-between">
           <h3 className="text-xl font-semibold text-white">Contact</h3>
         </div>
