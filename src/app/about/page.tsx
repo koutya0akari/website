@@ -30,16 +30,8 @@ export default async function AboutPage() {
         </section>
       </FadeIn>
 
-      {/* GitHub Stats */}
-      <FadeIn delay={0.1}>
-        <section className="section-card">
-          <h2 className="mb-6 text-2xl font-semibold">GitHub アクティビティ</h2>
-          <GitHubStats username="koutya0akari" />
-        </section>
-      </FadeIn>
-
       {/* Sections */}
-      <FadeIn delay={0.2}>
+      <FadeIn delay={0.1}>
         <section className="section-card space-y-6">
           {about.sections.map((section) => (
             <article key={section.heading} className="space-y-2">
@@ -52,7 +44,7 @@ export default async function AboutPage() {
 
       {/* Skills Tags */}
       {about.skills.length > 0 && (
-        <FadeIn delay={0.3}>
+        <FadeIn delay={0.2}>
           <section className="section-card">
             <h2 className="text-2xl font-semibold">🛠️ Skills / Tools</h2>
             <div className="mt-4 flex flex-wrap gap-3">
@@ -65,6 +57,14 @@ export default async function AboutPage() {
           </section>
         </FadeIn>
       )}
+
+      {/* GitHub Stats */}
+      <FadeIn delay={0.3}>
+        <section className="section-card">
+          <h2 className="mb-6 text-2xl font-semibold">GitHub アクティビティ</h2>
+          <GitHubStats username="koutya0akari" />
+        </section>
+      </FadeIn>
 
       {/* Changelog */}
       <FadeIn delay={0.4}>
