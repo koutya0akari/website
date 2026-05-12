@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { ActivitySection } from "@/components/home/activity-section";
 import { ContactSection } from "@/components/home/contact-section";
+import { DiarySection } from "@/components/home/diary-section";
 import { FocusSection } from "@/components/home/focus-section";
 import { HeroSection } from "@/components/home/hero-section";
 import { LearningSection } from "@/components/home/learning-section";
@@ -57,9 +58,12 @@ export default async function HomePage() {
       <div className="relative"> 
         <main className="relative mx-auto flex max-w-content flex-col gap-8 px-4 py-8 sm:gap-12 sm:px-6 sm:py-12">
           <FadeIn>
-            <HeroSection site={site} diaries={diaries} />
+            <HeroSection site={site} />
           </FadeIn>
           <FadeIn delay={0.08}>
+            <DiarySection diaries={diaries} />
+          </FadeIn>
+          <FadeIn delay={0.1}>
             <MonthlyDiarySection entries={monthlyDiaries} />
           </FadeIn>
           <FadeIn delay={0.1}>

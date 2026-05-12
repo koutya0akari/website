@@ -26,10 +26,14 @@ export function DiarySection({ diaries }: DiarySectionProps) {
           </Link>
         </div>
       </div>
-      <div className="relative mt-4 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {diaries.map((entry) => (
-          <DiaryCard key={entry.id} entry={entry} compact />
-        ))}
+      <div className="relative mt-4 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {diaries.length === 0 ? (
+          <div className="border border-highlight/20 bg-black/15 p-6 text-sm text-white/62 md:col-span-2 lg:col-span-3">
+            数学メモを準備中です。
+          </div>
+        ) : (
+          diaries.map((entry) => <DiaryCard key={entry.id} entry={entry} compact />)
+        )}
       </div>
     </JournalSection>
   );
