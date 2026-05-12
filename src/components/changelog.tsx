@@ -105,27 +105,27 @@ export function Changelog({ username = "Mori-Yusei", repo = "website" }: Changel
   const getCommitCategory = (message: string): { label: string; color: string } => {
     const lowerMessage = message.toLowerCase();
     if (lowerMessage.startsWith("feat") || lowerMessage.includes("add")) {
-      return { label: "✨ 新機能", color: "text-green-400" };
+      return { label: "新機能", color: "text-green-400" };
     }
     if (lowerMessage.startsWith("fix") || lowerMessage.includes("bug")) {
-      return { label: "🐛 修正", color: "text-yellow-400" };
+      return { label: "修正", color: "text-yellow-400" };
     }
     if (lowerMessage.startsWith("refactor")) {
-      return { label: "♻️ リファクタ", color: "text-blue-400" };
+      return { label: "リファクタ", color: "text-blue-400" };
     }
     if (lowerMessage.startsWith("style") || lowerMessage.includes("ui")) {
-      return { label: "🎨 スタイル", color: "text-purple-400" };
+      return { label: "スタイル", color: "text-purple-400" };
     }
     if (lowerMessage.startsWith("docs")) {
-      return { label: "📝 ドキュメント", color: "text-cyan-400" };
+      return { label: "ドキュメント", color: "text-cyan-400" };
     }
     if (lowerMessage.startsWith("perf")) {
-      return { label: "⚡ パフォーマンス", color: "text-orange-400" };
+      return { label: "パフォーマンス", color: "text-orange-400" };
     }
     if (lowerMessage.startsWith("chore") || lowerMessage.startsWith("build")) {
-      return { label: "🔧 メンテナンス", color: "text-gray-400" };
+      return { label: "メンテナンス", color: "text-gray-400" };
     }
-    return { label: "🔄 更新", color: "text-white/70" };
+    return { label: "更新", color: "text-white/70" };
   };
 
   if (loading) {
