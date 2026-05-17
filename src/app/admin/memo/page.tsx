@@ -81,14 +81,14 @@ export default function MemoListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-100">メモ</h1>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold text-gray-100 sm:text-3xl">メモ</h1>
           <p className="mt-2 text-sm text-gray-400">文章メモを管理します。</p>
         </div>
         <Link
           href="/admin/memo/new"
-          className="flex items-center gap-2 rounded-md bg-accent px-4 py-2 font-medium text-night transition-colors hover:bg-accent/90"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-accent px-4 py-2 font-medium text-night transition-colors hover:bg-accent/90 sm:w-auto"
         >
           <FilePlus className="h-4 w-4" />
           新規作成

@@ -98,12 +98,12 @@ export function AboutSettingsForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-white">About Settings</h1>
         <button
           type="submit"
           disabled={saving}
-          className="flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-night hover:bg-accent/90 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-night hover:bg-accent/90 disabled:opacity-50 sm:w-auto"
         >
           <Save className="h-4 w-4" />
           {saving ? "保存中..." : "保存"}
@@ -111,7 +111,7 @@ export function AboutSettingsForm() {
       </div>
 
       {/* Basic Info */}
-      <div className="space-y-4 rounded-lg border border-night-muted bg-night-soft p-6">
+      <div className="space-y-4 rounded-lg border border-night-muted bg-night-soft p-4 sm:p-6">
         <h2 className="text-lg font-semibold text-white">基本情報</h2>
 
         <MarkdownTextarea
@@ -184,10 +184,10 @@ export function AboutSettingsForm() {
       </div>
 
       {/* Skills */}
-      <div className="space-y-4 rounded-lg border border-night-muted bg-night-soft p-6">
+      <div className="space-y-4 rounded-lg border border-night-muted bg-night-soft p-4 sm:p-6">
         <h2 className="text-lg font-semibold text-white">スキル / ツール</h2>
 
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <input
             type="text"
             value={skillInput}
@@ -198,7 +198,7 @@ export function AboutSettingsForm() {
                 addSkill();
               }
             }}
-            className="flex-1 rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
+            className="min-w-0 flex-1 rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none"
             placeholder="スキルを入力してEnter"
           />
           <button
@@ -231,4 +231,3 @@ export function AboutSettingsForm() {
     </form>
   );
 }
-

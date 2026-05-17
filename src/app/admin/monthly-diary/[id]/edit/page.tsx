@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 
-import { DiaryForm, DiaryFormData } from "@/components/admin/DiaryForm";
+import { DiaryForm, type DiaryFormData, type DiarySubmitOptions } from "@/components/admin/DiaryForm";
 import { useToast } from "@/components/admin/ToastProvider";
 
 export default function EditMonthlyDiaryPage() {
@@ -56,7 +56,7 @@ export default function EditMonthlyDiaryPage() {
     }
   };
 
-  const handleSubmit = async (data: DiaryFormData) => {
+  const handleSubmit = async (data: DiaryFormData, options?: DiarySubmitOptions) => {
     try {
       const response = await fetch(`/api/admin/monthly-diary/${id}`, {
         method: "PUT",
@@ -80,10 +80,14 @@ export default function EditMonthlyDiaryPage() {
         throw new Error(apiError.error || "日記の更新に失敗しました");
       }
 
-      showSuccess("日記を更新しました");
-      await fetchEntry();
+      if (!options?.autoSave) {
+        showSuccess("日記を更新しました");
+        await fetchEntry();
+      }
     } catch (apiError) {
-      showError(apiError instanceof Error ? apiError.message : "日記の更新に失敗しました");
+      if (!options?.autoSave) {
+        showError(apiError instanceof Error ? apiError.message : "日記の更新に失敗しました");
+      }
       throw apiError;
     }
   };
@@ -133,22 +137,22 @@ export default function EditMonthlyDiaryPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex items-start gap-3 sm:items-center sm:gap-4">
         <Link
           href="/admin/monthly-diary"
           className="rounded-md border border-night-muted p-2 text-gray-400 hover:bg-night-muted hover:text-gray-300"
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <div>
-          <h1 className="text-3xl font-bold text-gray-100">日記を編集</h1>
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold text-gray-100 sm:text-3xl">日記を編集</h1>
           <p className="mt-2 text-sm text-gray-400">
             h2 見出しを日付として書くと、公開ページ側の月次目次に反映されます。
           </p>
         </div>
       </div>
 
-      <div className="rounded-lg border border-night-muted bg-night-soft p-6">
+      <div className="rounded-lg border border-night-muted bg-night-soft p-4 sm:p-6">
         <DiaryForm
           initialData={initialData}
           onSubmit={handleSubmit}

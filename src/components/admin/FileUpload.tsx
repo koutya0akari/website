@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { Upload, X, File, Image, FileText, Loader2, Check, AlertCircle } from "lucide-react";
+import { Upload, X, File, Image as ImageIcon, FileText, Loader2, Check, AlertCircle } from "lucide-react";
 import { clsx } from "clsx";
 
 interface UploadedFile {
@@ -143,7 +143,7 @@ export function FileUpload({
   const getFileIcon = (url: string) => {
     const ext = url.split(".").pop()?.toLowerCase();
     if (["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(ext || "")) {
-      return <Image className="h-5 w-5" />;
+      return <ImageIcon className="h-5 w-5" />;
     }
     if (ext === "pdf") {
       return <FileText className="h-5 w-5" />;
@@ -169,7 +169,7 @@ export function FileUpload({
         onDragLeave={handleDragLeave}
         onClick={() => fileInputRef.current?.click()}
         className={clsx(
-          "relative flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-6 transition-colors",
+          "relative flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-4 text-center transition-colors sm:p-6",
           dragOver
             ? "border-accent bg-accent/10"
             : "border-night-muted bg-night hover:border-accent/50",
@@ -241,7 +241,8 @@ export function FileUpload({
       {showPreview && currentUrl && (
         <div className="mt-2 rounded-lg border border-night-muted bg-night-soft p-3">
           {isImage(currentUrl) ? (
-            <div className="flex items-start gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={currentUrl}
                 alt="Preview"
@@ -250,8 +251,8 @@ export function FileUpload({
                   (e.target as HTMLImageElement).style.display = "none";
                 }}
               />
-              <div className="flex-1 overflow-hidden">
-                <p className="truncate text-sm text-gray-300">{currentUrl}</p>
+              <div className="min-w-0 flex-1 overflow-hidden">
+                <p className="break-all text-sm text-gray-300 sm:truncate">{currentUrl}</p>
                 <a
                   href={currentUrl}
                   target="_blank"
@@ -267,8 +268,8 @@ export function FileUpload({
               <div className="flex h-10 w-10 items-center justify-center rounded-md bg-night text-gray-400">
                 {getFileIcon(currentUrl)}
               </div>
-              <div className="flex-1 overflow-hidden">
-                <p className="truncate text-sm text-gray-300">{currentUrl}</p>
+              <div className="min-w-0 flex-1 overflow-hidden">
+                <p className="break-all text-sm text-gray-300 sm:truncate">{currentUrl}</p>
                 <a
                   href={currentUrl}
                   target="_blank"

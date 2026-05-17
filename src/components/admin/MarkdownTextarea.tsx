@@ -98,8 +98,8 @@ export function MarkdownTextarea({
       
       <div className="rounded-md border border-night-muted bg-night overflow-hidden">
         {/* ツールバー */}
-        <div className="flex items-center justify-between border-b border-night-muted bg-night-soft px-2 py-1">
-          <div className="flex items-center gap-1">
+        <div className="flex flex-col gap-2 border-b border-night-muted bg-night-soft px-2 py-1 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0">
             {MARKDOWN_TOOLBAR_BUTTONS.map((button) => {
               const Icon = button.icon;
               return (
@@ -110,7 +110,7 @@ export function MarkdownTextarea({
                   onMouseDown={(e) => e.preventDefault()} // テキストエリアのフォーカスを維持
                   title={button.title}
                   disabled={isPreview}
-                  className="rounded p-1.5 text-gray-400 hover:bg-night-muted hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="shrink-0 rounded p-1.5 text-gray-400 hover:bg-night-muted hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Icon className="h-4 w-4" />
                 </button>
@@ -118,7 +118,7 @@ export function MarkdownTextarea({
             })}
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between gap-2 sm:justify-end">
             <span className="text-xs text-gray-500">Markdown</span>
             <button
               type="button"

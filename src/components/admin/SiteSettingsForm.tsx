@@ -201,12 +201,12 @@ export function SiteSettingsForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-white">Site Settings</h1>
         <button
           type="submit"
           disabled={saving}
-          className="flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-night hover:bg-accent/90 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-night hover:bg-accent/90 disabled:opacity-50 sm:w-auto"
         >
           <Save className="h-4 w-4" />
           {saving ? "保存中..." : "保存"}
@@ -214,13 +214,13 @@ export function SiteSettingsForm() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-night-muted">
+      <div className="flex gap-1 overflow-x-auto border-b border-night-muted">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 text-sm font-medium transition-colors ${
+            className={`shrink-0 px-4 py-2 text-sm font-medium transition-colors ${
               activeTab === tab.id
                 ? "border-b-2 border-accent text-accent"
                 : "text-gray-400 hover:text-gray-200"
@@ -246,7 +246,7 @@ export function SiteSettingsForm() {
                 </button>
               </div>
               <div className="grid gap-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <input
                     type="text"
                     value={project.title}
@@ -382,19 +382,19 @@ export function SiteSettingsForm() {
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-300">参考文献リンク（オプション）</label>
                   {(seminar.references || []).map((ref, refIndex) => (
-                    <div key={refIndex} className="flex items-center gap-2">
+                    <div key={refIndex} className="flex flex-col gap-2 sm:flex-row sm:items-center">
                       <input
                         type="text"
                         value={ref.label}
                         onChange={(e) => updateSeminarReference(index, refIndex, "label", e.target.value)}
-                        className="w-1/3 rounded-md border border-night-muted bg-night px-3 py-2 text-sm text-gray-100 focus:border-accent focus:outline-none"
+                        className="w-full rounded-md border border-night-muted bg-night px-3 py-2 text-sm text-gray-100 focus:border-accent focus:outline-none sm:w-1/3"
                         placeholder="ラベル"
                       />
                       <input
                         type="url"
                         value={ref.url}
                         onChange={(e) => updateSeminarReference(index, refIndex, "url", e.target.value)}
-                        className="flex-1 rounded-md border border-night-muted bg-night px-3 py-2 text-sm text-gray-100 focus:border-accent focus:outline-none"
+                        className="min-w-0 flex-1 rounded-md border border-night-muted bg-night px-3 py-2 text-sm text-gray-100 focus:border-accent focus:outline-none"
                         placeholder="URL"
                       />
                       <button
@@ -508,7 +508,7 @@ export function SiteSettingsForm() {
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <input
                     type="text"
                     value={detail.label}

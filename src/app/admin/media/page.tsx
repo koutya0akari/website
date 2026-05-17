@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { FileUpload } from "@/components/admin/FileUpload";
-import { Trash2, Copy, Check, Image, FileText, File, RefreshCw, FolderOpen } from "lucide-react";
+import { Trash2, Copy, Check, Image as ImageIcon, FileText, File, RefreshCw, FolderOpen } from "lucide-react";
 import { clsx } from "clsx";
 
 interface MediaFile {
@@ -83,7 +83,7 @@ export default function MediaPage() {
 
   const getFileIcon = (type?: string) => {
     if (type?.startsWith("image/")) {
-      return <Image className="h-5 w-5" />;
+      return <ImageIcon className="h-5 w-5" />;
     }
     if (type === "application/pdf") {
       return <FileText className="h-5 w-5" />;
@@ -102,12 +102,12 @@ export default function MediaPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-white">Media Library</h1>
         <button
           onClick={fetchFiles}
           disabled={loading}
-          className="flex items-center gap-2 rounded-md border border-night-muted bg-night-soft px-4 py-2 text-sm text-gray-300 hover:bg-night-muted disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-md border border-night-muted bg-night-soft px-4 py-2 text-sm text-gray-300 hover:bg-night-muted disabled:opacity-50 sm:w-auto"
         >
           <RefreshCw className={clsx("h-4 w-4", loading && "animate-spin")} />
           更新
@@ -115,7 +115,7 @@ export default function MediaPage() {
       </div>
 
       {/* Upload section */}
-      <div className="rounded-lg border border-night-muted bg-night-soft p-6">
+      <div className="rounded-lg border border-night-muted bg-night-soft p-4 sm:p-6">
         <h2 className="mb-4 text-lg font-semibold text-white">ファイルをアップロード</h2>
         <FileUpload
           folder={selectedFolder || "uploads"}
@@ -125,16 +125,18 @@ export default function MediaPage() {
       </div>
 
       {/* Folder filter */}
-      <div className="flex items-center gap-2">
-        <FolderOpen className="h-4 w-4 text-gray-400" />
-        <span className="text-sm text-gray-400">フォルダ:</span>
-        <div className="flex gap-1">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="flex items-center gap-2">
+          <FolderOpen className="h-4 w-4 text-gray-400" />
+          <span className="text-sm text-gray-400">フォルダ:</span>
+        </div>
+        <div className="flex gap-1 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0">
           {FOLDERS.map((folder) => (
             <button
               key={folder.id}
               onClick={() => setSelectedFolder(folder.id)}
               className={clsx(
-                "rounded-md px-3 py-1 text-sm transition-colors",
+                  "shrink-0 rounded-md px-3 py-1 text-sm transition-colors",
                 selectedFolder === folder.id
                   ? "bg-accent text-night"
                   : "bg-night-muted text-gray-300 hover:bg-night-muted/80"
@@ -166,6 +168,7 @@ export default function MediaPage() {
                 {/* Preview */}
                 <div className="aspect-square bg-night-muted">
                   {isImage(file.type) ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={file.url}
                       alt={file.name}
@@ -188,7 +191,7 @@ export default function MediaPage() {
                 </div>
 
                 {/* Actions (on hover) */}
-                <div className="absolute right-2 top-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="absolute right-2 top-2 flex gap-1 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
                   <button
                     onClick={() => handleCopy(file.url)}
                     className="rounded-md bg-black/60 p-2 text-white backdrop-blur-sm hover:bg-black/80"

@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 
-import { DiaryForm, DiaryFormData } from "@/components/admin/DiaryForm";
+import { DiaryForm, type DiaryFormData, type DiarySubmitOptions } from "@/components/admin/DiaryForm";
 import { useToast } from "@/components/admin/ToastProvider";
 import { MEMO_FOLDER } from "@/lib/monthly-diary-config";
 
@@ -57,7 +57,7 @@ export default function EditMemoPage() {
     }
   };
 
-  const handleSubmit = async (data: DiaryFormData) => {
+  const handleSubmit = async (data: DiaryFormData, options?: DiarySubmitOptions) => {
     try {
       const response = await fetch(`/api/admin/memo/${id}`, {
         method: "PUT",
@@ -81,10 +81,14 @@ export default function EditMemoPage() {
         throw new Error(apiError.error || "メモの更新に失敗しました");
       }
 
-      showSuccess("メモを更新しました");
-      await fetchEntry();
+      if (!options?.autoSave) {
+        showSuccess("メモを更新しました");
+        await fetchEntry();
+      }
     } catch (apiError) {
-      showError(apiError instanceof Error ? apiError.message : "メモの更新に失敗しました");
+      if (!options?.autoSave) {
+        showError(apiError instanceof Error ? apiError.message : "メモの更新に失敗しました");
+      }
       throw apiError;
     }
   };
@@ -134,17 +138,17 @@ export default function EditMemoPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex items-start gap-3 sm:items-center sm:gap-4">
         <Link
           href="/admin/memo"
           className="rounded-md border border-night-muted p-2 text-gray-400 hover:bg-night-muted hover:text-gray-300"
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <h1 className="text-3xl font-bold text-gray-100">メモを編集</h1>
+        <h1 className="min-w-0 text-2xl font-bold text-gray-100 sm:text-3xl">メモを編集</h1>
       </div>
 
-      <div className="rounded-lg border border-night-muted bg-night-soft p-6">
+      <div className="rounded-lg border border-night-muted bg-night-soft p-4 sm:p-6">
         <DiaryForm
           initialData={initialData}
           onSubmit={handleSubmit}

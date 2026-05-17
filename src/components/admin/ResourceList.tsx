@@ -104,8 +104,8 @@ export function ResourceList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 space-y-1">
           <h1 className="text-2xl font-bold text-white">Resources</h1>
           <p className="text-sm text-gray-400">
             GitHub の PDF は自動で並びます。ここでは説明やカテゴリを追加できます。
@@ -113,15 +113,15 @@ export function ResourceList() {
         </div>
         <Link
           href="/admin/resources/new"
-          className="flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-night hover:bg-accent/90"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-night hover:bg-accent/90 sm:w-auto"
         >
           <Plus className="h-4 w-4" />
           新規作成
         </Link>
       </div>
 
-      <div className="flex flex-wrap gap-4">
-        <div className="relative flex-1 min-w-[200px]">
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+        <div className="relative min-w-0 flex-1 sm:min-w-[200px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
@@ -131,12 +131,12 @@ export function ResourceList() {
             className="w-full rounded-md border border-night-muted bg-night py-2 pl-10 pr-4 text-gray-100 placeholder-gray-500 focus:border-accent focus:outline-none"
           />
         </div>
-        <div className="relative">
+        <div className="relative sm:w-auto">
           <Filter className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="appearance-none rounded-md border border-night-muted bg-night py-2 pl-10 pr-8 text-gray-100 focus:border-accent focus:outline-none"
+            className="w-full appearance-none rounded-md border border-night-muted bg-night py-2 pl-10 pr-8 text-gray-100 focus:border-accent focus:outline-none sm:w-auto"
           >
             <option value="">すべてのカテゴリ</option>
             {categories.map((cat) => (
@@ -161,7 +161,87 @@ export function ResourceList() {
           </Link>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-night-muted">
+        <>
+        <div className="space-y-3 md:hidden">
+          {filteredResources.map((resource) => (
+            <div key={resource.id} className="rounded-lg border border-night-muted bg-night-soft p-4">
+              <div className="flex flex-col gap-3">
+                <div className="min-w-0">
+                  <div className="break-words font-medium text-white">{resource.title}</div>
+                  {resource.description && (
+                    <div className="mt-1 line-clamp-2 text-sm text-gray-400">{resource.description}</div>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap gap-2 text-xs">
+                  <span className="rounded-md bg-white/5 px-2 py-1 text-gray-300">
+                    {resource.source === "github" ? "GitHub PDF" : "手動追加"}
+                  </span>
+                  <span
+                    className={`rounded-md px-2 py-1 ${
+                      resource.has_metadata
+                        ? "bg-accent/10 text-accent"
+                        : "bg-white/5 text-gray-400"
+                    }`}
+                  >
+                    {resource.has_metadata ? "補足あり" : "補足なし"}
+                  </span>
+                  {resource.category ? (
+                    <span className="rounded-md bg-accent/10 px-2 py-1 text-accent">
+                      {resource.category}
+                    </span>
+                  ) : null}
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-gray-400">
+                  <span>{formatDate(resource.updated_at) ?? formatDate(resource.created_at) ?? "-"}</span>
+                  {(resource.file_url || resource.external_url) && (
+                    <a
+                      href={resource.file_url || resource.external_url || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-accent hover:underline"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      開く
+                    </a>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap justify-end gap-2 border-t border-night-muted pt-3">
+                  {resource.metadata_id ? (
+                    <>
+                      <Link
+                        href={`/admin/resources/${resource.metadata_id}/edit`}
+                        className="inline-flex items-center gap-2 rounded-md border border-night-muted px-3 py-2 text-sm text-gray-300 hover:bg-night-muted hover:text-white"
+                      >
+                        <Pencil className="h-4 w-4" />
+                        編集
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(resource.metadata_id)}
+                        className="inline-flex items-center gap-2 rounded-md border border-red-500/20 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        削除
+                      </button>
+                    </>
+                  ) : (
+                    <Link
+                      href={buildCreateHref(resource)}
+                      className="inline-flex items-center gap-2 rounded-md border border-night-muted px-3 py-2 text-sm text-gray-300 hover:border-accent hover:text-accent"
+                    >
+                      <Plus className="h-4 w-4" />
+                      説明を追加
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="hidden overflow-hidden rounded-lg border border-night-muted md:block">
           <table className="w-full">
             <thead className="bg-night-soft">
               <tr>
@@ -255,6 +335,7 @@ export function ResourceList() {
             </tbody>
           </table>
         </div>
+        </>
       )}
     </div>
   );
