@@ -25,6 +25,8 @@ interface RichEditorProps {
   value: string;
   onChange: (value: string) => void;
   onSave?: () => void;
+  autoSaveLabel?: string;
+  autoSaveTone?: string;
   placeholder?: string;
   minHeight?: number;
   initialMode?: EditorMode;
@@ -34,6 +36,8 @@ export function RichEditor({
   value,
   onChange,
   onSave,
+  autoSaveLabel,
+  autoSaveTone = "text-gray-400",
   placeholder = "ここに入力...",
   minHeight = 400,
   initialMode = "markdown",
@@ -540,6 +544,7 @@ export function RichEditor({
             {value.length} 文字 | {value.split(/\n/).length} 行
           </div>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            {autoSaveLabel && <span className={autoSaveTone}>{autoSaveLabel}</span>}
             <span>Ctrl+S 保存</span>
             <span>Ctrl+Shift+P プレビュー切替</span>
           </div>

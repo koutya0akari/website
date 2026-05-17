@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 
-import { DiaryForm, DiaryFormData } from "@/components/admin/DiaryForm";
+import { DiaryForm, type DiaryFormData, type DiarySubmitOptions } from "@/components/admin/DiaryForm";
 import { useToast } from "@/components/admin/ToastProvider";
 
 export default function EditMonthlyDiaryPage() {
@@ -56,7 +56,7 @@ export default function EditMonthlyDiaryPage() {
     }
   };
 
-  const handleSubmit = async (data: DiaryFormData) => {
+  const handleSubmit = async (data: DiaryFormData, options?: DiarySubmitOptions) => {
     try {
       const response = await fetch(`/api/admin/monthly-diary/${id}`, {
         method: "PUT",
@@ -80,10 +80,14 @@ export default function EditMonthlyDiaryPage() {
         throw new Error(apiError.error || "日記の更新に失敗しました");
       }
 
-      showSuccess("日記を更新しました");
-      await fetchEntry();
+      if (!options?.autoSave) {
+        showSuccess("日記を更新しました");
+        await fetchEntry();
+      }
     } catch (apiError) {
-      showError(apiError instanceof Error ? apiError.message : "日記の更新に失敗しました");
+      if (!options?.autoSave) {
+        showError(apiError instanceof Error ? apiError.message : "日記の更新に失敗しました");
+      }
       throw apiError;
     }
   };

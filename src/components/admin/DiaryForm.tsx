@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { RichEditor } from "./editor";
 import { FileUpload } from "./FileUpload";
 import { Save, Eye, Trash2 } from "lucide-react";
@@ -17,9 +17,13 @@ export interface DiaryFormData {
   heroImageUrl: string;
 }
 
+export interface DiarySubmitOptions {
+  autoSave?: boolean;
+}
+
 interface DiaryFormProps {
   initialData?: Partial<DiaryFormData>;
-  onSubmit: (data: DiaryFormData) => Promise<void>;
+  onSubmit: (data: DiaryFormData, options?: DiarySubmitOptions) => Promise<void>;
   onDelete?: () => Promise<void>;
   isNew?: boolean;
   previewBasePath?: string;
@@ -27,16 +31,12 @@ interface DiaryFormProps {
   folderDisabled?: boolean;
 }
 
-export function DiaryForm({
-  initialData,
-  onSubmit,
-  onDelete,
-  isNew = true,
-  previewBasePath = "/diary",
-  formKey = "diary",
-  folderDisabled = false,
-}: DiaryFormProps) {
-  const [formData, setFormData] = useState<DiaryFormData>({
+type AutoSaveStatus = "saved" | "dirty" | "saving" | "error" | "waiting";
+
+const AUTOSAVE_DELAY_MS = 3000;
+
+function createInitialFormData(initialData?: Partial<DiaryFormData>): DiaryFormData {
+  return {
     title: initialData?.title || "",
     slug: initialData?.slug || "",
     body: initialData?.body || "",
@@ -48,20 +48,125 @@ export function DiaryForm({
       initialData?.publishedAt ||
       (initialData?.status === "published" ? new Date().toISOString().slice(0, 16) : ""),
     heroImageUrl: initialData?.heroImageUrl || "",
-  });
+  };
+}
 
+function serializeFormData(data: DiaryFormData) {
+  return JSON.stringify(data);
+}
+
+export function DiaryForm({
+  initialData,
+  onSubmit,
+  onDelete,
+  isNew = true,
+  previewBasePath = "/diary",
+  formKey = "diary",
+  folderDisabled = false,
+}: DiaryFormProps) {
+  const [formData, setFormData] = useState<DiaryFormData>(() => createInitialFormData(initialData));
   const [tagInput, setTagInput] = useState("");
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<AutoSaveStatus>("saved");
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+  const [autoSaveError, setAutoSaveError] = useState<string | null>(null);
+  const draftStorageKey = useMemo(() => `admin-draft:${formKey}`, [formKey]);
+  const serializedFormData = useMemo(() => serializeFormData(formData), [formData]);
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSavedSerializedRef = useRef(serializeFormData(createInitialFormData(initialData)));
+  const restoredDraftRef = useRef(false);
+
   const formRef = useCallback((node: HTMLFormElement | null) => {
     if (node) node.dataset.form = formKey;
   }, [formKey]);
 
+  const updateSavedSnapshot = useCallback((data: DiaryFormData) => {
+    lastSavedSerializedRef.current = serializeFormData(data);
+    setLastSavedAt(new Date());
+    setAutoSaveStatus("saved");
+    setAutoSaveError(null);
+  }, []);
+
+  useEffect(() => {
+    if (!isNew || restoredDraftRef.current) return;
+    restoredDraftRef.current = true;
+
+    try {
+      const storedDraft = window.localStorage.getItem(draftStorageKey);
+      if (!storedDraft) return;
+
+      const parsedDraft = JSON.parse(storedDraft) as Partial<DiaryFormData>;
+      const restoredData = { ...createInitialFormData(initialData), ...parsedDraft };
+      setFormData(restoredData);
+      lastSavedSerializedRef.current = serializeFormData(restoredData);
+      setAutoSaveStatus("saved");
+      setLastSavedAt(new Date());
+    } catch (error) {
+      console.error("Failed to restore admin draft:", error);
+      window.localStorage.removeItem(draftStorageKey);
+    }
+  }, [draftStorageKey, initialData, isNew]);
+
+  useEffect(() => {
+    if (serializedFormData === lastSavedSerializedRef.current) {
+      return;
+    }
+
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current);
+    }
+
+    setAutoSaveStatus("dirty");
+    setAutoSaveError(null);
+
+    autoSaveTimerRef.current = setTimeout(async () => {
+      if (!isNew && (!formData.title.trim() || !formData.slug.trim())) {
+        setAutoSaveStatus("waiting");
+        setAutoSaveError("Title and slug are required");
+        return;
+      }
+
+      setAutoSaveStatus("saving");
+
+      try {
+        if (isNew) {
+          window.localStorage.setItem(draftStorageKey, serializedFormData);
+        } else {
+          await onSubmit(formData, { autoSave: true });
+        }
+        updateSavedSnapshot(formData);
+      } catch (error) {
+        setAutoSaveStatus("error");
+        setAutoSaveError(error instanceof Error ? error.message : "Auto-save failed");
+      }
+    }, AUTOSAVE_DELAY_MS);
+
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+    };
+  }, [draftStorageKey, formData, isNew, onSubmit, serializedFormData, updateSavedSnapshot]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current);
+    }
+
     setSaving(true);
+    setAutoSaveStatus("saving");
     try {
-      await onSubmit(formData);
+      await onSubmit(formData, { autoSave: false });
+      if (isNew) {
+        window.localStorage.removeItem(draftStorageKey);
+      }
+      updateSavedSnapshot(formData);
+    } catch (error) {
+      setAutoSaveStatus("error");
+      setAutoSaveError(error instanceof Error ? error.message : "Save failed");
+      throw error;
     } finally {
       setSaving(false);
     }
@@ -112,6 +217,27 @@ export function DiaryForm({
     });
   };
 
+  const autoSaveLabel = useMemo(() => {
+    if (autoSaveStatus === "dirty") return "未保存";
+    if (autoSaveStatus === "saving") return "自動保存中";
+    if (autoSaveStatus === "waiting") return autoSaveError ?? "title/slug required";
+    if (autoSaveStatus === "error") return autoSaveError ?? "自動保存失敗";
+    if (lastSavedAt) {
+      return `保存済み ${lastSavedAt.toLocaleTimeString("ja-JP", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })}`;
+    }
+    return "保存済み";
+  }, [autoSaveError, autoSaveStatus, lastSavedAt]);
+
+  const autoSaveTone =
+    autoSaveStatus === "error" || autoSaveStatus === "waiting"
+      ? "text-red-400"
+      : autoSaveStatus === "saving"
+        ? "text-accent"
+        : "text-gray-400";
+
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" data-form="diary">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -159,6 +285,8 @@ export function DiaryForm({
           value={formData.body}
           onChange={(value) => setFormData({ ...formData, body: value })}
           onSave={handleEditorSave}
+          autoSaveLabel={autoSaveLabel}
+          autoSaveTone={autoSaveTone}
           placeholder="記事の本文を入力してください..."
           minHeight={500}
           initialMode="markdown"
@@ -308,17 +436,20 @@ export function DiaryForm({
           )}
         </div>
 
-        {formData.slug && (
-          <a
-            href={`${previewBasePath}/${formData.slug}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 text-sm text-gray-400 hover:text-accent"
-          >
-            <Eye className="h-4 w-4" />
-            Preview
-          </a>
-        )}
+        <div className="flex flex-col gap-2 sm:items-end">
+          <span className={`text-sm ${autoSaveTone}`}>{autoSaveLabel}</span>
+          {formData.slug && (
+            <a
+              href={`${previewBasePath}/${formData.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-gray-400 hover:text-accent"
+            >
+              <Eye className="h-4 w-4" />
+              Preview
+            </a>
+          )}
+        </div>
       </div>
     </form>
   );

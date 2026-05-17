@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 
-import { DiaryForm, DiaryFormData } from "@/components/admin/DiaryForm";
+import { DiaryForm, type DiaryFormData, type DiarySubmitOptions } from "@/components/admin/DiaryForm";
 import { useToast } from "@/components/admin/ToastProvider";
 import { MEMO_FOLDER } from "@/lib/monthly-diary-config";
 
@@ -57,7 +57,7 @@ export default function EditMemoPage() {
     }
   };
 
-  const handleSubmit = async (data: DiaryFormData) => {
+  const handleSubmit = async (data: DiaryFormData, options?: DiarySubmitOptions) => {
     try {
       const response = await fetch(`/api/admin/memo/${id}`, {
         method: "PUT",
@@ -81,10 +81,14 @@ export default function EditMemoPage() {
         throw new Error(apiError.error || "メモの更新に失敗しました");
       }
 
-      showSuccess("メモを更新しました");
-      await fetchEntry();
+      if (!options?.autoSave) {
+        showSuccess("メモを更新しました");
+        await fetchEntry();
+      }
     } catch (apiError) {
-      showError(apiError instanceof Error ? apiError.message : "メモの更新に失敗しました");
+      if (!options?.autoSave) {
+        showError(apiError instanceof Error ? apiError.message : "メモの更新に失敗しました");
+      }
       throw apiError;
     }
   };

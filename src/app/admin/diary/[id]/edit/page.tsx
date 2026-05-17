@@ -2,7 +2,7 @@
 
 import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { DiaryForm, DiaryFormData } from "@/components/admin/DiaryForm";
+import { DiaryForm, type DiaryFormData, type DiarySubmitOptions } from "@/components/admin/DiaryForm";
 import { useToast } from "@/components/admin/ToastProvider";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -55,7 +55,7 @@ export default function EditDiaryPage() {
     }
   };
 
-  const handleSubmit = async (data: DiaryFormData) => {
+  const handleSubmit = async (data: DiaryFormData, options?: DiarySubmitOptions) => {
     try {
       const response = await fetch(`/api/admin/diary/${id}`, {
         method: "PUT",
@@ -80,10 +80,14 @@ export default function EditDiaryPage() {
         throw new Error(error.error || "Failed to update post");
       }
 
-      showSuccess("Post updated successfully!");
-      await fetchDiary();
+      if (!options?.autoSave) {
+        showSuccess("Post updated successfully!");
+        await fetchDiary();
+      }
     } catch (error) {
-      showError(error instanceof Error ? error.message : "Failed to update post");
+      if (!options?.autoSave) {
+        showError(error instanceof Error ? error.message : "Failed to update post");
+      }
       throw error;
     }
   };
