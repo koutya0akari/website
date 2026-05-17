@@ -16,13 +16,18 @@ const navigation = [
   { name: "About Settings", href: "/admin/about" as const, icon: User },
 ];
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  onNavigate?: () => void;
+  className?: string;
+}
+
+export function AdminSidebar({ onNavigate, className }: AdminSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex w-64 flex-col border-r border-night-muted bg-night-soft">
+    <aside className={clsx("flex w-64 flex-col border-r border-night-muted bg-night-soft", className)}>
       <div className="flex h-16 items-center border-b border-night-muted px-6">
-        <Link href="/admin/dashboard" className="text-xl font-bold text-accent">
+        <Link href="/admin/dashboard" onClick={onNavigate} className="text-xl font-bold text-accent">
           Admin Panel
         </Link>
       </div>
@@ -34,6 +39,7 @@ export function AdminSidebar() {
             <Link
               key={item.name}
               href={item.href}
+              onClick={onNavigate}
               className={clsx(
                 "flex items-center gap-3 rounded-md px-4 py-2.5 text-sm font-medium transition-colors",
                 isActive
@@ -51,6 +57,7 @@ export function AdminSidebar() {
       <div className="border-t border-night-muted p-4">
         <Link
           href="/"
+          onClick={onNavigate}
           className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-gray-400 transition-colors hover:bg-night-muted hover:text-gray-300"
         >
           ← Back to Site

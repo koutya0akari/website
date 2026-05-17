@@ -27,11 +27,11 @@ function Dialog({ isOpen, onClose, title, children }: DialogProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
       <div
         ref={dialogRef}
-        className="relative z-10 w-full max-w-md rounded-lg border border-night-muted bg-night-soft p-6 shadow-xl"
+        className="relative z-10 max-h-[calc(100vh-2rem)] w-full max-w-md overflow-y-auto rounded-lg border border-night-muted bg-night-soft p-4 shadow-xl sm:p-6"
         role="dialog"
         aria-modal="true"
         aria-labelledby="dialog-title"
@@ -127,15 +127,15 @@ function LinkDialogContent({ onClose, onInsert, initialText = "" }: LinkDialogPr
         {data.url && (
           <div className="rounded-md border border-night-muted bg-night p-3">
             <div className="mb-1 text-xs text-gray-400">プレビュー</div>
-            <div className="flex items-center gap-2 text-accent">
-              <LinkIcon className="h-4 w-4" />
-              <span className="underline">{data.text || data.url}</span>
-              {data.openInNewTab && <ExternalLink className="h-3 w-3" />}
+            <div className="flex min-w-0 items-center gap-2 text-accent">
+              <LinkIcon className="h-4 w-4 shrink-0" />
+              <span className="break-all underline">{data.text || data.url}</span>
+              {data.openInNewTab && <ExternalLink className="h-3 w-3 shrink-0" />}
             </div>
           </div>
         )}
 
-        <div className="flex justify-end gap-3 pt-2">
+        <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={onClose}
@@ -216,7 +216,7 @@ function ImageDialogContent({ onClose, onInsert }: ImageDialogProps) {
             className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 placeholder-gray-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
           />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-300">幅 (オプション)</label>
             <input
@@ -259,7 +259,7 @@ function ImageDialogContent({ onClose, onInsert }: ImageDialogProps) {
           </div>
         )}
 
-        <div className="flex justify-end gap-3 pt-2">
+        <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={onClose}
@@ -346,7 +346,7 @@ function TableDialogContent({ onClose, onInsert }: TableDialogProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-300">行数</label>
             <input
@@ -441,7 +441,7 @@ function TableDialogContent({ onClose, onInsert }: TableDialogProps) {
           </table>
         </div>
 
-        <div className="flex justify-end gap-3 pt-2">
+        <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={onClose}

@@ -47,19 +47,19 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-100">Dashboard</h1>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-bold text-gray-100 sm:text-3xl">Dashboard</h1>
         <Link
           href="/admin/diary/new"
-          className="flex items-center gap-2 rounded-md bg-accent px-4 py-2 font-medium text-night transition-colors hover:bg-accent/90"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-accent px-4 py-2 font-medium text-night transition-colors hover:bg-accent/90 sm:w-auto"
         >
           <FilePlus className="h-4 w-4" />
           New Post
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-lg border border-night-muted bg-night-soft p-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+        <div className="rounded-lg border border-night-muted bg-night-soft p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-400">Total Posts</p>
@@ -69,7 +69,7 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-night-muted bg-night-soft p-6">
+        <div className="rounded-lg border border-night-muted bg-night-soft p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-400">Published</p>
@@ -79,7 +79,7 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-night-muted bg-night-soft p-6">
+        <div className="rounded-lg border border-night-muted bg-night-soft p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-400">Drafts</p>
@@ -89,7 +89,7 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-night-muted bg-night-soft p-6">
+        <div className="rounded-lg border border-night-muted bg-night-soft p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-400">Total Views</p>
@@ -100,7 +100,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="rounded-lg border border-night-muted bg-night-soft p-6">
+      <div className="rounded-lg border border-night-muted bg-night-soft p-4 sm:p-6">
         <h2 className="mb-4 text-xl font-bold text-gray-100">Recent Posts</h2>
         {stats.recentPosts.length === 0 ? (
           <p className="text-gray-400">No posts yet. Create your first post!</p>
@@ -110,7 +110,7 @@ export default async function DashboardPage() {
               <Link
                 key={post.id}
                 href={`/admin/diary/${post.id}/edit`}
-                className="flex items-center justify-between rounded-md border border-night-muted p-4 transition-colors hover:bg-night"
+                className="flex flex-col gap-3 rounded-md border border-night-muted p-4 transition-colors hover:bg-night sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="flex-1">
                   <h3 className="font-medium text-gray-100">{post.title}</h3>

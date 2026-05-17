@@ -133,13 +133,13 @@ export function DiaryForm({
           <label className="mb-2 block text-sm font-medium text-gray-300">
             Slug <span className="text-red-400">*</span>
           </label>
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <input
               type="text"
               value={formData.slug}
               onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
               required
-              className="flex-1 rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 placeholder-gray-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              className="min-w-0 flex-1 rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 placeholder-gray-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
               placeholder="post-slug"
             />
             <button
@@ -201,7 +201,7 @@ export function DiaryForm({
 
       <div>
         <label className="mb-2 block text-sm font-medium text-gray-300">Tags</label>
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <input
             type="text"
             value={tagInput}
@@ -212,7 +212,7 @@ export function DiaryForm({
                 addTag();
               }
             }}
-            className="flex-1 rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 placeholder-gray-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+            className="min-w-0 flex-1 rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 placeholder-gray-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
             placeholder="Add a tag and press Enter"
           />
           <button
@@ -284,12 +284,12 @@ export function DiaryForm({
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-t border-night-muted pt-6">
-        <div className="flex gap-3">
+      <div className="flex flex-col gap-4 border-t border-night-muted pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <button
             type="submit"
             disabled={saving}
-            className="flex items-center gap-2 rounded-md bg-accent px-6 py-2 font-medium text-night transition-colors hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-accent px-6 py-2 font-medium text-night transition-colors hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             <Save className="h-4 w-4" />
             {saving ? "Saving..." : isNew ? "Create Post" : "Update Post"}
@@ -300,7 +300,7 @@ export function DiaryForm({
               type="button"
               onClick={handleDelete}
               disabled={deleting}
-              className="flex items-center gap-2 rounded-md border border-red-500 px-6 py-2 font-medium text-red-400 transition-colors hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-md border border-red-500 px-6 py-2 font-medium text-red-400 transition-colors hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               <Trash2 className="h-4 w-4" />
               {deleting ? "Deleting..." : "Delete"}

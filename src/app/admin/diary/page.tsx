@@ -81,11 +81,11 @@ export default function DiaryListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-100">数学メモ</h1>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-bold text-gray-100 sm:text-3xl">数学メモ</h1>
         <Link
           href="/admin/diary/new"
-          className="flex items-center gap-2 rounded-md bg-accent px-4 py-2 font-medium text-night transition-colors hover:bg-accent/90"
+          className="flex w-full items-center justify-center gap-2 rounded-md bg-accent px-4 py-2 font-medium text-night transition-colors hover:bg-accent/90 sm:w-auto"
         >
           <FilePlus className="h-4 w-4" />
           新規作成

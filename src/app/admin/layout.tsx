@@ -9,11 +9,11 @@ import { ToastProvider } from "@/components/admin/ToastProvider";
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <ToastProvider>
-      <div className="flex h-screen overflow-hidden bg-night">
-        <AdminSidebar />
-        <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex min-h-screen bg-night">
+        <AdminSidebar className="sticky top-0 hidden h-screen shrink-0 md:flex" />
+        <div className="flex min-w-0 flex-1 flex-col">
           <AdminHeader />
-          <main className="flex-1 overflow-y-auto p-6">{children}</main>
+          <main className="min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6">{children}</main>
         </div>
       </div>
     </ToastProvider>

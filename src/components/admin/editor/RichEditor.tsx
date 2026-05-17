@@ -43,6 +43,7 @@ export function RichEditor({
   const [viewMode, setViewMode] = useState<ViewMode>("split");
   const [isDark, setIsDark] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isNarrowScreen, setIsNarrowScreen] = useState(false);
   const [undoStack, setUndoStack] = useState<string[]>([]);
   const [redoStack, setRedoStack] = useState<string[]>([]);
   const [splitPosition, setSplitPosition] = useState(50);
@@ -70,6 +71,7 @@ export function RichEditor({
     () => (mode === "markdown" ? markdownToHtml(deferredValue) : deferredValue),
     [deferredValue, mode],
   );
+  const effectiveViewMode = isNarrowScreen && viewMode === "split" ? "editor" : viewMode;
 
   // Undo/Redo management
   const pushToUndoStack = useCallback((content: string, force = false) => {
@@ -328,6 +330,16 @@ export function RichEditor({
 
   // Keyboard shortcuts
   useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const updateIsNarrow = () => setIsNarrowScreen(mediaQuery.matches);
+
+    updateIsNarrow();
+    mediaQuery.addEventListener("change", updateIsNarrow);
+
+    return () => mediaQuery.removeEventListener("change", updateIsNarrow);
+  }, []);
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const editorIsActive = containerRef.current?.contains(document.activeElement) ?? false;
       if (!editorIsActive || e.isComposing) {
@@ -411,7 +423,7 @@ export function RichEditor({
   const handleEditorScroll = useCallback(() => {
     const textarea = textareaRef.current;
     const preview = previewRef.current;
-    if (!textarea || !preview || viewMode !== "split") return;
+    if (!textarea || !preview || effectiveViewMode !== "split") return;
 
     const scrollableEditorHeight = textarea.scrollHeight - textarea.clientHeight;
     const scrollablePreviewHeight = preview.scrollHeight - preview.clientHeight;
@@ -419,7 +431,7 @@ export function RichEditor({
 
     const scrollPercentage = textarea.scrollTop / scrollableEditorHeight;
     preview.scrollTop = scrollPercentage * (preview.scrollHeight - preview.clientHeight);
-  }, [viewMode]);
+  }, [effectiveViewMode]);
 
   // Handle content change
   const handleContentChange = useCallback(
@@ -479,10 +491,10 @@ export function RichEditor({
 
         <div className="flex flex-1 overflow-hidden" style={{ minHeight: `${minHeight}px` }}>
           {/* Editor pane */}
-          {viewMode !== "preview" && (
+          {effectiveViewMode !== "preview" && (
             <div
               className="flex flex-col overflow-hidden"
-              style={{ width: viewMode === "split" ? `${splitPosition}%` : "100%" }}
+              style={{ width: effectiveViewMode === "split" ? `${splitPosition}%` : "100%" }}
             >
               <textarea
                 ref={textareaRef}
@@ -498,7 +510,7 @@ export function RichEditor({
           )}
 
           {/* Resize handle */}
-          {viewMode === "split" && (
+          {effectiveViewMode === "split" && (
             <div
               className={`w-1 cursor-col-resize bg-night-muted hover:bg-accent/50 transition-colors ${
                 isDragging ? "bg-accent" : ""
@@ -511,11 +523,11 @@ export function RichEditor({
           )}
 
           {/* Preview pane */}
-          {viewMode !== "editor" && (
+          {effectiveViewMode !== "editor" && (
             <div
               ref={previewRef}
               className={previewClasses}
-              style={{ width: viewMode === "split" ? `${100 - splitPosition}%` : "100%" }}
+              style={{ width: effectiveViewMode === "split" ? `${100 - splitPosition}%` : "100%" }}
               dangerouslySetInnerHTML={{ __html: previewHtml }}
               aria-label="プレビュー"
             />
@@ -523,11 +535,11 @@ export function RichEditor({
         </div>
 
         {/* Status bar */}
-        <div className="flex items-center justify-between border-t border-night-muted px-4 py-1 text-xs text-gray-400">
+        <div className="flex flex-col gap-1 border-t border-night-muted px-4 py-1 text-xs text-gray-400 sm:flex-row sm:items-center sm:justify-between">
           <div>
             {value.length} 文字 | {value.split(/\n/).length} 行
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <span>Ctrl+S 保存</span>
             <span>Ctrl+Shift+P プレビュー切替</span>
           </div>
@@ -556,6 +568,7 @@ export function RichEditor({
       <style jsx global>{`
         .toolbar-btn {
           display: flex;
+          flex-shrink: 0;
           align-items: center;
           gap: 0.25rem;
           padding: 0.375rem 0.5rem;

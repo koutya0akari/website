@@ -158,20 +158,20 @@ export function ResourceForm({ initialData, onSubmit, onDelete, isNew = true, lo
             href={formData.fileUrl || formData.externalUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-accent hover:underline"
+            className="flex min-w-0 items-center gap-2 break-all text-accent hover:underline"
           >
-            <ExternalLink className="h-4 w-4" />
-            {formData.title || "リンクを開く"}
+            <ExternalLink className="h-4 w-4 shrink-0" />
+            <span>{formData.title || "リンクを開く"}</span>
           </a>
         </div>
       )}
 
-      <div className="flex items-center justify-between border-t border-night-muted pt-6">
-        <div className="flex gap-3">
+      <div className="flex flex-col gap-4 border-t border-night-muted pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <button
             type="submit"
             disabled={saving}
-            className="flex items-center gap-2 rounded-md bg-accent px-6 py-2 font-medium text-night transition-colors hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-accent px-6 py-2 font-medium text-night transition-colors hover:bg-accent/90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             <Save className="h-4 w-4" />
             {saving ? "保存中..." : isNew ? "作成" : "更新"}
@@ -182,7 +182,7 @@ export function ResourceForm({ initialData, onSubmit, onDelete, isNew = true, lo
               type="button"
               onClick={handleDelete}
               disabled={deleting}
-              className="flex items-center gap-2 rounded-md border border-red-500 px-6 py-2 font-medium text-red-400 transition-colors hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-md border border-red-500 px-6 py-2 font-medium text-red-400 transition-colors hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               <Trash2 className="h-4 w-4" />
               {deleting ? "削除中..." : "削除"}

@@ -89,7 +89,7 @@ function Dropdown({ trigger, children, isOpen, onToggle, onClose }: DropdownProp
   }, [isOpen, onClose]);
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative shrink-0">
       <button
         type="button"
         onClick={onToggle}
@@ -100,7 +100,7 @@ function Dropdown({ trigger, children, isOpen, onToggle, onClose }: DropdownProp
       </button>
       {isOpen && (
         <div
-          className="absolute left-0 top-full z-50 mt-1 rounded-md border border-night-muted bg-night-soft shadow-lg"
+          className="absolute left-0 top-full z-50 mt-1 max-w-[calc(100vw-2rem)] rounded-md border border-night-muted bg-night-soft shadow-lg"
           onMouseDown={(e) => e.preventDefault()} // ドロップダウン内でもフォーカスを維持
         >
           {children}
@@ -183,7 +183,7 @@ export function EditorToolbar({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-1 border-b border-night-muted bg-night-soft/50 p-2">
+    <div className="flex items-center gap-1 overflow-x-auto border-b border-night-muted bg-night-soft/50 p-2 md:flex-wrap md:overflow-visible">
       {/* Save & History */}
       <ToolbarButton icon={<Save className="h-4 w-4" />} label="保存" shortcut="Ctrl+S" onClick={onSave} />
       <ToolbarButton icon={<Undo className="h-4 w-4" />} label="元に戻す" shortcut="Ctrl+Z" onClick={onUndo} disabled={!canUndo} />
@@ -209,7 +209,7 @@ export function EditorToolbar({
           </>
         }
       >
-        <div className="p-3 w-64">
+        <div className="w-64 max-w-[calc(100vw-2rem)] p-3">
           <div className="mb-2 text-xs text-gray-400">文字色</div>
           <div className="grid grid-cols-10 gap-1">
             {PRESET_COLORS.map((color) => (
@@ -254,7 +254,7 @@ export function EditorToolbar({
           </>
         }
       >
-        <div className="p-3 w-64">
+        <div className="w-64 max-w-[calc(100vw-2rem)] p-3">
           <div className="mb-2 text-xs text-gray-400">背景色</div>
           <div className="grid grid-cols-10 gap-1">
             {PRESET_COLORS.map((color) => (
@@ -335,7 +335,7 @@ export function EditorToolbar({
           </>
         }
       >
-        <div className="p-3 w-72 max-h-64 overflow-y-auto">
+        <div className="max-h-64 w-72 max-w-[calc(100vw-2rem)] overflow-y-auto p-3">
           <div className="grid grid-cols-10 gap-1">
             {COMMON_EMOJIS.map((emoji, index) => (
               <button
@@ -405,7 +405,7 @@ export function EditorToolbar({
       />
 
       {/* Mode indicator */}
-      <div className="ml-auto flex items-center gap-2 text-xs text-gray-400">
+      <div className="ml-auto flex shrink-0 items-center gap-2 text-xs text-gray-400">
         <span className="rounded bg-night-muted px-2 py-1">{mode === "markdown" ? "Markdown" : "HTML"}</span>
       </div>
     </div>

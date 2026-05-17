@@ -82,7 +82,7 @@ export function DiaryList({
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as "all" | "draft" | "published")}
-          className="rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+          className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:w-auto"
         >
           <option value="all">All Status</option>
           <option value="draft">Draft</option>
@@ -92,7 +92,7 @@ export function DiaryList({
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-          className="rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+          className="w-full rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent sm:w-auto"
         >
           <option value="created">Sort by Created</option>
           <option value="published">Sort by Published</option>
@@ -110,13 +110,13 @@ export function DiaryList({
           <div className="divide-y divide-night-muted">
             {filteredItems.map((item) => (
               <div key={item.id} className="p-4 transition-colors hover:bg-night">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
                       <Link
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         href={`${adminBasePath}/${item.id}/edit` as any}
-                        className="text-lg font-medium text-gray-100 hover:text-accent"
+                        className="min-w-0 break-words text-lg font-medium text-gray-100 hover:text-accent"
                       >
                         {item.title}
                       </Link>
@@ -131,8 +131,8 @@ export function DiaryList({
                       </span>
                     </div>
 
-                    <div className="mt-1 text-sm text-gray-400">
-                      <span className="font-mono">{item.slug}</span>
+                    <div className="mt-1 break-words text-sm text-gray-400">
+                      <span className="font-mono break-all">{item.slug}</span>
                       {item.folder && <span className="ml-3">📁 {item.folder}</span>}
                     </div>
 
@@ -149,7 +149,7 @@ export function DiaryList({
                       </div>
                     )}
 
-                    <div className="mt-2 text-xs text-gray-500">
+                    <div className="mt-2 break-words text-xs text-gray-500">
                       Created: {new Date(item.created_at).toLocaleDateString()}
                       {item.published_at && (
                         <> • Published: {new Date(item.published_at).toLocaleDateString()}</>
@@ -158,7 +158,7 @@ export function DiaryList({
                     </div>
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2 sm:justify-end">
                     <Link
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       href={`${adminBasePath}/${item.id}/edit` as any}

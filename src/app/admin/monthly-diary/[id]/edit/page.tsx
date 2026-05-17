@@ -133,22 +133,22 @@ export default function EditMonthlyDiaryPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex items-start gap-3 sm:items-center sm:gap-4">
         <Link
           href="/admin/monthly-diary"
           className="rounded-md border border-night-muted p-2 text-gray-400 hover:bg-night-muted hover:text-gray-300"
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <div>
-          <h1 className="text-3xl font-bold text-gray-100">日記を編集</h1>
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold text-gray-100 sm:text-3xl">日記を編集</h1>
           <p className="mt-2 text-sm text-gray-400">
             h2 見出しを日付として書くと、公開ページ側の月次目次に反映されます。
           </p>
         </div>
       </div>
 
-      <div className="rounded-lg border border-night-muted bg-night-soft p-6">
+      <div className="rounded-lg border border-night-muted bg-night-soft p-4 sm:p-6">
         <DiaryForm
           initialData={initialData}
           onSubmit={handleSubmit}
