@@ -17,6 +17,7 @@ import {
 } from "./editor-utils";
 import { EditorToolbar } from "./EditorToolbar";
 import { LinkDialog, ImageDialog, TableDialog } from "./EditorDialogs";
+import { DiaryBody } from "@/components/diary/diary-body";
 
 const HISTORY_LIMIT = 50;
 const HISTORY_COALESCE_MS = 900;
@@ -461,7 +462,7 @@ export function RichEditor({
   `;
 
   const previewClasses = `
-    prose prose-invert prose-preserve-whitespace max-w-none p-4 overflow-y-auto
+    overflow-y-auto p-4
     ${isDark ? "bg-night-soft" : "bg-gray-50"}
   `;
 
@@ -532,9 +533,10 @@ export function RichEditor({
               ref={previewRef}
               className={previewClasses}
               style={{ width: effectiveViewMode === "split" ? `${100 - splitPosition}%` : "100%" }}
-              dangerouslySetInnerHTML={{ __html: previewHtml }}
               aria-label="プレビュー"
-            />
+            >
+              <DiaryBody html={previewHtml} />
+            </div>
           )}
         </div>
 

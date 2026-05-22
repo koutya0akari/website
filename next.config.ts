@@ -5,7 +5,7 @@ const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-eval' 'unsafe-inline' https://giscus.app https://platform.twitter.com;
   style-src 'self' 'unsafe-inline';
-  img-src 'self' blob: data: https://images.microcms-assets.io https://*.githubusercontent.com https://abs.twimg.com https://pbs.twimg.com https://*.supabase.co;
+  img-src 'self' blob: data: https:;
   font-src 'self';
   connect-src 'self' https://giscus.app https://api.github.com https://vitals.vercel-insights.com https://*.supabase.co;
   worker-src 'self' blob:;
@@ -13,7 +13,7 @@ const cspHeader = `
   base-uri 'self';
   form-action 'self';
   frame-ancestors 'none';
-  frame-src 'self' https://giscus.app https://platform.twitter.com;
+  frame-src 'self' https://giscus.app https://platform.twitter.com https://www.youtube.com;
   manifest-src 'self';
   upgrade-insecure-requests;
 `;

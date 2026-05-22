@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 
 type OgData = {
@@ -17,9 +16,16 @@ export function LinkCard({ url }: { url: string }) {
   const [data, setData] = useState<OgData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [failedImage, setFailedImage] = useState(false);
+  const [failedFavicon, setFailedFavicon] = useState(false);
 
   useEffect(() => {
     const fetchOg = async () => {
+      setLoading(true);
+      setError(false);
+      setFailedImage(false);
+      setFailedFavicon(false);
+
       try {
         const res = await fetch(`/api/og-proxy?url=${encodeURIComponent(url)}`);
         if (!res.ok) throw new Error("Failed to fetch OGP");
@@ -35,6 +41,8 @@ export function LinkCard({ url }: { url: string }) {
 
     fetchOg();
   }, [url]);
+
+  const hostname = getHostname(url);
 
   if (error) {
     return (
@@ -58,43 +66,77 @@ export function LinkCard({ url }: { url: string }) {
 
   if (!data) return null;
 
+  const imageSrc = !failedImage ? data.image : undefined;
+  const faviconSrc = !failedFavicon ? data.favicon : undefined;
+  const previewSrc = imageSrc || faviconSrc;
+  const isFaviconPreview = Boolean(!imageSrc && faviconSrc);
+  const fallbackInitial = (data.siteName || hostname || url).trim().charAt(0).toUpperCase();
+
   return (
     <a
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group my-6 flex h-full w-full flex-col overflow-hidden rounded-xl border border-transparent bg-night-soft/50 transition hover:border-accent/50 hover:bg-night-soft md:h-[120px] md:flex-row"
+      className="not-prose group my-6 flex w-full flex-col overflow-hidden rounded-xl border border-white/10 bg-night-soft/70 text-left no-underline shadow-[0_14px_36px_rgba(2,8,20,0.18)] transition hover:border-accent/50 hover:bg-night-soft md:min-h-[136px] md:flex-row"
     >
-      <div className="flex flex-1 flex-col justify-between p-4">
-        <div className="space-y-2">
-          <h3 className="line-clamp-2 text-base font-bold text-white group-hover:text-accent sm:text-lg">
+      <div className="flex min-w-0 flex-1 flex-col justify-between gap-4 p-4 sm:p-5">
+        <div className="min-w-0 space-y-2">
+          <h3 className="m-0 line-clamp-2 break-words text-base font-bold leading-snug text-white transition group-hover:text-accent sm:text-lg">
             {data.title || url}
           </h3>
           {data.description && (
-            <p className="line-clamp-1 text-xs text-white/60 sm:line-clamp-2 sm:text-sm">
+            <p className="m-0 line-clamp-2 break-words text-xs leading-relaxed text-white/62 sm:text-sm">
               {data.description}
             </p>
           )}
         </div>
-        <div className="mt-2 flex items-center gap-2 text-xs text-white/50">
-          {data.favicon && (
+        <div className="flex min-w-0 items-center gap-2 text-xs text-white/55">
+          {faviconSrc && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={data.favicon} alt="" className="h-4 w-4 object-contain" />
+            <img
+              src={faviconSrc}
+              alt=""
+              className="m-0 h-4 w-4 shrink-0 rounded-sm object-contain"
+              onError={() => setFailedFavicon(true)}
+            />
           )}
-          <span className="line-clamp-1">{data.siteName || new URL(url).hostname}</span>
+          <span className="line-clamp-1 min-w-0 break-all">{data.siteName || hostname}</span>
         </div>
       </div>
-      {data.image && (
-        <div className="relative h-48 w-full shrink-0 overflow-hidden md:h-full md:w-[200px]">
-          <Image
-            src={data.image}
+      <div className="flex aspect-[16/9] w-full shrink-0 items-center justify-center overflow-hidden border-t border-white/10 bg-white/[0.04] md:aspect-auto md:w-[220px] md:border-l md:border-t-0">
+        {previewSrc ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={previewSrc}
             alt={data.title || "Link preview"}
-            fill
-            className="object-cover transition duration-500 group-hover:scale-105"
-            unoptimized // 外部画像の最適化をスキップ（ドメイン設定回避のため）
+            loading="lazy"
+            decoding="async"
+            className={`m-0 h-full w-full transition duration-500 group-hover:scale-105 ${
+              isFaviconPreview ? "p-10 object-contain md:p-12" : "object-cover"
+            }`}
+            onError={() => {
+              if (imageSrc) {
+                setFailedImage(true);
+                return;
+              }
+
+              setFailedFavicon(true);
+            }}
           />
-        </div>
-      )}
+        ) : (
+          <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-2xl font-semibold text-white/70">
+            {fallbackInitial || <ExternalLink className="h-7 w-7" aria-hidden="true" />}
+          </div>
+        )}
+      </div>
     </a>
   );
+}
+
+function getHostname(url: string): string {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return url;
+  }
 }
