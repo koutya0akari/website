@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Link as LinkIcon, Image as ImageIcon, ExternalLink } from "lucide-react";
 import type { LinkDialogData, ImageDialogData, TableDialogData } from "./editor-types";
+import { FileUpload, type UploadedFile } from "../FileUpload";
 
 interface DialogProps {
   isOpen: boolean;
@@ -87,6 +88,22 @@ function LinkDialogContent({ onClose, onInsert, initialText = "" }: LinkDialogPr
   return (
     <Dialog isOpen onClose={onClose} title="リンクを挿入">
       <form onSubmit={handleSubmit} className="space-y-4">
+        <FileUpload
+          label="PDFをアップロード"
+          folder="diary"
+          accept="application/pdf"
+          showPreview={false}
+          showUrlInput={false}
+          hint="アップロード後、URL欄に自動で反映されます。"
+          onUpload={(file: UploadedFile) =>
+            setData((current) => ({
+              ...current,
+              url: file.url,
+              text: current.text || file.fileName.replace(/\.[^/.]+$/, ""),
+            }))
+          }
+        />
+
         <div>
           <label className="mb-2 block text-sm font-medium text-gray-300">
             URL <span className="text-red-400">*</span>
@@ -189,6 +206,23 @@ function ImageDialogContent({ onClose, onInsert }: ImageDialogProps) {
   return (
     <Dialog isOpen onClose={onClose} title="画像を挿入">
       <form onSubmit={handleSubmit} className="space-y-4">
+        <FileUpload
+          label="画像をアップロード"
+          folder="diary"
+          accept="image/*"
+          showPreview={false}
+          showUrlInput={false}
+          hint="アップロード後、画像URL欄に自動で反映されます。"
+          onUpload={(file: UploadedFile) => {
+            setData((current) => ({
+              ...current,
+              url: file.url,
+              alt: current.alt || file.fileName.replace(/\.[^/.]+$/, ""),
+            }));
+            setPreviewError(false);
+          }}
+        />
+
         <div>
           <label className="mb-2 block text-sm font-medium text-gray-300">
             画像URL <span className="text-red-400">*</span>

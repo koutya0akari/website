@@ -4,7 +4,7 @@ import { useState, useRef, useCallback } from "react";
 import { Upload, X, File, Image as ImageIcon, FileText, Loader2, Check, AlertCircle } from "lucide-react";
 import { clsx } from "clsx";
 
-interface UploadedFile {
+export interface UploadedFile {
   path: string;
   url: string;
   fileName: string;
@@ -23,6 +23,7 @@ interface FileUploadProps {
   label?: string;
   hint?: string;
   showPreview?: boolean;
+  showUrlInput?: boolean;
 }
 
 type UploadStatus = "idle" | "uploading" | "success" | "error";
@@ -38,6 +39,7 @@ export function FileUpload({
   label,
   hint,
   showPreview = true,
+  showUrlInput = true,
 }: FileUploadProps) {
   const [status, setStatus] = useState<UploadStatus>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -215,27 +217,28 @@ export function FileUpload({
         </div>
       )}
 
-      {/* URL input */}
-      <div className="flex gap-2">
-        <div className="relative flex-1">
-          <input
-            type="text"
-            value={currentUrl}
-            onChange={handleUrlInputChange}
-            placeholder="URLを入力またはファイルをアップロード"
-            className="w-full rounded-md border border-night-muted bg-night px-4 py-2 pr-10 text-gray-100 placeholder-gray-500 focus:border-accent focus:outline-none"
-          />
-          {currentUrl && (
-            <button
-              type="button"
-              onClick={clearFile}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-gray-400 hover:bg-night-muted hover:text-gray-300"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          )}
+      {showUrlInput && (
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={currentUrl}
+              onChange={handleUrlInputChange}
+              placeholder="URLを入力またはファイルをアップロード"
+              className="w-full rounded-md border border-night-muted bg-night px-4 py-2 pr-10 text-gray-100 placeholder-gray-500 focus:border-accent focus:outline-none"
+            />
+            {currentUrl && (
+              <button
+                type="button"
+                onClick={clearFile}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-gray-400 hover:bg-night-muted hover:text-gray-300"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Preview */}
       {showPreview && currentUrl && (
