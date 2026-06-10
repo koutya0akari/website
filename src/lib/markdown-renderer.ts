@@ -8,6 +8,8 @@ import rehypeSlug from "rehype-slug";
 import rehypeKatex from "rehype-katex";
 import rehypeStringify from "rehype-stringify";
 
+import { preprocessRichBlocks } from "@/lib/markdown-blocks";
+
 const markdownProcessor = unified()
   .use(remarkParse)
   .use(remarkGfm)
@@ -23,5 +25,6 @@ export function normalizeLineEndings(value: string): string {
 }
 
 export function renderMarkdownToHtml(markdown: string): string {
-  return String(markdownProcessor.processSync(normalizeLineEndings(markdown)));
+  const preprocessed = preprocessRichBlocks(normalizeLineEndings(markdown));
+  return String(markdownProcessor.processSync(preprocessed));
 }

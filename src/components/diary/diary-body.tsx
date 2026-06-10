@@ -1,7 +1,8 @@
-import parse, { DOMNode, Element, Text } from "html-react-parser";
+import parse, { DOMNode, Element, Text, domToReact, type HTMLReactParserOptions } from "html-react-parser";
 import katex from "katex";
 
 import { LinkCard } from "@/components/ui/link-card";
+import { RichTabs, type RichTabItem } from "@/components/diary/rich-tabs";
 
 type DiaryBodyProps = {
   html: string;
@@ -141,7 +142,26 @@ const renderMath = (content: string, displayMode: boolean) => {
   }
 };
 
+function hasClass(node: Element, className: string): boolean {
+  const classAttr = node.attribs?.class ?? "";
+  return classAttr.split(/\s+/).includes(className);
+}
+
 const replaceNode = (domNode: DOMNode) => {
+  // 0. タブ (:::tabs) の置換処理 — クライアント側で切り替え可能にする
+  if (domNode instanceof Element && domNode.name === "div" && hasClass(domNode, "md-tabs")) {
+    const items: RichTabItem[] = domNode.children
+      .filter((child): child is Element => child instanceof Element && hasClass(child, "md-tab"))
+      .map((tab) => ({
+        label: tab.attribs["data-tab-label"] || "タブ",
+        content: domToReact(tab.children as DOMNode[], parseOptions),
+      }));
+
+    if (items.length > 0) {
+      return <RichTabs items={items} />;
+    }
+  }
+
   // 1. リンクカードの置換処理
   // <p><a href="...">URL</a></p> または <li><a href="...">URL</a></li> のような構造で、
   // テキストがURLと一致する場合のみカード化する
@@ -232,10 +252,12 @@ const replaceNode = (domNode: DOMNode) => {
   }
 };
 
+const parseOptions: HTMLReactParserOptions = { replace: replaceNode };
+
 export function DiaryBody({ html }: DiaryBodyProps) {
   return (
     <div className="prose prose-invert prose-preserve-whitespace max-w-none prose-headings:font-semibold prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl">
-      {parse(html, { replace: replaceNode })}
+      {parse(html, parseOptions)}
     </div>
   );
 }

@@ -36,6 +36,7 @@ import {
   Sun,
   Maximize,
   ChevronDown,
+  Layers,
 } from "lucide-react";
 import type { EditorMode, ViewMode } from "./editor-types";
 import { PRESET_COLORS, COMMON_EMOJIS } from "./editor-utils";
@@ -53,6 +54,7 @@ interface EditorToolbarProps {
   onImage: () => void;
   onTable: () => void;
   onColor: (color: string, isBackground: boolean) => void;
+  onInsertBlock: (type: "fold" | "tabs" | "hide" | "spoiler") => void;
   onEmoji: (emoji: string) => void;
   onIndent: (increase: boolean) => void;
   onAlign: (alignment: "left" | "center" | "right") => void;
@@ -157,6 +159,7 @@ export function EditorToolbar({
   onImage,
   onTable,
   onColor,
+  onInsertBlock,
   onEmoji,
   onIndent,
   onAlign,
@@ -322,6 +325,38 @@ export function EditorToolbar({
       <ToolbarButton icon={<Link className="h-4 w-4" />} label="リンク挿入" shortcut="Ctrl+K" onClick={onLink} />
       <ToolbarButton icon={<ImageIcon className="h-4 w-4" />} label="画像挿入" onClick={onImage} />
       <ToolbarButton icon={<Table className="h-4 w-4" />} label="テーブル挿入" onClick={onTable} />
+
+      {/* Rich blocks: 折り畳み / タブ / 隠し */}
+      <Dropdown
+        isOpen={openDropdown === "blocks"}
+        onToggle={() => setOpenDropdown(openDropdown === "blocks" ? null : "blocks")}
+        onClose={closeDropdown}
+        trigger={
+          <>
+            <Layers className="h-4 w-4" />
+            <ChevronDown className="h-3 w-3" />
+          </>
+        }
+      >
+        <div className="w-44 py-1">
+          {[
+            { type: "fold" as const, label: "折り畳み", hint: ":::fold" },
+            { type: "tabs" as const, label: "タブ", hint: ":::tabs" },
+            { type: "hide" as const, label: "隠し（ブロック）", hint: ":::hide" },
+            { type: "spoiler" as const, label: "隠し（インライン）", hint: "||…||" },
+          ].map((item) => (
+            <button
+              key={item.type}
+              type="button"
+              onClick={() => { onInsertBlock(item.type); closeDropdown(); }}
+              className="flex w-full items-center justify-between gap-3 px-4 py-2 text-left text-sm hover:bg-night-muted"
+            >
+              <span>{item.label}</span>
+              <span className="text-xs text-gray-500">{item.hint}</span>
+            </button>
+          ))}
+        </div>
+      </Dropdown>
 
       {/* Emoji */}
       <Dropdown
