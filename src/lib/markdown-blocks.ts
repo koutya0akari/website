@@ -42,6 +42,15 @@ function escapeHtml(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
+/** 行頭から最大 width 文字分の空白を取り除く。 */
+function dedent(line: string, width: number): string {
+  let index = 0;
+  while (index < width && index < line.length && (line[index] === " " || line[index] === "\t")) {
+    index += 1;
+  }
+  return line.slice(index);
+}
+
 /** `タイトル` / `[タイトル]` のどちらの書き方でも中身を取り出す。 */
 function normalizeTitle(raw: string): string {
   const trimmed = raw.trim();
@@ -90,7 +99,7 @@ function buildTabs(body: string[]): string[] {
   let current: { label: string; lines: string[] } | null = null;
 
   for (const line of body) {
-    const tabMatch = line.match(/^@tab\s+(.*)$/);
+    const tabMatch = line.match(/^\s*@tab\s+(.*)$/);
     if (tabMatch) {
       current = { label: tabMatch[1].trim() || `タブ${panels.length + 1}`, lines: [] };
       panels.push(current);
@@ -149,12 +158,17 @@ export function preprocessRichBlocks(markdown: string): string {
       continue;
     }
 
-    const openMatch = line.match(/^:::(fold|hide|tabs)\s*(.*)$/);
+    // 行頭の空白を許容する（math-callout などの HTML ブロック内でインデントして
+    // 書かれた場合でも検出できるようにする）
+    const openMatch = line.match(/^(\s*):::(fold|hide|tabs)\s*(.*)$/);
     if (openMatch) {
-      const kind = openMatch[1] as ContainerKind;
-      const title = normalizeTitle(openMatch[2] ?? "");
+      const indent = openMatch[1] ?? "";
+      const kind = openMatch[2] as ContainerKind;
+      const title = normalizeTitle(openMatch[3] ?? "");
 
-      // 対応する閉じ `:::` までを本文として収集する
+      // 対応する閉じ `:::` までを本文として収集する。
+      // 開始マーカーのインデント分だけ各行を de-indent し、内側を素の
+      // Markdown として解釈できるようにする。
       const body: string[] = [];
       let j = i + 1;
       let closed = false;
@@ -163,7 +177,7 @@ export function preprocessRichBlocks(markdown: string): string {
           closed = true;
           break;
         }
-        body.push(lines[j]);
+        body.push(dedent(lines[j], indent.length));
         j += 1;
       }
 
