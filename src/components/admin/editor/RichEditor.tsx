@@ -231,6 +231,39 @@ export function RichEditor({
     [mode, value, onChange, getSelection, pushToUndoStack, setCursorPosition]
   );
 
+  // Handle rich block insertion (折り畳み / タブ / 隠し)
+  const handleInsertBlock = useCallback(
+    (type: "fold" | "tabs" | "hide" | "spoiler") => {
+      const selection = getSelection();
+      pushToUndoStack(value, true);
+      const selected = selection.text;
+
+      if (type === "spoiler") {
+        const snippet = `||${selected || "隠したいテキスト"}||`;
+        const newContent =
+          value.substring(0, selection.start) + snippet + value.substring(selection.end);
+        onChange(newContent);
+        requestAnimationFrame(() => setCursorPosition(selection.start + snippet.length));
+        return;
+      }
+
+      const block =
+        type === "fold"
+          ? `:::fold タイトル\n${selected || "折り畳む内容"}\n:::`
+          : type === "hide"
+            ? `:::hide\n${selected || "クリックで表示される内容"}\n:::`
+            : `:::tabs\n@tab タブ1\n${selected || "1つ目の内容"}\n@tab タブ2\n2つ目の内容\n:::`;
+
+      const needsLeadingNewline = selection.start > 0 && value[selection.start - 1] !== "\n";
+      const snippet = `${needsLeadingNewline ? "\n" : ""}${block}\n`;
+      const newContent =
+        value.substring(0, selection.start) + snippet + value.substring(selection.end);
+      onChange(newContent);
+      requestAnimationFrame(() => setCursorPosition(selection.start + snippet.length));
+    },
+    [value, onChange, getSelection, pushToUndoStack, setCursorPosition],
+  );
+
   // Handle emoji
   const handleEmoji = useCallback(
     (emoji: string) => {
@@ -482,6 +515,7 @@ export function RichEditor({
           onImage={handleImage}
           onTable={handleTable}
           onColor={handleColor}
+          onInsertBlock={handleInsertBlock}
           onEmoji={handleEmoji}
           onIndent={handleIndent}
           onAlign={handleAlign}

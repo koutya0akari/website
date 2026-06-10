@@ -210,6 +210,91 @@ html.light .prose .math-callout--proposition {
   --math-callout-title: #166534;
 }
 
+/* 折り畳み (:::fold) / 隠し (:::hide) ブロック */
+.prose .md-fold,
+.prose .md-hide {
+  margin: 1.25rem 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+}
+
+.prose .md-fold > summary,
+.prose .md-hide > summary {
+  cursor: pointer;
+  padding: 0.7rem 1rem;
+  font-weight: 600;
+  list-style: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.15s ease;
+}
+
+.prose .md-fold > summary:hover,
+.prose .md-hide > summary:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.prose .md-fold > summary::-webkit-details-marker,
+.prose .md-hide > summary::-webkit-details-marker {
+  display: none;
+}
+
+.prose .md-fold > summary::before,
+.prose .md-hide > summary::before {
+  content: "▶";
+  font-size: 0.7em;
+  color: var(--accent-color);
+  transition: transform 0.15s ease;
+}
+
+.prose .md-fold[open] > summary::before,
+.prose .md-hide[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.prose .md-hide > summary::before {
+  content: "🙈";
+  font-size: 0.95em;
+}
+
+.prose .md-hide[open] > summary::before {
+  content: "🙉";
+  transform: none;
+}
+
+.prose .md-fold > :not(summary),
+.prose .md-hide > :not(summary) {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.prose .md-fold > :not(summary):last-child,
+.prose .md-hide > :not(summary):last-child {
+  margin-bottom: 1rem;
+}
+
+/* 隠し(インライン) ||...|| スポイラー */
+.prose .md-spoiler {
+  background: var(--text-muted, #64748b);
+  color: transparent;
+  border-radius: 4px;
+  padding: 0 0.15em;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+  outline: none;
+}
+
+.prose .md-spoiler:hover,
+.prose .md-spoiler:focus,
+.prose .md-spoiler:focus-within {
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+}
+
 /* Selection colors */
 ::selection {
   background: var(--accent-color);
