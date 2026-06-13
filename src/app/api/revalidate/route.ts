@@ -61,11 +61,9 @@ async function sendRevalidateResponse(pathSet: Set<string>) {
     await Promise.all(paths.map((path) => revalidatePath(path)));
     return NextResponse.json({ revalidated: true, paths });
   } catch (error) {
+    console.error("[API] Revalidation failed:", error);
     return NextResponse.json(
-      {
-        revalidated: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
+      { revalidated: false, error: "Revalidation failed" },
       { status: 500 },
     );
   }

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { apiError } from "@/lib/api-response";
 
 // GET /api/admin/about - Get about settings
 export async function GET() {
@@ -86,17 +87,12 @@ export async function PUT(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error("[API] Failed to update about settings:", error);
-      return NextResponse.json(
-        { error: "Failed to update settings", details: error.message },
-        { status: 500 }
-      );
+      return apiError("Failed to update settings", 500, error);
     }
 
     return NextResponse.json({ data });
   } catch (error) {
-    console.error("[API] Error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return apiError("Internal server error", 500, error);
   }
 }
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 
 import { JournalCard } from "@/components/journal/journal-card";
 import { MATH_DIARY_LABEL, getDiaryDisplayLabel } from "@/lib/diary-labels";
@@ -43,8 +44,7 @@ export function DiaryCard({
       </div>
       <div>
         <h3 className="text-lg font-semibold leading-snug text-white sm:text-xl">
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          <Link href={`${hrefBase}/${entry.slug}` as any} className="hover:text-accent">
+          <Link href={`${hrefBase}/${entry.slug}` as Route} className="hover:text-accent">
             {entry.title}
           </Link>
         </h3>

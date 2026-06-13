@@ -29,6 +29,7 @@ const signika = Signika_Negative({
   subsets: ["latin"],
   weight: ["600"],
   variable: "--font-signika",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -75,6 +76,12 @@ export default function RootLayout({
   return (
     <html lang="ja" className="dark" suppressHydrationWarning>
       <body className={`${inter.variable} ${noto.variable} ${signika.variable}`}>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:font-medium focus:text-night focus:shadow-lg"
+        >
+          本文へスキップ
+        </a>
         <ThemeProvider>
           <div className="flex min-h-screen flex-col">
             <KaTeXProvider />
@@ -82,7 +89,9 @@ export default function RootLayout({
             <ScrollProgress />
             <ScrollToTop />
             <SiteHeader />
-            <div className="flex-1 pb-16">{children}</div>
+            <div id="main-content" tabIndex={-1} className="flex-1 pb-16">
+              {children}
+            </div>
             <SiteFooter />
           </div>
           <CommandPalette />
