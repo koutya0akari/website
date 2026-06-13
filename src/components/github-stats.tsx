@@ -20,12 +20,6 @@ interface GitHubUser {
   following: number;
 }
 
-interface GitHubEvent {
-  type: string;
-  created_at: string;
-  repo: { name: string };
-}
-
 interface ContributionDay {
   date: string;
   count: number;
@@ -54,8 +48,8 @@ const LANGUAGE_COLORS: Record<string, string> = {
 export function GitHubStats({ username }: GitHubStatsProps) {
   const [user, setUser] = useState<GitHubUser | null>(null);
   const [repos, setRepos] = useState<GitHubRepo[]>([]);
-  const [events, setEvents] = useState<GitHubEvent[]>([]);
   const [contributions, setContributions] = useState<ContributionDay[]>([]);
+  const [pushEvents, setPushEvents] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -76,34 +70,8 @@ export function GitHubStats({ username }: GitHubStatsProps) {
         
         setUser(data.user);
         setRepos(data.repos);
-        setEvents(data.events);
-
-        // Calculate contribution data from events
-        const contributionMap = new Map<string, number>();
-        const today = new Date();
-        
-        // Initialize last 365 days
-        for (let i = 0; i < 365; i++) {
-          const date = new Date(today);
-          date.setDate(date.getDate() - i);
-          const dateStr = date.toISOString().split("T")[0];
-          contributionMap.set(dateStr, 0);
-        }
-
-        // Count push events as contributions
-        data.events.forEach((event: GitHubEvent) => {
-          if (event.type === "PushEvent") {
-            const dateStr = event.created_at.split("T")[0];
-            const current = contributionMap.get(dateStr) || 0;
-            contributionMap.set(dateStr, current + 1);
-          }
-        });
-
-        const contributionData = Array.from(contributionMap.entries())
-          .map(([date, count]) => ({ date, count }))
-          .sort((a, b) => a.date.localeCompare(b.date));
-
-        setContributions(contributionData);
+        setContributions(data.commitActivity);
+        setPushEvents(data.pushEventCount);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
       } finally {
@@ -117,7 +85,6 @@ export function GitHubStats({ username }: GitHubStatsProps) {
   // Calculate stats
   const totalStars = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0);
   const totalForks = repos.reduce((sum, repo) => sum + repo.forks_count, 0);
-  const pushEvents = events.filter((e) => e.type === "PushEvent").length;
   
   // Get language distribution
   const languageCount = repos.reduce((acc, repo) => {
