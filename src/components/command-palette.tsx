@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, Fragment } from "react";
 import { useRouter } from "next/navigation";
+import type { Route } from "next";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Search,
@@ -154,8 +155,7 @@ export function CommandPalette() {
       case "Enter":
         e.preventDefault();
         if (results[selectedIndex]) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          router.push(results[selectedIndex].href as any);
+          router.push(results[selectedIndex].href as Route);
           close();
         }
         break;
@@ -164,8 +164,7 @@ export function CommandPalette() {
 
   // Navigate to result
   const navigateTo = (result: SearchResult) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    router.push(result.href as any);
+    router.push(result.href as Route);
     close();
   };
 

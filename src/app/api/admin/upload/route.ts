@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { apiError } from "@/lib/api-response";
 
 const ALLOWED_MIME_TYPES = [
   // Images
@@ -76,11 +77,7 @@ export async function POST(request: NextRequest) {
       });
 
     if (error) {
-      console.error("[Upload] Storage error:", error);
-      return NextResponse.json(
-        { error: "Failed to upload file", details: error.message },
-        { status: 500 }
-      );
+      return apiError("Failed to upload file", 500, error, "Upload");
     }
 
     // Get public URL
@@ -128,11 +125,7 @@ export async function GET(request: NextRequest) {
       });
 
     if (error) {
-      console.error("[Upload] List error:", error);
-      return NextResponse.json(
-        { error: "Failed to list files", details: error.message },
-        { status: 500 }
-      );
+      return apiError("Failed to list files", 500, error, "Upload");
     }
 
     // Get public URLs for each file
@@ -180,11 +173,7 @@ export async function DELETE(request: NextRequest) {
     const { error } = await supabase.storage.from("media").remove([path]);
 
     if (error) {
-      console.error("[Upload] Delete error:", error);
-      return NextResponse.json(
-        { error: "Failed to delete file", details: error.message },
-        { status: 500 }
-      );
+      return apiError("Failed to delete file", 500, error, "Upload");
     }
 
     return NextResponse.json({ success: true });
