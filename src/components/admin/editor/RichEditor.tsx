@@ -21,6 +21,8 @@ import { DiaryBody } from "@/components/diary/diary-body";
 
 const HISTORY_LIMIT = 50;
 const HISTORY_COALESCE_MS = 900;
+const EDITOR_BOTTOM_GAP = 24;
+const MIN_VIEWPORT_EDITOR_HEIGHT = 320;
 
 interface RichEditorProps {
   value: string;
@@ -53,7 +55,7 @@ export function RichEditor({
   const [redoStack, setRedoStack] = useState<string[]>([]);
   const [splitPosition, setSplitPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
-  const [independentScroll, setIndependentScroll] = useState(true);
+  const [editorHeight, setEditorHeight] = useState(minHeight);
 
   // Dialog states
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
@@ -72,7 +74,6 @@ export function RichEditor({
   const previewRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const lastHistoryAtRef = useRef(0);
-  const scrollSyncSourceRef = useRef<"editor" | "preview" | null>(null);
   const deferredValue = useDeferredValue(value);
   const previewHtml = useMemo(
     () => (mode === "markdown" ? markdownToHtml(deferredValue) : deferredValue),
@@ -459,40 +460,38 @@ export function RichEditor({
     };
   }, [isDragging]);
 
-  const syncPaneScroll = useCallback((source: "editor" | "preview") => {
-    if (independentScroll) return;
-    const textarea = textareaRef.current;
-    const preview = previewRef.current;
-    if (!textarea || !preview || effectiveViewMode !== "split") return;
-    if (scrollSyncSourceRef.current && scrollSyncSourceRef.current !== source) return;
+  useEffect(() => {
+    if (isFullscreen) return;
 
-    const sourceElement = source === "editor" ? textarea : preview;
-    const targetElement = source === "editor" ? preview : textarea;
-    const scrollableSourceHeight = sourceElement.scrollHeight - sourceElement.clientHeight;
-    const scrollableTargetHeight = targetElement.scrollHeight - targetElement.clientHeight;
-    if (scrollableSourceHeight <= 0 || scrollableTargetHeight <= 0) return;
+    let animationFrameId = 0;
 
-    const scrollPercentage = sourceElement.scrollTop / scrollableSourceHeight;
-    scrollSyncSourceRef.current = source;
-    targetElement.scrollTop = scrollPercentage * scrollableTargetHeight;
-    requestAnimationFrame(() => {
-      scrollSyncSourceRef.current = null;
-    });
-  }, [effectiveViewMode, independentScroll]);
+    const updateEditorHeight = () => {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = requestAnimationFrame(() => {
+        const container = containerRef.current;
+        if (!container) return;
 
-  // Sync scroll between editor and preview when independent scroll is disabled.
-  const handleEditorScroll = useCallback(() => {
-    syncPaneScroll("editor");
-  }, [syncPaneScroll]);
+        const rect = container.getBoundingClientRect();
+        const visibleTop = Math.max(rect.top, 0);
+        const availableHeight = window.innerHeight - visibleTop - EDITOR_BOTTOM_GAP;
+        const nextHeight = Math.max(MIN_VIEWPORT_EDITOR_HEIGHT, Math.floor(availableHeight));
 
-  const handlePreviewScroll = useCallback(() => {
-    syncPaneScroll("preview");
-  }, [syncPaneScroll]);
+        setEditorHeight((currentHeight) => (
+          currentHeight === nextHeight ? currentHeight : nextHeight
+        ));
+      });
+    };
 
-  // Independent scroll toggle (プレビューとエディターを別々にスクロールするか)
-  const handleIndependentScrollToggle = useCallback(() => {
-    setIndependentScroll((prev) => !prev);
-  }, []);
+    updateEditorHeight();
+    window.addEventListener("resize", updateEditorHeight);
+    window.addEventListener("scroll", updateEditorHeight, true);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("resize", updateEditorHeight);
+      window.removeEventListener("scroll", updateEditorHeight, true);
+    };
+  }, [isFullscreen]);
 
   // Handle content change
   const handleContentChange = useCallback(
@@ -512,25 +511,29 @@ export function RichEditor({
   `;
 
   const editorClasses = `
-    w-full h-full resize-none p-4 font-mono text-sm focus:outline-none
+    h-full min-h-0 w-full resize-none overflow-y-auto p-4 font-mono text-sm focus:outline-none
     ${isDark ? "bg-night text-gray-100" : "bg-white text-gray-900"}
     ${isDark ? "placeholder-gray-500" : "placeholder-gray-400"}
   `;
 
   const previewClasses = `
-    overflow-y-auto p-4
+    h-full min-h-0 min-w-0 overflow-y-auto p-4
     ${isDark ? "bg-night-soft" : "bg-gray-50"}
   `;
 
   return (
     <>
-      <div ref={containerRef} className={containerClasses}>
+      <div
+        ref={containerRef}
+        className={containerClasses}
+        style={{ height: isFullscreen ? "100dvh" : `${editorHeight}px` }}
+        data-testid="rich-editor-container"
+      >
         <EditorToolbar
           mode={mode}
           viewMode={viewMode}
           isDark={isDark}
           isFullscreen={isFullscreen}
-          independentScroll={independentScroll}
           canUndo={undoStack.length > 0}
           canRedo={redoStack.length > 0}
           onFormat={handleFormat}
@@ -550,21 +553,23 @@ export function RichEditor({
           onModeToggle={handleModeToggle}
           onThemeToggle={handleThemeToggle}
           onFullscreenToggle={handleFullscreenToggle}
-          onIndependentScrollToggle={handleIndependentScrollToggle}
         />
 
-        <div className="flex min-h-0 flex-1 overflow-hidden" style={{ minHeight: `${minHeight}px` }}>
+        <div
+          className="flex min-h-0 flex-1 items-stretch overflow-hidden"
+          data-testid="rich-editor-panes"
+        >
           {/* Editor pane */}
           {effectiveViewMode !== "preview" && (
             <div
-              className="flex min-h-0 flex-col overflow-hidden"
+              className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden"
               style={{ width: effectiveViewMode === "split" ? `${splitPosition}%` : "100%" }}
+              data-testid="rich-editor-editor-pane"
             >
               <textarea
                 ref={textareaRef}
                 value={value}
                 onChange={handleContentChange}
-                onScroll={handleEditorScroll}
                 placeholder={placeholder}
                 className={editorClasses}
                 spellCheck={false}
@@ -576,7 +581,7 @@ export function RichEditor({
           {/* Resize handle */}
           {effectiveViewMode === "split" && (
             <div
-              className={`w-1 cursor-col-resize bg-night-muted hover:bg-accent/50 transition-colors ${
+              className={`w-1 shrink-0 cursor-col-resize bg-night-muted transition-colors hover:bg-accent/50 ${
                 isDragging ? "bg-accent" : ""
               }`}
               onMouseDown={handleDragStart}
@@ -591,9 +596,9 @@ export function RichEditor({
             <div
               ref={previewRef}
               className={previewClasses}
-              onScroll={handlePreviewScroll}
               style={{ width: effectiveViewMode === "split" ? `${100 - splitPosition}%` : "100%" }}
               aria-label="プレビュー"
+              data-testid="rich-editor-preview-pane"
             >
               <DiaryBody html={previewHtml} />
             </div>
