@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { apiError } from "@/lib/api-response";
 
 // GET /api/admin/site - Get site settings
 export async function GET() {
@@ -65,8 +66,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("[API] Error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return apiError("Internal server error", 500, error);
   }
 }
 
@@ -128,17 +128,12 @@ export async function PUT(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error("[API] Failed to update site settings:", error);
-      return NextResponse.json(
-        { error: "Failed to update settings", details: error.message },
-        { status: 500 }
-      );
+      return apiError("Failed to update settings", 500, error);
     }
 
     return NextResponse.json({ data });
   } catch (error) {
-    console.error("[API] Error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return apiError("Internal server error", 500, error);
   }
 }
 

@@ -1,9 +1,24 @@
 import type { NextConfig } from "next";
 import path from "path";
 
-const cspHeader = `
+const isDev = process.env.NODE_ENV !== "production";
+
+// `'unsafe-eval'` is required by React Fast Refresh in `next dev`, and by the
+// Ace editor (admin only). We therefore allow it everywhere in development, but
+// in production only on the authenticated /admin & /login routes — public pages
+// get a stricter policy. KaTeX renders without eval (server-side + client
+// `katex.renderToString`), and framer-motion does not need it either.
+// `'unsafe-inline'` is kept for script-src/style-src: Next injects inline
+// bootstrap scripts and KaTeX emits inline styles; removing it requires a nonce
+// (tracked as a follow-up).
+function buildCsp({ allowEval }: { allowEval: boolean }): string {
+  const scriptSrc = ["'self'", "'unsafe-inline'", allowEval ? "'unsafe-eval'" : "", "https://giscus.app", "https://platform.twitter.com"]
+    .filter(Boolean)
+    .join(" ");
+
+  return `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://giscus.app https://platform.twitter.com;
+  script-src ${scriptSrc};
   style-src 'self' 'unsafe-inline';
   img-src 'self' blob: data: https:;
   font-src 'self';
@@ -17,6 +32,12 @@ const cspHeader = `
   manifest-src 'self';
   upgrade-insecure-requests;
 `;
+}
+
+const publicCsp = buildCsp({ allowEval: isDev });
+const adminCsp = buildCsp({ allowEval: true });
+
+const oneLine = (value: string) => value.replace(/\n/g, "").trim();
 
 const nextConfig: NextConfig = {
   // Prevent Next.js from inferring an incorrect workspace root when multiple lockfiles exist.
@@ -40,6 +61,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        // Non-CSP security headers apply to every route.
         source: "/(.*)",
         headers: [
           {
@@ -67,10 +89,6 @@ const nextConfig: NextConfig = {
             value: "strict-origin-when-cross-origin",
           },
           {
-            key: "Content-Security-Policy",
-            value: cspHeader.replace(/\n/g, "").trim(),
-          },
-          {
             key: "Permissions-Policy",
             value: "geolocation=(), microphone=(), camera=(), payment=()",
           },
@@ -79,6 +97,22 @@ const nextConfig: NextConfig = {
             value: "none",
           },
         ],
+      },
+      {
+        // Authenticated admin & login routes: looser CSP (Ace editor needs eval).
+        // These rules and the public rule below are mutually exclusive, so each
+        // path receives exactly one Content-Security-Policy header.
+        source: "/admin/:path*",
+        headers: [{ key: "Content-Security-Policy", value: oneLine(adminCsp) }],
+      },
+      {
+        source: "/login",
+        headers: [{ key: "Content-Security-Policy", value: oneLine(adminCsp) }],
+      },
+      {
+        // Everything except /admin/** and /login: stricter CSP (no unsafe-eval in prod).
+        source: "/((?!admin(?:$|/)|login(?:$|/)).*)",
+        headers: [{ key: "Content-Security-Policy", value: oneLine(publicCsp) }],
       },
     ];
   },

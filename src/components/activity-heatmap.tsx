@@ -27,7 +27,7 @@ export function ActivityHeatmap({ data, year = new Date().getFullYear() }: Activ
     const months: { name: string; week: number }[] = [];
 
     let currentWeek: { date: Date; count: number }[] = [];
-    let currentDate = new Date(startDate);
+    const currentDate = new Date(startDate);
     let weekIndex = 0;
     let lastMonth = -1;
 

@@ -4,11 +4,13 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import remarkRehype from "remark-rehype";
 import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 import rehypeSlug from "rehype-slug";
 import rehypeKatex from "rehype-katex";
 import rehypeStringify from "rehype-stringify";
 
 import { preprocessRichBlocks } from "@/lib/markdown-blocks";
+import { articleSanitizeSchema } from "@/lib/sanitize-schema";
 
 const markdownProcessor = unified()
   .use(remarkParse)
@@ -16,6 +18,8 @@ const markdownProcessor = unified()
   .use(remarkMath)
   .use(remarkRehype, { allowDangerousHtml: true })
   .use(rehypeRaw)
+  // Sanitize raw/author HTML before trusted transforms add their own markup.
+  .use(rehypeSanitize, articleSanitizeSchema)
   .use(rehypeSlug)
   .use(rehypeKatex)
   .use(rehypeStringify);

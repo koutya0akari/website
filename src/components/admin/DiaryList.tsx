@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { Route } from "next";
 import { useState } from "react";
 import { Edit, Eye, Trash2, Search } from "lucide-react";
 
@@ -114,8 +115,7 @@ export function DiaryList({
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <Link
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        href={`${adminBasePath}/${item.id}/edit` as any}
+                        href={`${adminBasePath}/${item.id}/edit` as Route}
                         className="min-w-0 break-words text-lg font-medium text-gray-100 hover:text-accent"
                       >
                         {item.title}
@@ -160,8 +160,7 @@ export function DiaryList({
 
                   <div className="flex flex-wrap gap-2 sm:justify-end">
                     <Link
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      href={`${adminBasePath}/${item.id}/edit` as any}
+                      href={`${adminBasePath}/${item.id}/edit` as Route}
                       className="rounded-md border border-night-muted bg-night px-3 py-2 text-gray-300 transition-colors hover:bg-night-muted"
                       title="Edit"
                     >

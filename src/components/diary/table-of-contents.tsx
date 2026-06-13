@@ -35,6 +35,9 @@ export function TableOfContents({ html }: TableOfContentsProps) {
       });
     });
 
+    // DOMParser is browser-only, so heading extraction must run in an effect
+    // after mount rather than during render (which also runs on the server).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setItems(tocItems);
   }, [html]);
 
