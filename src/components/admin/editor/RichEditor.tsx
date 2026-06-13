@@ -53,7 +53,7 @@ export function RichEditor({
   const [redoStack, setRedoStack] = useState<string[]>([]);
   const [splitPosition, setSplitPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
-  const [syncScroll, setSyncScroll] = useState(true);
+  const [independentScroll, setIndependentScroll] = useState(true);
 
   // Dialog states
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
@@ -72,6 +72,7 @@ export function RichEditor({
   const previewRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const lastHistoryAtRef = useRef(0);
+  const scrollSyncSourceRef = useRef<"editor" | "preview" | null>(null);
   const deferredValue = useDeferredValue(value);
   const previewHtml = useMemo(
     () => (mode === "markdown" ? markdownToHtml(deferredValue) : deferredValue),
@@ -458,25 +459,39 @@ export function RichEditor({
     };
   }, [isDragging]);
 
-  // Sync scroll between editor and preview
-  const handleEditorScroll = useCallback(() => {
-    if (!syncScroll) return;
-
+  const syncPaneScroll = useCallback((source: "editor" | "preview") => {
+    if (independentScroll) return;
     const textarea = textareaRef.current;
     const preview = previewRef.current;
     if (!textarea || !preview || effectiveViewMode !== "split") return;
+    if (scrollSyncSourceRef.current && scrollSyncSourceRef.current !== source) return;
 
-    const scrollableEditorHeight = textarea.scrollHeight - textarea.clientHeight;
-    const scrollablePreviewHeight = preview.scrollHeight - preview.clientHeight;
-    if (scrollableEditorHeight <= 0 || scrollablePreviewHeight <= 0) return;
+    const sourceElement = source === "editor" ? textarea : preview;
+    const targetElement = source === "editor" ? preview : textarea;
+    const scrollableSourceHeight = sourceElement.scrollHeight - sourceElement.clientHeight;
+    const scrollableTargetHeight = targetElement.scrollHeight - targetElement.clientHeight;
+    if (scrollableSourceHeight <= 0 || scrollableTargetHeight <= 0) return;
 
-    const scrollPercentage = textarea.scrollTop / scrollableEditorHeight;
-    preview.scrollTop = scrollPercentage * (preview.scrollHeight - preview.clientHeight);
-  }, [effectiveViewMode, syncScroll]);
+    const scrollPercentage = sourceElement.scrollTop / scrollableSourceHeight;
+    scrollSyncSourceRef.current = source;
+    targetElement.scrollTop = scrollPercentage * scrollableTargetHeight;
+    requestAnimationFrame(() => {
+      scrollSyncSourceRef.current = null;
+    });
+  }, [effectiveViewMode, independentScroll]);
 
-  // Scroll sync toggle (追従スクロールの ON/OFF)
-  const handleSyncScrollToggle = useCallback(() => {
-    setSyncScroll((prev) => !prev);
+  // Sync scroll between editor and preview when independent scroll is disabled.
+  const handleEditorScroll = useCallback(() => {
+    syncPaneScroll("editor");
+  }, [syncPaneScroll]);
+
+  const handlePreviewScroll = useCallback(() => {
+    syncPaneScroll("preview");
+  }, [syncPaneScroll]);
+
+  // Independent scroll toggle (プレビューとエディターを別々にスクロールするか)
+  const handleIndependentScrollToggle = useCallback(() => {
+    setIndependentScroll((prev) => !prev);
   }, []);
 
   // Handle content change
@@ -515,7 +530,7 @@ export function RichEditor({
           viewMode={viewMode}
           isDark={isDark}
           isFullscreen={isFullscreen}
-          syncScroll={syncScroll}
+          independentScroll={independentScroll}
           canUndo={undoStack.length > 0}
           canRedo={redoStack.length > 0}
           onFormat={handleFormat}
@@ -535,14 +550,14 @@ export function RichEditor({
           onModeToggle={handleModeToggle}
           onThemeToggle={handleThemeToggle}
           onFullscreenToggle={handleFullscreenToggle}
-          onSyncScrollToggle={handleSyncScrollToggle}
+          onIndependentScrollToggle={handleIndependentScrollToggle}
         />
 
-        <div className="flex flex-1 overflow-hidden" style={{ minHeight: `${minHeight}px` }}>
+        <div className="flex min-h-0 flex-1 overflow-hidden" style={{ minHeight: `${minHeight}px` }}>
           {/* Editor pane */}
           {effectiveViewMode !== "preview" && (
             <div
-              className="flex flex-col overflow-hidden"
+              className="flex min-h-0 flex-col overflow-hidden"
               style={{ width: effectiveViewMode === "split" ? `${splitPosition}%` : "100%" }}
             >
               <textarea
@@ -576,6 +591,7 @@ export function RichEditor({
             <div
               ref={previewRef}
               className={previewClasses}
+              onScroll={handlePreviewScroll}
               style={{ width: effectiveViewMode === "split" ? `${100 - splitPosition}%` : "100%" }}
               aria-label="プレビュー"
             >

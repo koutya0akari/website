@@ -48,7 +48,7 @@ interface EditorToolbarProps {
   viewMode: ViewMode;
   isDark: boolean;
   isFullscreen: boolean;
-  syncScroll: boolean;
+  independentScroll: boolean;
   canUndo: boolean;
   canRedo: boolean;
   onFormat: (format: string) => void;
@@ -68,7 +68,7 @@ interface EditorToolbarProps {
   onModeToggle: () => void;
   onThemeToggle: () => void;
   onFullscreenToggle: () => void;
-  onSyncScrollToggle: () => void;
+  onIndependentScrollToggle: () => void;
 }
 
 interface DropdownProps {
@@ -155,7 +155,7 @@ export function EditorToolbar({
   viewMode,
   isDark,
   isFullscreen,
-  syncScroll,
+  independentScroll,
   canUndo,
   canRedo,
   onFormat,
@@ -175,7 +175,7 @@ export function EditorToolbar({
   onModeToggle,
   onThemeToggle,
   onFullscreenToggle,
-  onSyncScrollToggle,
+  onIndependentScrollToggle,
 }: EditorToolbarProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [recentColors, setRecentColors] = useState<string[]>([]);
@@ -424,10 +424,10 @@ export function EditorToolbar({
         isActive={viewMode === "split"}
       />
       <ToolbarButton
-        icon={syncScroll ? <Link2 className="h-4 w-4" /> : <Link2Off className="h-4 w-4" />}
-        label={syncScroll ? "追従スクロール: ON（クリックで解除）" : "追従スクロール: OFF（クリックで有効化）"}
-        onClick={onSyncScrollToggle}
-        isActive={syncScroll}
+        icon={independentScroll ? <Link2Off className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
+        label={independentScroll ? "独立スクロール: ON（クリックで同期）" : "独立スクロール: OFF（クリックで独立）"}
+        onClick={onIndependentScrollToggle}
+        isActive={independentScroll}
         disabled={viewMode !== "split"}
       />
 
