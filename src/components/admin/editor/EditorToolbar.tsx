@@ -31,8 +31,6 @@ import {
   Eye,
   EyeOff,
   Columns,
-  Link2,
-  Link2Off,
   RefreshCw,
   Moon,
   Sun,
@@ -48,7 +46,6 @@ interface EditorToolbarProps {
   viewMode: ViewMode;
   isDark: boolean;
   isFullscreen: boolean;
-  independentScroll: boolean;
   canUndo: boolean;
   canRedo: boolean;
   onFormat: (format: string) => void;
@@ -68,7 +65,6 @@ interface EditorToolbarProps {
   onModeToggle: () => void;
   onThemeToggle: () => void;
   onFullscreenToggle: () => void;
-  onIndependentScrollToggle: () => void;
 }
 
 interface DropdownProps {
@@ -155,7 +151,6 @@ export function EditorToolbar({
   viewMode,
   isDark,
   isFullscreen,
-  independentScroll,
   canUndo,
   canRedo,
   onFormat,
@@ -175,7 +170,6 @@ export function EditorToolbar({
   onModeToggle,
   onThemeToggle,
   onFullscreenToggle,
-  onIndependentScrollToggle,
 }: EditorToolbarProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [recentColors, setRecentColors] = useState<string[]>([]);
@@ -422,13 +416,6 @@ export function EditorToolbar({
         shortcut="Ctrl+Shift+P"
         onClick={() => onViewModeChange("split")}
         isActive={viewMode === "split"}
-      />
-      <ToolbarButton
-        icon={independentScroll ? <Link2Off className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
-        label={independentScroll ? "独立スクロール: ON（クリックで同期）" : "独立スクロール: OFF（クリックで独立）"}
-        onClick={onIndependentScrollToggle}
-        isActive={independentScroll}
-        disabled={viewMode !== "split"}
       />
 
       <Separator />
