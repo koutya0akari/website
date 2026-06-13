@@ -53,6 +53,7 @@ export function RichEditor({
   const [redoStack, setRedoStack] = useState<string[]>([]);
   const [splitPosition, setSplitPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
+  const [syncScroll, setSyncScroll] = useState(true);
 
   // Dialog states
   const [linkDialogOpen, setLinkDialogOpen] = useState(false);
@@ -459,6 +460,8 @@ export function RichEditor({
 
   // Sync scroll between editor and preview
   const handleEditorScroll = useCallback(() => {
+    if (!syncScroll) return;
+
     const textarea = textareaRef.current;
     const preview = previewRef.current;
     if (!textarea || !preview || effectiveViewMode !== "split") return;
@@ -469,7 +472,12 @@ export function RichEditor({
 
     const scrollPercentage = textarea.scrollTop / scrollableEditorHeight;
     preview.scrollTop = scrollPercentage * (preview.scrollHeight - preview.clientHeight);
-  }, [effectiveViewMode]);
+  }, [effectiveViewMode, syncScroll]);
+
+  // Scroll sync toggle (追従スクロールの ON/OFF)
+  const handleSyncScrollToggle = useCallback(() => {
+    setSyncScroll((prev) => !prev);
+  }, []);
 
   // Handle content change
   const handleContentChange = useCallback(
@@ -507,6 +515,7 @@ export function RichEditor({
           viewMode={viewMode}
           isDark={isDark}
           isFullscreen={isFullscreen}
+          syncScroll={syncScroll}
           canUndo={undoStack.length > 0}
           canRedo={redoStack.length > 0}
           onFormat={handleFormat}
@@ -526,6 +535,7 @@ export function RichEditor({
           onModeToggle={handleModeToggle}
           onThemeToggle={handleThemeToggle}
           onFullscreenToggle={handleFullscreenToggle}
+          onSyncScrollToggle={handleSyncScrollToggle}
         />
 
         <div className="flex flex-1 overflow-hidden" style={{ minHeight: `${minHeight}px` }}>
