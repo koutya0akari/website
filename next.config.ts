@@ -12,7 +12,7 @@ const isDev = process.env.NODE_ENV !== "production";
 // bootstrap scripts and KaTeX emits inline styles; removing it requires a nonce
 // (tracked as a follow-up).
 function buildCsp({ allowEval }: { allowEval: boolean }): string {
-  const scriptSrc = ["'self'", "'unsafe-inline'", allowEval ? "'unsafe-eval'" : "", "https://giscus.app", "https://platform.twitter.com"]
+  const scriptSrc = ["'self'", "'unsafe-inline'", allowEval ? "'unsafe-eval'" : "", "https://giscus.app", "https://platform.twitter.com", "https://va.vercel-scripts.com"]
     .filter(Boolean)
     .join(" ");
 
@@ -22,7 +22,7 @@ function buildCsp({ allowEval }: { allowEval: boolean }): string {
   style-src 'self' 'unsafe-inline';
   img-src 'self' blob: data: https:;
   font-src 'self';
-  connect-src 'self' https://giscus.app https://api.github.com https://vitals.vercel-insights.com https://*.supabase.co;
+  connect-src 'self' https://giscus.app https://api.github.com https://vitals.vercel-insights.com https://va.vercel-scripts.com https://*.supabase.co;
   worker-src 'self' blob:;
   object-src 'none';
   base-uri 'self';

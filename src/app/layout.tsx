@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_JP, Signika_Negative } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 import { CommandPalette } from "@/components/command-palette";
 import { InteractiveBackground } from "@/components/interactive-background";
@@ -96,6 +97,7 @@ export default function RootLayout({
           </div>
           <CommandPalette />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
