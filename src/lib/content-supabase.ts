@@ -2,7 +2,7 @@ import "server-only";
 
 import type { AboutContent, ResourceItem, SiteContent } from "@/lib/types";
 import { getLectureNoteItems, mergeResourceItems, type ResourceRow } from "@/lib/resource-items";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 
 const SITE_KEY = "default";
 const ABOUT_KEY = "default";
@@ -41,7 +41,7 @@ function asArray<T>(val: unknown): T[] {
 }
 
 export async function getSiteContent(): Promise<SiteContent> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data, error } = await supabase.from("site").select("*").eq("key", SITE_KEY).maybeSingle();
 
   const defaultProfile = { description: "", details: [] };
@@ -90,7 +90,7 @@ export async function getSiteContent(): Promise<SiteContent> {
 }
 
 export async function getAboutContent(): Promise<AboutContent> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data, error } = await supabase.from("about").select("*").eq("key", ABOUT_KEY).maybeSingle();
 
   if (error || !data) {
@@ -109,7 +109,7 @@ export async function getAboutContent(): Promise<AboutContent> {
 }
 
 export async function getResourceItems(limit = 100): Promise<ResourceItem[]> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const [githubResources, { data, error }] = await Promise.all([
     getLectureNoteItems(),
     supabase

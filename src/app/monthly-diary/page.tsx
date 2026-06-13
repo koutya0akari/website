@@ -10,8 +10,7 @@ export const metadata: Metadata = {
   description: "月ごとの日記をまとめた一覧ページです。",
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export default async function MonthlyDiaryPage() {
   const entries = await getMonthlyDiaryEntries(100);

@@ -10,8 +10,7 @@ export const metadata: Metadata = {
   description: "文章メモをまとめた一覧ページです。",
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export default async function MemoPage() {
   const entries = await getMemoEntries(100);

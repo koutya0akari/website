@@ -4,8 +4,8 @@ import type { DiaryEntry } from "@/lib/types";
 import { getSortCandidateLimit, sortByPopularityDesc, sortByPublishedDesc } from "@/lib/diary-order";
 import { normalizeRichTextToHtml } from "@/lib/markdown";
 import { RESERVED_DIARY_FOLDER_EXCLUSION_FILTER } from "@/lib/monthly-diary-config";
-import { createAdminClient, createClient } from "@/lib/supabase/server";
-import { createExcerpt, escapeHtml } from "@/lib/utils";
+import { createAdminClient, createPublicClient } from "@/lib/supabase/server";
+import { createExcerpt, escapeHtml, markdownToPlainText } from "@/lib/utils";
 
 const MATH_DIARY_FOLDER = "Math Diary";
 
@@ -49,8 +49,34 @@ function normalizeDiary(row: SupabaseDiaryRow): DiaryEntry {
   };
 }
 
+// 一覧向けの軽量版。body は検索/抜粋でしか使われず常に stripHtml されるため、
+// 重い Markdown→HTML 変換を避けてプレーンテキストとして保持する。
+function normalizeDiaryListItem(row: SupabaseDiaryRow): DiaryEntry {
+  const plainBody = markdownToPlainText(row.body || "");
+  const summaryHtml = normalizeRichTextToHtml(row.summary || "");
+  const fallbackSummaryHtml = `<p>${escapeHtml(createExcerpt(plainBody))}</p>`;
+
+  return {
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
+    summary: summaryHtml || fallbackSummaryHtml,
+    body: plainBody,
+    folder: row.folder || undefined,
+    tags: row.tags || [],
+    heroImage: row.hero_image_url
+      ? {
+          url: row.hero_image_url,
+        }
+      : undefined,
+    publishedAt: row.published_at || row.created_at,
+    updatedAt: row.updated_at,
+    viewCount: row.view_count > 0 ? row.view_count : undefined,
+  };
+}
+
 export async function getDiaryEntries(limit = 50): Promise<DiaryEntry[]> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data, error } = await supabase
     .from("diary")
@@ -65,14 +91,14 @@ export async function getDiaryEntries(limit = 50): Promise<DiaryEntry[]> {
     return [];
   }
 
-  return sortByPublishedDesc((data || []).map(normalizeDiary)).slice(0, limit);
+  return sortByPublishedDesc((data || []).map(normalizeDiaryListItem)).slice(0, limit);
 }
 
 export async function getPopularDiaryEntries(
   limit = 5,
   excludeSlug?: string,
 ): Promise<DiaryEntry[]> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   let query = supabase
     .from("diary")
@@ -94,11 +120,11 @@ export async function getPopularDiaryEntries(
     return [];
   }
 
-  return sortByPopularityDesc((data || []).map(normalizeDiary)).slice(0, limit);
+  return sortByPopularityDesc((data || []).map(normalizeDiaryListItem)).slice(0, limit);
 }
 
 export async function getDiaryBySlug(slug: string): Promise<DiaryEntry | undefined> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data, error } = await supabase
     .from("diary")
@@ -146,7 +172,7 @@ export type ActivityYear = {
 };
 
 export async function getActivityByYear(): Promise<ActivityYear[]> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data, error } = await supabase
     .from("diary")

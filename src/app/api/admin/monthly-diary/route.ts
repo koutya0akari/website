@@ -1,3 +1,5 @@
+import { revalidatePath } from "next/cache";
+
 import { createClient } from "@/lib/supabase/server";
 import { MONTHLY_DIARY_FOLDER, MONTHLY_DIARY_FOLDERS } from "@/lib/monthly-diary-config";
 import { NextRequest, NextResponse } from "next/server";
@@ -91,6 +93,10 @@ export async function POST(request: NextRequest) {
       console.error("[API] Failed to create monthly diary entry:", error);
       return NextResponse.json({ error: "Failed to create entry" }, { status: 500 });
     }
+
+    revalidatePath("/");
+    revalidatePath("/monthly-diary");
+    if (data?.slug) revalidatePath(`/monthly-diary/${data.slug}`);
 
     return NextResponse.json({ data }, { status: 201 });
   } catch (error) {

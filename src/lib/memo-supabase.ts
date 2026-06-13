@@ -4,8 +4,8 @@ import type { DiaryEntry } from "@/lib/types";
 import { getSortCandidateLimit, sortByPublishedDesc } from "@/lib/diary-order";
 import { normalizeRichTextToHtml } from "@/lib/markdown";
 import { MEMO_FOLDER } from "@/lib/monthly-diary-config";
-import { createClient } from "@/lib/supabase/server";
-import { createExcerpt, escapeHtml } from "@/lib/utils";
+import { createPublicClient } from "@/lib/supabase/server";
+import { createExcerpt, escapeHtml, markdownToPlainText } from "@/lib/utils";
 
 type SupabaseMemoRow = {
   id: string;
@@ -47,8 +47,33 @@ function normalizeMemo(row: SupabaseMemoRow): DiaryEntry {
   };
 }
 
+// 一覧向けの軽量版（重い Markdown→HTML 変換を避ける）。詳細表示は normalizeMemo を使う。
+function normalizeMemoListItem(row: SupabaseMemoRow): DiaryEntry {
+  const plainBody = markdownToPlainText(row.body || "");
+  const summaryHtml = normalizeRichTextToHtml(row.summary || "");
+  const fallbackSummaryHtml = `<p>${escapeHtml(createExcerpt(plainBody))}</p>`;
+
+  return {
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
+    summary: summaryHtml || fallbackSummaryHtml,
+    body: plainBody,
+    folder: MEMO_FOLDER,
+    tags: row.tags || [],
+    heroImage: row.hero_image_url
+      ? {
+          url: row.hero_image_url,
+        }
+      : undefined,
+    publishedAt: row.published_at || row.created_at,
+    updatedAt: row.updated_at,
+    viewCount: row.view_count > 0 ? row.view_count : undefined,
+  };
+}
+
 export async function getMemoEntries(limit = 50): Promise<DiaryEntry[]> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data, error } = await supabase
     .from("diary")
@@ -63,11 +88,11 @@ export async function getMemoEntries(limit = 50): Promise<DiaryEntry[]> {
     return [];
   }
 
-  return sortByPublishedDesc((data || []).map(normalizeMemo)).slice(0, limit);
+  return sortByPublishedDesc((data || []).map(normalizeMemoListItem)).slice(0, limit);
 }
 
 export async function getMemoBySlug(slug: string): Promise<DiaryEntry | undefined> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
 
   const { data, error } = await supabase
     .from("diary")

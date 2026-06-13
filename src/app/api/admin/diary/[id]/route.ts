@@ -1,3 +1,5 @@
+import { revalidatePath } from "next/cache";
+
 import { createClient } from "@/lib/supabase/server";
 import {
   MEMO_FOLDER,
@@ -121,6 +123,10 @@ export async function PUT(
       return NextResponse.json({ error: "Failed to update entry" }, { status: 500 });
     }
 
+    revalidatePath("/");
+    revalidatePath("/diary");
+    if (data?.slug) revalidatePath(`/diary/${data.slug}`);
+
     return NextResponse.json({ data });
   } catch (error) {
     console.error("[API] Error:", error);
@@ -145,16 +151,22 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { error } = await supabase
+    const { data: deleted, error } = await supabase
       .from("diary")
       .delete()
       .eq("id", id)
-      .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER);
+      .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
+      .select("slug")
+      .maybeSingle();
 
     if (error) {
       console.error("[API] Failed to delete diary entry:", error);
       return NextResponse.json({ error: "Failed to delete entry" }, { status: 500 });
     }
+
+    revalidatePath("/");
+    revalidatePath("/diary");
+    if (deleted?.slug) revalidatePath(`/diary/${deleted.slug}`);
 
     return NextResponse.json({ success: true });
   } catch (error) {

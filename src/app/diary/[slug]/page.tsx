@@ -21,8 +21,7 @@ type PageProps = {
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.akari0koutya.com";
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export const dynamicParams = true;
 

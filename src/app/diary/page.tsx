@@ -12,8 +12,7 @@ export const metadata: Metadata = {
   description: "数学メモ。フォルダやタグ、検索で学習記録を絞り込めます。",
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export default async function DiaryPage() {
   const [diaries, popularDiaries] = await Promise.all([getDiaryEntries(100), getPopularDiaryEntries(6)]);

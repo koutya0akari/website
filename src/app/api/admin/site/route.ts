@@ -1,3 +1,5 @@
+import { revalidatePath } from "next/cache";
+
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { apiError } from "@/lib/api-response";
@@ -130,6 +132,9 @@ export async function PUT(request: NextRequest) {
     if (error) {
       return apiError("Failed to update settings", 500, error);
     }
+
+    revalidatePath("/");
+    revalidatePath("/about");
 
     return NextResponse.json({ data });
   } catch (error) {

@@ -1,3 +1,5 @@
+import { revalidatePath } from "next/cache";
+
 import { createClient } from "@/lib/supabase/server";
 import { MEMO_FOLDER } from "@/lib/monthly-diary-config";
 import { NextRequest, NextResponse } from "next/server";
@@ -91,6 +93,9 @@ export async function POST(request: NextRequest) {
       console.error("[API] Failed to create memo entry:", error);
       return NextResponse.json({ error: "Failed to create entry" }, { status: 500 });
     }
+
+    revalidatePath("/memo");
+    if (data?.slug) revalidatePath(`/memo/${data.slug}`);
 
     return NextResponse.json({ data }, { status: 201 });
   } catch (error) {

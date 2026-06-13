@@ -1,3 +1,5 @@
+import { revalidatePath } from "next/cache";
+
 import { createClient } from "@/lib/supabase/server";
 import { MONTHLY_DIARY_FOLDER, MONTHLY_DIARY_FOLDERS } from "@/lib/monthly-diary-config";
 import { NextRequest, NextResponse } from "next/server";
@@ -98,6 +100,10 @@ export async function PUT(
       return NextResponse.json({ error: "Failed to update entry" }, { status: 500 });
     }
 
+    revalidatePath("/");
+    revalidatePath("/monthly-diary");
+    if (data?.slug) revalidatePath(`/monthly-diary/${data.slug}`);
+
     return NextResponse.json({ data });
   } catch (error) {
     console.error("[API] Error:", error);
@@ -121,16 +127,22 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { error } = await supabase
+    const { data: deleted, error } = await supabase
       .from("diary")
       .delete()
       .eq("id", id)
-      .in("folder", [...MONTHLY_DIARY_FOLDERS]);
+      .in("folder", [...MONTHLY_DIARY_FOLDERS])
+      .select("slug")
+      .maybeSingle();
 
     if (error) {
       console.error("[API] Failed to delete monthly diary entry:", error);
       return NextResponse.json({ error: "Failed to delete entry" }, { status: 500 });
     }
+
+    revalidatePath("/");
+    revalidatePath("/monthly-diary");
+    if (deleted?.slug) revalidatePath(`/monthly-diary/${deleted.slug}`);
 
     return NextResponse.json({ success: true });
   } catch (error) {
