@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -38,6 +37,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const tags = (entry.tags ?? []).slice(0, 6).map((tag) => `#${tag.replace(/^#/, "")}`);
   const withTags = tags.length > 0 ? `${description} ${tags.join(" ")}` : description;
   const ogImage = `/api/og?title=${encodeURIComponent(entry.title)}&summary=${encodeURIComponent(description)}&tags=${encodeURIComponent(tags.join(" "))}&author=akari0koutya`;
+  const shareImage = entry.heroImage?.url ?? ogImage;
 
   return {
     title: entry.title,
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: "article",
       publishedTime: entry.publishedAt,
       modifiedTime: entry.updatedAt,
-      images: [{ url: ogImage }],
+      images: [{ url: shareImage }],
     },
     twitter: {
       card: "summary_large_image",
@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: withTags,
       creator: "@akari0koutya",
       site: "@akari0koutya",
-      images: [ogImage],
+      images: [shareImage],
     },
   };
 }
@@ -112,19 +112,6 @@ export default async function MonthlyDiaryDetailPage({ params }: PageProps) {
               </div>
             )}
           </JournalSection>
-
-          {entry.heroImage?.url && (
-            <div className="relative overflow-hidden rounded-2xl shadow-[0_18px_48px_rgba(2,8,20,0.22)] sm:rounded-3xl">
-              <Image
-                src={entry.heroImage.url}
-                alt={entry.heroImage.alt ?? entry.title}
-                width={entry.heroImage.width ?? 1600}
-                height={entry.heroImage.height ?? 900}
-                className="h-full w-full object-cover"
-                priority
-              />
-            </div>
-          )}
 
           <section className="min-w-0 rounded-[22px] bg-night-soft/75 p-4 shadow-[0_18px_48px_rgba(2,8,20,0.18)] sm:rounded-[32px] sm:p-8">
             <DiaryBody html={entry.body} />

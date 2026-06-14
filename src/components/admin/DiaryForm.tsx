@@ -318,12 +318,12 @@ export function DiaryForm({
         </div>
 
         <FileUpload
-          label="Hero Image"
+          label="共有サムネイル (OGP)"
           value={formData.heroImageUrl}
           onUrlChange={(url) => setFormData({ ...formData, heroImageUrl: url })}
           folder="diary"
           accept="image/*"
-          hint="記事のサムネイル画像をアップロードまたはURLを入力"
+          hint="リンク共有時(X / LINE など)のプレビュー画像。未設定の場合は自動生成画像を使用します"
         />
       </div>
 
