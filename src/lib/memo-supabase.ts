@@ -36,6 +36,11 @@ function normalizeMemo(row: SupabaseMemoRow): DiaryEntry {
     body: bodyHtml,
     folder: MEMO_FOLDER,
     tags: row.tags || [],
+    shareImage: row.hero_image_url
+      ? {
+          url: row.hero_image_url,
+        }
+      : undefined,
     heroImage: row.hero_image_url
       ? {
           url: row.hero_image_url,
@@ -61,6 +66,11 @@ function normalizeMemoListItem(row: SupabaseMemoRow): DiaryEntry {
     body: plainBody,
     folder: MEMO_FOLDER,
     tags: row.tags || [],
+    shareImage: row.hero_image_url
+      ? {
+          url: row.hero_image_url,
+        }
+      : undefined,
     heroImage: row.hero_image_url
       ? {
           url: row.hero_image_url,

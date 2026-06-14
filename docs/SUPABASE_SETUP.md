@@ -32,7 +32,7 @@ CREATE TABLE diary (
   folder TEXT,
   tags TEXT[],
   status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'published')),
-  hero_image_url TEXT,
+  hero_image_url TEXT, -- 共有画像（OGP）URL
   view_count INTEGER DEFAULT 0,
   published_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),

@@ -49,6 +49,7 @@ export async function GET(request: NextRequest) {
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <div
               style={{
+                display: "flex",
                 padding: "8px 14px",
                 borderRadius: "999px",
                 backgroundColor: "rgba(255,255,255,0.10)",
@@ -60,11 +61,12 @@ export async function GET(request: NextRequest) {
             >
               Akari Math Lab
             </div>
-            <div style={{ fontSize: "18px", color: "rgba(255,255,255,0.7)" }}>@{author}</div>
+            <div style={{ display: "flex", fontSize: "18px", color: "rgba(255,255,255,0.7)" }}>@{author}</div>
           </div>
 
           <div
             style={{
+              display: "flex",
               fontSize: "62px",
               lineHeight: "1.1",
               fontWeight: 700,
@@ -76,18 +78,18 @@ export async function GET(request: NextRequest) {
           </div>
 
           {subtitle && (
-            <div style={{ fontSize: "28px", color: "rgba(255,255,255,0.80)", lineHeight: "1.25" }}>{subtitle}</div>
+            <div style={{ display: "flex", fontSize: "28px", color: "rgba(255,255,255,0.80)", lineHeight: "1.25" }}>{subtitle}</div>
           )}
 
           {summary && (
-            <div style={{ fontSize: "26px", color: "rgba(255,255,255,0.75)", lineHeight: "1.35" }}>
+            <div style={{ display: "flex", fontSize: "26px", color: "rgba(255,255,255,0.75)", lineHeight: "1.35" }}>
               {summary}
             </div>
           )}
         </div>
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ fontSize: "18px", color: "rgba(255,255,255,0.55)" }}>www.akari0koutya.com</div>
+          <div style={{ display: "flex", fontSize: "18px", color: "rgba(255,255,255,0.55)" }}>www.akari0koutya.com</div>
         </div>
       </div>
     ),

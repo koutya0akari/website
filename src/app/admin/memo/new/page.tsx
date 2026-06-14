@@ -27,7 +27,7 @@ export default function NewMemoPage() {
           tags: data.tags,
           status: data.status,
           publishedAt: data.publishedAt,
-          heroImageUrl: data.heroImageUrl,
+          shareImageUrl: data.shareImageUrl,
         }),
       });
 

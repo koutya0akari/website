@@ -33,6 +33,9 @@ const signika = Signika_Negative({
   display: "swap",
 });
 
+const defaultOgImage =
+  "/api/og?title=Akari%20Math%20Lab&summary=%E6%95%B0%E5%AD%A6%E3%81%AE%E5%8B%89%E5%BC%B7%E3%83%95%E3%82%A9%E3%83%BC%E3%82%AB%E3%82%B9%E3%81%A8%E7%99%BA%E8%A1%A8%E8%B3%87%E6%96%99%E3%82%92%E3%81%BE%E3%81%A8%E3%82%81%E3%81%9F%E3%83%9D%E3%83%BC%E3%83%88%E3%83%95%E3%82%A9%E3%83%AA%E3%82%AA%E3%80%82&author=akari0koutya";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.akari0koutya.com"),
   title: {
@@ -49,10 +52,10 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/tako.png",
-        width: 512,
-        height: 512,
-        alt: "Akari Math Lab logo",
+        url: defaultOgImage,
+        width: 1200,
+        height: 630,
+        alt: "Akari Math Lab share image",
       },
     ],
   },
@@ -60,7 +63,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Akari Math Lab",
     description: " Akari の研究・発表資料をまとめたポートフォリオ。",
-    images: ["/tako.png"],
+    images: [defaultOgImage],
   },
   icons: {
     icon: "/tako.png",

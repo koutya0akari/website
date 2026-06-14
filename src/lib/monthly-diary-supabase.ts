@@ -36,6 +36,11 @@ function normalizeMonthlyDiary(row: SupabaseMonthlyDiaryRow): DiaryEntry {
     body: bodyHtml,
     folder: MONTHLY_DIARY_FOLDER,
     tags: row.tags || [],
+    shareImage: row.hero_image_url
+      ? {
+          url: row.hero_image_url,
+        }
+      : undefined,
     heroImage: row.hero_image_url
       ? {
           url: row.hero_image_url,
@@ -61,6 +66,11 @@ function normalizeMonthlyDiaryListItem(row: SupabaseMonthlyDiaryRow): DiaryEntry
     body: plainBody,
     folder: MONTHLY_DIARY_FOLDER,
     tags: row.tags || [],
+    shareImage: row.hero_image_url
+      ? {
+          url: row.hero_image_url,
+        }
+      : undefined,
     heroImage: row.hero_image_url
       ? {
           url: row.hero_image_url,

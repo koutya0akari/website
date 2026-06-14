@@ -14,7 +14,8 @@ export interface DiaryFormData {
   tags: string[];
   status: "draft" | "published";
   publishedAt: string;
-  heroImageUrl: string;
+  shareImageUrl: string;
+  heroImageUrl?: string;
 }
 
 export interface DiarySubmitOptions {
@@ -47,7 +48,7 @@ function createInitialFormData(initialData?: Partial<DiaryFormData>): DiaryFormD
     publishedAt:
       initialData?.publishedAt ||
       (initialData?.status === "published" ? new Date().toISOString().slice(0, 16) : ""),
-    heroImageUrl: initialData?.heroImageUrl || "",
+    shareImageUrl: initialData?.shareImageUrl || initialData?.heroImageUrl || "",
   };
 }
 
@@ -97,7 +98,16 @@ export function DiaryForm({
       if (!storedDraft) return;
 
       const parsedDraft = JSON.parse(storedDraft) as Partial<DiaryFormData>;
-      const restoredData = { ...createInitialFormData(initialData), ...parsedDraft };
+      const restoredData = {
+        ...createInitialFormData(initialData),
+        ...parsedDraft,
+        shareImageUrl:
+          parsedDraft.shareImageUrl ||
+          parsedDraft.heroImageUrl ||
+          initialData?.shareImageUrl ||
+          initialData?.heroImageUrl ||
+          "",
+      };
       setFormData(restoredData);
       lastSavedSerializedRef.current = serializeFormData(restoredData);
       setAutoSaveStatus("saved");
@@ -318,12 +328,12 @@ export function DiaryForm({
         </div>
 
         <FileUpload
-          label="共有サムネイル (OGP)"
-          value={formData.heroImageUrl}
-          onUrlChange={(url) => setFormData({ ...formData, heroImageUrl: url })}
+          label="共有画像 (OGP)"
+          value={formData.shareImageUrl}
+          onUrlChange={(url) => setFormData({ ...formData, shareImageUrl: url })}
           folder="diary"
           accept="image/*"
-          hint="リンク共有時(X / LINE など)のプレビュー画像。未設定の場合は自動生成画像を使用します"
+          hint="リンク共有時（X / LINE など）のプレビュー画像。URL を直接指定するか、画像をアップロードできます。未設定の場合は自動生成画像を使用します。推奨: 1200 x 630px"
         />
       </div>
 

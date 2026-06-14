@@ -142,7 +142,7 @@ POST   /api/diary/view           # 閲覧数カウント
 | folder | TEXT | フォルダ分類 |
 | tags | TEXT[] | タグ配列 |
 | status | TEXT | draft / published |
-| hero_image_url | TEXT | ヒーロー画像 URL |
+| hero_image_url | TEXT | 共有画像（OGP）URL |
 | view_count | INTEGER | 閲覧数 |
 | published_at | TIMESTAMPTZ | 公開日時 |
 | created_at | TIMESTAMPTZ | 作成日時 |

@@ -47,7 +47,7 @@ export default function EditMonthlyDiaryPage() {
           : data.status === "published"
             ? new Date().toISOString().slice(0, 16)
             : "",
-        heroImageUrl: data.hero_image_url || "",
+        shareImageUrl: data.hero_image_url || "",
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -71,7 +71,7 @@ export default function EditMonthlyDiaryPage() {
           tags: data.tags,
           status: data.status,
           publishedAt: data.publishedAt,
-          heroImageUrl: data.heroImageUrl,
+          shareImageUrl: data.shareImageUrl,
         }),
       });
 

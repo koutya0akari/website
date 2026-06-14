@@ -38,6 +38,11 @@ function normalizeDiary(row: SupabaseDiaryRow): DiaryEntry {
     body: bodyHtml,
     folder: row.folder || undefined,
     tags: row.tags || [],
+    shareImage: row.hero_image_url
+      ? {
+          url: row.hero_image_url,
+        }
+      : undefined,
     heroImage: row.hero_image_url
       ? {
           url: row.hero_image_url,
@@ -64,6 +69,11 @@ function normalizeDiaryListItem(row: SupabaseDiaryRow): DiaryEntry {
     body: plainBody,
     folder: row.folder || undefined,
     tags: row.tags || [],
+    shareImage: row.hero_image_url
+      ? {
+          url: row.hero_image_url,
+        }
+      : undefined,
     heroImage: row.hero_image_url
       ? {
           url: row.hero_image_url,

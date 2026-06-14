@@ -66,7 +66,19 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { title, slug, body: content, summary, folder, tags, status, publishedAt, heroImageUrl } = body;
+    const {
+      title,
+      slug,
+      body: content,
+      summary,
+      folder,
+      tags,
+      status,
+      publishedAt,
+      shareImageUrl,
+      heroImageUrl,
+    } = body;
+    const ogImageUrl = shareImageUrl ?? heroImageUrl;
 
     // Validate required fields
     if (!title || !slug) {
@@ -110,7 +122,7 @@ export async function PUT(
         tags: tags || null,
         status: status || "draft",
         published_at: publishedAt || null,
-        hero_image_url: heroImageUrl || null,
+        hero_image_url: ogImageUrl || null,
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)

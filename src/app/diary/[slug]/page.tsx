@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const tags = (entry.tags ?? []).slice(0, 6).map((tag) => `#${tag.replace(/^#/, "")}`);
   const withTags = tags.length > 0 ? `${description} ${tags.join(" ")}` : description;
   const ogImage = `/api/og?title=${encodeURIComponent(entry.title)}&summary=${encodeURIComponent(description)}&tags=${encodeURIComponent(tags.join(" "))}&author=akari0koutya`;
-  const shareImage = entry.heroImage?.url ?? ogImage;
+  const shareImage = entry.shareImage?.url ?? entry.heroImage?.url ?? ogImage;
 
   return {
     title: entry.title,
