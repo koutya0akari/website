@@ -67,6 +67,7 @@ export function DiaryForm({
 }: DiaryFormProps) {
   const [formData, setFormData] = useState<DiaryFormData>(() => createInitialFormData(initialData));
   const [tagInput, setTagInput] = useState("");
+  const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [autoSaveStatus, setAutoSaveStatus] = useState<AutoSaveStatus>("saved");
@@ -117,6 +118,26 @@ export function DiaryForm({
       window.localStorage.removeItem(draftStorageKey);
     }
   }, [draftStorageKey, initialData, isNew]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const folder = initialData?.folder;
+    const query = folder ? `?folder=${encodeURIComponent(folder)}` : "";
+
+    fetch(`/api/admin/tags${query}`, { signal: controller.signal })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { tags?: string[] } | null) => {
+        if (data && Array.isArray(data.tags)) {
+          setTagSuggestions(data.tags);
+        }
+      })
+      .catch((error) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        console.error("Failed to load tag suggestions:", error);
+      });
+
+    return () => controller.abort();
+  }, [initialData?.folder]);
 
   useEffect(() => {
     if (serializedFormData === lastSavedSerializedRef.current) {
@@ -210,14 +231,19 @@ export function DiaryForm({
     setFormData({ ...formData, slug });
   };
 
-  const addTag = () => {
-    if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
+  const addTagValue = (value: string) => {
+    const trimmed = value.trim();
+    if (trimmed && !formData.tags.includes(trimmed)) {
       setFormData({
         ...formData,
-        tags: [...formData.tags, tagInput.trim()],
+        tags: [...formData.tags, trimmed],
       });
-      setTagInput("");
     }
+  };
+
+  const addTag = () => {
+    addTagValue(tagInput);
+    setTagInput("");
   };
 
   const removeTag = (tag: string) => {
@@ -226,6 +252,11 @@ export function DiaryForm({
       tags: formData.tags.filter((t) => t !== tag),
     });
   };
+
+  const availableTagSuggestions = useMemo(
+    () => tagSuggestions.filter((tag) => !formData.tags.includes(tag)),
+    [tagSuggestions, formData.tags],
+  );
 
   const autoSaveLabel = useMemo(() => {
     if (autoSaveStatus === "dirty") return "未保存";
@@ -344,6 +375,7 @@ export function DiaryForm({
             type="text"
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
+            list={`${formKey}-tag-suggestions`}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
@@ -353,6 +385,11 @@ export function DiaryForm({
             className="min-w-0 flex-1 rounded-md border border-night-muted bg-night px-4 py-2 text-gray-100 placeholder-gray-500 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
             placeholder="Add a tag and press Enter"
           />
+          <datalist id={`${formKey}-tag-suggestions`}>
+            {tagSuggestions.map((tag) => (
+              <option key={tag} value={tag} />
+            ))}
+          </datalist>
           <button
             type="button"
             onClick={addTag}
@@ -378,6 +415,24 @@ export function DiaryForm({
             </span>
           ))}
         </div>
+        {availableTagSuggestions.length > 0 && (
+          <div className="mt-3">
+            <p className="mb-1.5 text-xs text-gray-400">既存のタグから選択</p>
+            <div className="flex flex-wrap gap-2">
+              {availableTagSuggestions.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => addTagValue(tag)}
+                  className="flex items-center gap-1 rounded-md border border-night-muted bg-night px-3 py-1 text-sm text-gray-300 transition-colors hover:border-accent hover:text-accent"
+                >
+                  <span aria-hidden>+</span>
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
