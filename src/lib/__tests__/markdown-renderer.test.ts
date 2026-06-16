@@ -62,6 +62,26 @@ describe("renderMarkdownToHtml", () => {
     expect(html).not.toContain("user-content-");
   });
 
+  it("preserves bibliography fragment links and ref-* anchor targets", () => {
+    const html = renderMarkdownToHtml(
+      [
+        "See [BS13](#ref-BhattScholzeProEtale).",
+        "",
+        '<div id="ref-BhattScholzeProEtale">Bhatt-Scholze</div>',
+      ].join("\n"),
+    );
+
+    expect(html).toContain('<a href="#ref-BhattScholzeProEtale">BS13</a>');
+    expect(html).toContain('<div id="ref-BhattScholzeProEtale">Bhatt-Scholze</div>');
+    expect(html).not.toContain("user-content-ref-BhattScholzeProEtale");
+  });
+
+  it("keeps non-reference raw HTML ids clobber-prefixed", () => {
+    const html = renderMarkdownToHtml('<div id="location">content</div>');
+
+    expect(html).toContain('id="user-content-location"');
+  });
+
   // Sanitization guards — these encode the security contract of the pipeline.
   it("strips <script> tags", () => {
     const html = renderMarkdownToHtml('<script>alert(1)</script>\n\nhello');
