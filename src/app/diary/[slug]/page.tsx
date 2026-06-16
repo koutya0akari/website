@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { DiaryBody } from "@/components/diary/diary-body";
-import { DiaryEngagement } from "@/components/diary/diary-engagement";
 import { Comments } from "@/components/diary/comments";
 import { TableOfContents } from "@/components/diary/table-of-contents";
 import { DiaryViewBadge } from "@/components/diary/view-badge";
@@ -113,7 +112,6 @@ export default async function DiaryDetailPage({ params }: PageProps) {
             )}
           </JournalSection>
           <DiaryBody html={entry.body} />
-          <DiaryEngagement entryId={entry.id} title={entry.title} summary={entry.summary} />
           <Comments />
         </article>
         {/* Desktop Sidebar */}

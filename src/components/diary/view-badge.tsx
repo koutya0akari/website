@@ -44,7 +44,6 @@ export function DiaryViewBadge({ slug, initialCount }: DiaryViewBadgeProps) {
 
   return (
     <span className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1 text-xs text-white/82">
-      <span aria-hidden>👁️</span>
       {label}
     </span>
   );
