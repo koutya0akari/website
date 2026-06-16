@@ -1,8 +1,10 @@
+import { Fragment, type ReactNode } from "react";
 import parse, { DOMNode, Element, Text, domToReact, type HTMLReactParserOptions } from "html-react-parser";
 import katex from "katex";
 
 import { LinkCard } from "@/components/ui/link-card";
 import { RichTabs, type RichTabItem } from "@/components/diary/rich-tabs";
+import { hasInlineLink, tokenizeInlineLinks } from "@/lib/inline-links";
 
 type DiaryBodyProps = {
   html: string;
@@ -147,6 +149,25 @@ function hasClass(node: Element, className: string): boolean {
   return classAttr.split(/\s+/).includes(className);
 }
 
+// 生 HTML ブロック（math-callout 等）の内側に残った `[label](href)` リンク記法を
+// クライアント側で <a> へ展開する。サーバー側の Markdown パイプラインはこれらを
+// 解釈しないため、数式処理と同じくここで補完する。
+const renderTextWithLinks = (text: string, keyPrefix: string): ReactNode => {
+  const tokens = tokenizeInlineLinks(text);
+  if (tokens.length === 1 && tokens[0].type === "text") {
+    return tokens[0].value;
+  }
+  return tokens.map((token, index) =>
+    token.type === "link" ? (
+      <a key={`${keyPrefix}-${index}`} href={token.href}>
+        {token.label}
+      </a>
+    ) : (
+      <Fragment key={`${keyPrefix}-${index}`}>{token.value}</Fragment>
+    ),
+  );
+};
+
 const replaceNode = (domNode: DOMNode) => {
   // 0. タブ (:::tabs) の置換処理 — クライアント側で切り替え可能にする
   if (domNode instanceof Element && domNode.name === "div" && hasClass(domNode, "md-tabs")) {
@@ -195,11 +216,13 @@ const replaceNode = (domNode: DOMNode) => {
     }
   }
 
-  // 2. 数式の置換処理
+  // 2. 数式・インラインリンクの置換処理
   if (domNode instanceof Text) {
     const text = domNode.data;
-    // 数式パターンがない場合は何もしない
-    if (!text.match(/\$\$|\\\[|\\\(|\$|\\begin\{/)) {
+    const hasMath = /\$\$|\\\[|\\\(|\$|\\begin\{/.test(text);
+    const hasLink = hasInlineLink(text);
+    // 数式もリンク記法も無い場合は何もしない
+    if (!hasMath && !hasLink) {
       return;
     }
 
@@ -211,41 +234,41 @@ const replaceNode = (domNode: DOMNode) => {
 
     const parts = text.split(regex);
 
-    if (parts.length === 1) return;
+    // 数式が無くリンクのみの場合は、テキスト全体をリンク化する
+    if (parts.length === 1) {
+      return <>{renderTextWithLinks(text, "lnk")}</>;
+    }
 
     return (
       <>
-        {parts.map((part) => {
-          // splitの結果、キャプチャグループも配列に含まれるため、環境名などはスキップする必要があるかもしれないが
-          // 今回の正規表現だと、環境名 (\2) が配列に入ってくる可能性がある。
-          // 単純な split だと挙動が難しいので、matchAll を使うか、あるいは単純に判定する。
-
-          // ここでは簡易的に判定する
+        {parts.map((part, index) => {
+          // splitの結果、キャプチャグループ（環境名 \2）も配列に含まれるため除外する
           if (!part) return null;
 
-          // 環境名のキャプチャグループが混ざるのを防ぐため、正規表現を調整するか、ここで判定
-          if (part.match(/^[a-z]+$/)) return null; // 環境名っぽいものは無視（雑だが）
+          // 環境名っぽいキャプチャグループは無視（雑だが）
+          if (part.match(/^[a-z]+$/)) return null;
 
           // Display Math
           if (part.startsWith("$$") && part.endsWith("$$")) {
-            return parse(renderMath(part.slice(2, -2), true));
+            return <Fragment key={index}>{parse(renderMath(part.slice(2, -2), true))}</Fragment>;
           }
           if (part.startsWith("\\[") && part.endsWith("\\]")) {
-            return parse(renderMath(part.slice(2, -2), true));
+            return <Fragment key={index}>{parse(renderMath(part.slice(2, -2), true))}</Fragment>;
           }
           if (part.match(/^\\begin\{([a-z]+)\*?\}/)) {
-            return parse(renderMath(part, true));
+            return <Fragment key={index}>{parse(renderMath(part, true))}</Fragment>;
           }
 
           // Inline Math
           if (part.startsWith("\\(") && part.endsWith("\\)")) {
-            return parse(renderMath(part.slice(2, -2), false));
+            return <Fragment key={index}>{parse(renderMath(part.slice(2, -2), false))}</Fragment>;
           }
           if (part.startsWith("$") && part.endsWith("$")) {
-            return parse(renderMath(part.slice(1, -1), false));
+            return <Fragment key={index}>{parse(renderMath(part.slice(1, -1), false))}</Fragment>;
           }
 
-          return part;
+          // 数式以外の素のテキスト部分に残ったリンク記法を展開する
+          return <Fragment key={index}>{renderTextWithLinks(part, `p${index}`)}</Fragment>;
         })}
       </>
     );
