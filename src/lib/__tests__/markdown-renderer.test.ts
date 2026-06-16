@@ -76,7 +76,20 @@ describe("renderMarkdownToHtml", () => {
     expect(html).not.toContain("user-content-ref-BhattScholzeProEtale");
   });
 
-  it("keeps non-reference raw HTML ids clobber-prefixed", () => {
+  it("restores hyphen-namespaced cross-reference anchor targets (prop-/dfn-/thm-/rem-)", () => {
+    for (const id of [
+      "prop-compact-hausdorff-proetale-comparison",
+      "dfn-2-9",
+      "thm-main",
+      "rem-2-24",
+    ]) {
+      const html = renderMarkdownToHtml(`<div id="${id}" class="math-callout">x</div>`);
+      expect(html).toContain(`id="${id}"`);
+      expect(html).not.toContain(`user-content-${id}`);
+    }
+  });
+
+  it("keeps non-namespaced (single-word) raw HTML ids clobber-prefixed", () => {
     const html = renderMarkdownToHtml('<div id="location">content</div>');
 
     expect(html).toContain('id="user-content-location"');
