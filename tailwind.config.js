@@ -9,9 +9,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        night: "#08110f",
-        "night-soft": "#10231f",
-        "night-muted": "#1e312c",
+        night: "#0a0a0a",
+        "night-soft": "#141414",
+        "night-muted": "#1f1f1f",
         accent: "#61e3ba",
         highlight: "#efc968",
         parchment: "#fdf5e7",
@@ -24,10 +24,7 @@ module.exports = {
         content: "1180px",
       },
       boxShadow: {
-        card: "0 20px 50px rgba(2, 6, 23, 0.4)",
-      },
-      backgroundImage: {
-        "grid-line": "linear-gradient(transparent 95%, rgba(255,255,255,0.08) 100%)",
+        card: "none",
       },
     },
   },

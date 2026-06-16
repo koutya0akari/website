@@ -12,11 +12,7 @@ export function SeminarSection({ seminars }: SeminarSectionProps) {
   const themes = seminars && seminars.length > 0 ? seminars : defaultSeminarThemes.map((t, i) => ({ ...t, id: String(i) }));
 
   return (
-    <section className="relative overflow-hidden rounded-[22px] border border-transparent bg-gradient-to-br from-white/5 via-night-soft/40 to-night-soft/80 p-5 sm:rounded-[32px] sm:p-8">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-3 rounded-[22px] border border-transparent sm:rounded-[28px]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(100,210,255,0.08),transparent_40%),radial-gradient(circle_at_85%_10%,rgba(247,181,0,0.07),transparent_35%)] sm:bg-[radial-gradient(circle_at_15%_15%,rgba(100,210,255,0.12),transparent_40%),radial-gradient(circle_at_85%_10%,rgba(247,181,0,0.1),transparent_35%)]" />
-      </div>
+    <section className="relative overflow-hidden rounded-2xl border border-white/10 bg-night-soft p-5 sm:p-8">
       <div className="relative flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[11px] uppercase tracking-[0.35em] text-white/55">Seminars</p>
@@ -28,10 +24,7 @@ export function SeminarSection({ seminars }: SeminarSectionProps) {
           <SpotlightCard
             key={theme.title}
             className="relative h-full space-y-3 overflow-hidden bg-white/5 p-5 sm:p-6"
-            spotlightColor="rgba(247, 181, 0, 0.25)"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/10" />
-            <div className="absolute -right-16 top-0 h-28 w-28 rotate-12 rounded-full bg-highlight/15 blur-2xl" />
             <div className="relative space-y-2">
               <h3 className="text-lg font-semibold text-white">{theme.title}</h3>
               <p className="text-sm text-white/75">{theme.summary}</p>

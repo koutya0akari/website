@@ -19,10 +19,7 @@ export function SiteFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative border-t border-transparent bg-night/80 backdrop-blur-sm">
-      {/* Decorative gradient */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
-
+    <footer className="relative border-t border-white/10 bg-night">
       <div className="mx-auto max-w-content px-6 py-12">
         <div className="grid gap-8 md:grid-cols-3">
           {/* Brand */}
@@ -88,7 +85,7 @@ export function SiteFooter() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-transparent pt-6 text-xs text-white/40 sm:flex-row">
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-white/40 sm:flex-row">
           <p>© {currentYear} Akari Math Lab. All rights reserved.</p>
           <p className="flex items-center gap-1">
             Built with <Heart className="h-3 w-3 text-red-400" /> using Next.js + Supabase

@@ -7,6 +7,7 @@ import { Comments } from "@/components/diary/comments";
 import { TableOfContents } from "@/components/diary/table-of-contents";
 import { DiaryViewBadge } from "@/components/diary/view-badge";
 import { JournalSection } from "@/components/journal/journal-section";
+import { KaTeXProvider } from "@/components/math/katex-provider";
 import { ReadingTime } from "@/components/reading-time";
 import { ShareToX } from "@/components/share-to-x";
 import { MATH_DIARY_LABEL, MATH_DIARY_OVERLINE } from "@/lib/diary-labels";
@@ -82,6 +83,7 @@ export default async function DiaryDetailPage({ params }: PageProps) {
 
   return (
     <div className="mx-auto max-w-content px-4 py-8 sm:px-6 sm:py-12">
+      <KaTeXProvider />
       <Link href="/diary" className="text-sm text-accent underline-offset-4 hover:underline">
         ← {MATH_DIARY_LABEL} 一覧へ戻る
       </Link>

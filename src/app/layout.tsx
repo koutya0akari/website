@@ -3,8 +3,6 @@ import { Inter, Noto_Sans_JP, Signika_Negative } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 
 import { CommandPalette } from "@/components/command-palette";
-import { InteractiveBackground } from "@/components/interactive-background";
-import { KaTeXProvider } from "@/components/math/katex-provider";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { SiteFooter } from "@/components/site-footer";
@@ -88,8 +86,6 @@ export default function RootLayout({
         </a>
         <ThemeProvider>
           <div className="flex min-h-screen flex-col">
-            <KaTeXProvider />
-            <InteractiveBackground />
             <ScrollProgress />
             <ScrollToTop />
             <SiteHeader />

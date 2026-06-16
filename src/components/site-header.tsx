@@ -3,14 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X, Search, Command } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
 
 import { SmartLink } from "@/components/smart-link";
 
 const NAV_ITEMS = [
   { label: "ホーム", href: "/" },
-  { label: "研究関心", href: "/#focus" },
-  { label: "プロジェクト", href: "/#projects" },
   { label: "数学メモ", href: "/diary" },
   { label: "メモ", href: "/memo" },
   { label: "日記", href: "/monthly-diary" },
@@ -22,7 +19,7 @@ export function SiteHeader() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-transparent bg-[#030817]/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-night/95">
       <div className="mx-auto flex max-w-content items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         <Link href="/" className="flex items-center gap-2 text-lg font-semibold tracking-wide">
           <span className="rounded-full bg-accent/20 px-3 py-1 text-sm font-medium text-accent">Akari</span>
@@ -76,29 +73,22 @@ export function SiteHeader() {
       </div>
 
       {/* Mobile Nav Overlay */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="border-b border-transparent bg-[#030817] md:hidden"
-          >
-            <nav className="flex flex-col gap-3 p-4 sm:gap-4 sm:p-6">
-              {NAV_ITEMS.map((item) => (
-                <SmartLink
-                  key={item.href}
-                  href={item.href}
-                  className="text-base text-white/80 transition hover:text-white"
-                  onClick={() => setIsOpen(false)}
-                >
-                  {item.label}
-                </SmartLink>
-              ))}
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isOpen && (
+        <div className="border-b border-white/10 bg-night md:hidden">
+          <nav className="flex flex-col gap-3 p-4 sm:gap-4 sm:p-6">
+            {NAV_ITEMS.map((item) => (
+              <SmartLink
+                key={item.href}
+                href={item.href}
+                className="text-base text-white/80 transition-colors hover:text-white"
+                onClick={() => setIsOpen(false)}
+              >
+                {item.label}
+              </SmartLink>
+            ))}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

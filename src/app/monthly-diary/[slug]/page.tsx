@@ -7,6 +7,7 @@ import { DiaryBody } from "@/components/diary/diary-body";
 import { TableOfContents } from "@/components/diary/table-of-contents";
 import { DiaryViewBadge } from "@/components/diary/view-badge";
 import { JournalSection } from "@/components/journal/journal-section";
+import { KaTeXProvider } from "@/components/math/katex-provider";
 import { ShareToX } from "@/components/share-to-x";
 import { MONTHLY_DIARY_LABEL, MONTHLY_DIARY_OVERLINE } from "@/lib/diary-labels";
 import { getMonthlyDiaryBySlug } from "@/lib/monthly-diary";
@@ -77,6 +78,7 @@ export default async function MonthlyDiaryDetailPage({ params }: PageProps) {
 
   return (
     <div className="mx-auto max-w-content px-4 py-8 sm:px-6 sm:py-12">
+      <KaTeXProvider />
       <Link href="/monthly-diary" className="text-sm text-accent underline-offset-4 hover:underline">
         ← {MONTHLY_DIARY_LABEL} 一覧へ戻る
       </Link>

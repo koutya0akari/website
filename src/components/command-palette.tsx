@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback, useRef, Fragment } from "react";
 import { useRouter } from "next/navigation";
 import type { Route } from "next";
-import { AnimatePresence, motion } from "framer-motion";
 import {
   Search,
   FileText,
@@ -194,26 +193,16 @@ export function CommandPalette() {
       </button>
 
       {/* Modal */}
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-              onClick={close}
-            />
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 z-50 bg-black/70"
+            onClick={close}
+          />
 
-            {/* Dialog */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: -20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -20 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed left-1/2 top-[15%] z-50 w-full max-w-xl -translate-x-1/2 overflow-hidden rounded-2xl border border-transparent bg-night-soft/95 shadow-2xl backdrop-blur-xl"
-            >
+          {/* Dialog */}
+          <div className="fixed left-1/2 top-[15%] z-50 w-full max-w-xl -translate-x-1/2 overflow-hidden rounded-2xl border border-white/10 bg-night-soft shadow-2xl">
               {/* Search Input */}
               <div className="flex items-center gap-3 border-b border-transparent px-4 py-3">
                 <Search className="h-5 w-5 text-white/40" />
@@ -302,10 +291,9 @@ export function CommandPalette() {
                 </div>
                 <span>Powered by Akari Math Lab</span>
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+          </div>
+        </>
+      )}
     </>
   );
 }

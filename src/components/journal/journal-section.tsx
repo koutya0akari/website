@@ -11,10 +11,10 @@ type JournalSectionProps = {
 };
 
 const variantClasses: Record<JournalSectionVariant, string> = {
-  home: "rounded-[22px] p-5 sm:p-8",
-  page: "rounded-[22px] p-5 sm:rounded-[36px] sm:p-10",
-  listing: "rounded-[22px] p-5 sm:rounded-[32px] sm:p-8",
-  detail: "rounded-[22px] p-5 sm:rounded-[32px] sm:p-9",
+  home: "rounded-2xl p-5 sm:p-8",
+  page: "rounded-2xl p-5 sm:p-10",
+  listing: "rounded-2xl p-5 sm:p-8",
+  detail: "rounded-2xl p-5 sm:p-9",
 };
 
 export function JournalSection({
@@ -25,7 +25,7 @@ export function JournalSection({
   return (
     <section
       className={cn(
-        "glass-panel relative overflow-hidden shadow-[var(--card-shadow)]",
+        "glass-panel relative overflow-hidden",
         variantClasses[variant],
         className,
       )}

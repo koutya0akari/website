@@ -1,6 +1,9 @@
 import { Fragment, type ReactNode } from "react";
 import parse, { DOMNode, Element, Text, domToReact, type HTMLReactParserOptions } from "html-react-parser";
 import katex from "katex";
+// KaTeX styles are scoped to article bodies (this component) rather than loaded
+// globally, so non-article pages (home/listings/about) stay lightweight.
+import "katex/dist/katex.min.css";
 
 import { LinkCard } from "@/components/ui/link-card";
 import { RichTabs, type RichTabItem } from "@/components/diary/rich-tabs";

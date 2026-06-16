@@ -11,7 +11,7 @@ export function FocusSection({ focuses }: FocusSectionProps) {
   return (
     <section
       id="focus"
-      className="glass-panel rounded-[22px] p-5 shadow-[var(--card-shadow)] sm:p-8"
+      className="glass-panel rounded-2xl p-5 sm:p-8"
     >
       <div className="relative z-10 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
         <div className="flex flex-col gap-3">
@@ -25,9 +25,8 @@ export function FocusSection({ focuses }: FocusSectionProps) {
           {focuses.map((focus, index) => (
             <article
               key={focus.id}
-              className="group relative overflow-hidden border border-highlight/20 bg-black/20 p-4 transition hover:-translate-y-1 hover:border-accent/60 sm:p-5"
+              className="group relative overflow-hidden rounded-lg border border-white/10 bg-white/5 p-4 transition-colors hover:border-accent/60 sm:p-5"
             >
-              <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-accent via-highlight to-accent/40" />
               <span className="absolute right-4 top-3 font-display text-4xl text-white/[0.05]">
                 {(index + 1).toString().padStart(2, "0")}
               </span>

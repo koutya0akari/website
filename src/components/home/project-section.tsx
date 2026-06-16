@@ -9,11 +9,7 @@ type ProjectSectionProps = {
 
 export function ProjectSection({ projects }: ProjectSectionProps) {
   return (
-    <section id="projects" className="relative overflow-hidden rounded-[22px] border border-transparent bg-white/5 p-5 sm:rounded-[32px] sm:p-8">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-3 rounded-[22px] border border-transparent sm:rounded-[28px]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_30%,rgba(100,210,255,0.08),transparent_40%),radial-gradient(circle_at_85%_20%,rgba(247,181,0,0.06),transparent_35%)] sm:bg-[radial-gradient(circle_at_12%_30%,rgba(100,210,255,0.12),transparent_40%),radial-gradient(circle_at_85%_20%,rgba(247,181,0,0.08),transparent_35%)]" />
-      </div>
+    <section id="projects" className="relative overflow-hidden rounded-2xl border border-white/10 bg-night-soft p-5 sm:p-8">
       <div className="relative flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[11px] uppercase tracking-[0.35em] text-white/55">Projects</p>
@@ -26,9 +22,7 @@ export function ProjectSection({ projects }: ProjectSectionProps) {
           <SpotlightCard
             key={project.id}
             className="relative h-full space-y-3 overflow-hidden bg-white/5 p-5 sm:p-6"
-            spotlightColor="rgba(100, 210, 255, 0.2)"
           >
-            <div className="absolute -right-14 top-0 h-24 w-24 rotate-12 rounded-full bg-accent/15 blur-3xl" />
             <h3 className="text-lg font-semibold text-white">{project.title}</h3>
             <RichText content={project.summary} className="prose-sm text-white/75" />
             <div className="space-y-2 text-sm text-white/70">
