@@ -8,21 +8,28 @@ import rehypeSanitize from "rehype-sanitize";
 import rehypeSlug from "rehype-slug";
 import rehypeKatex from "rehype-katex";
 import rehypeStringify from "rehype-stringify";
-import type { Element, Root, RootContent } from "hast";
 
 import { preprocessRichBlocks } from "@/lib/markdown-blocks";
 import { articleSanitizeSchema } from "@/lib/sanitize-schema";
 
+type RehypeNode = {
+  type: string;
+  properties?: {
+    id?: unknown;
+  };
+  children?: RehypeNode[];
+};
+
 const sanitizerClobberPrefix = articleSanitizeSchema.clobberPrefix ?? "user-content-";
 const referenceIdPattern = /^ref-[A-Za-z0-9][A-Za-z0-9_.:-]*$/;
 
-function isElement(node: Root | RootContent): node is Element {
+function isElement(node: RehypeNode): node is RehypeNode & { properties: NonNullable<RehypeNode["properties"]> } {
   return node.type === "element";
 }
 
 function restoreReferenceAnchorIds() {
-  return (tree: Root) => {
-    const visit = (node: Root | RootContent) => {
+  return (tree: RehypeNode) => {
+    const visit = (node: RehypeNode) => {
       if (isElement(node)) {
         const id = node.properties.id;
         if (typeof id === "string" && id.startsWith(sanitizerClobberPrefix)) {
@@ -33,7 +40,7 @@ function restoreReferenceAnchorIds() {
         }
       }
 
-      if ("children" in node) {
+      if (node.children) {
         for (const child of node.children) {
           visit(child);
         }
