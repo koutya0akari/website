@@ -95,6 +95,33 @@ describe("renderMarkdownToHtml", () => {
     expect(html).toContain('id="user-content-location"');
   });
 
+  it("allows iframes from allowed hosts (Google Maps embed)", () => {
+    const html = renderMarkdownToHtml(
+      '<iframe src="https://www.google.com/maps/d/embed?mid=abc123&ehbc=2E312F" width="640" height="480"></iframe>',
+    );
+    expect(html).toContain("<iframe");
+    expect(html).toContain('src="https://www.google.com/maps/d/embed?mid=abc123');
+    expect(html).toContain('width="640"');
+  });
+
+  it("strips iframes from disallowed hosts", () => {
+    const html = renderMarkdownToHtml('<iframe src="https://evil.example.com/x"></iframe>\n\nhello');
+    expect(html).not.toContain("<iframe");
+    expect(html).toContain("hello");
+  });
+
+  it("strips non-map iframes from otherwise allowed hosts", () => {
+    const html = renderMarkdownToHtml('<iframe src="https://www.google.com/search?q=maps"></iframe>\n\nhello');
+    expect(html).not.toContain("<iframe");
+    expect(html).toContain("hello");
+  });
+
+  it("strips non-https iframes even from allowed hosts", () => {
+    const html = renderMarkdownToHtml('<iframe src="http://www.google.com/maps"></iframe>\n\nhi');
+    expect(html).not.toContain("<iframe");
+    expect(html).toContain("hi");
+  });
+
   // Sanitization guards — these encode the security contract of the pipeline.
   it("strips <script> tags", () => {
     const html = renderMarkdownToHtml('<script>alert(1)</script>\n\nhello');

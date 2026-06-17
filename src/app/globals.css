@@ -278,3 +278,12 @@ html.light .prose .math-callout--proposition {
 .prose-preserve-whitespace :where(p, li, blockquote, td, th):not(:where(pre *, code *)) {
   white-space: pre-wrap;
 }
+
+/* 本文に埋め込まれた iframe（Google マップ等）をレスポンシブ・マットに表示 */
+.prose iframe {
+  display: block;
+  max-width: 100%;
+  margin: 1.5rem 0;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+}
