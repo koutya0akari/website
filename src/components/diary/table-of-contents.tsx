@@ -80,7 +80,7 @@ export function TableOfContents({ html }: TableOfContentsProps) {
 
   return (
     <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto">
-      <div className="rounded-2xl border border-transparent bg-night-soft/80 backdrop-blur-sm">
+      <div className="rounded-2xl border border-transparent bg-night-soft">
         {/* Header */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}

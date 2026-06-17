@@ -50,7 +50,7 @@ export function LinkCard({ url }: { url: string }) {
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="my-4 flex items-center gap-2 break-all rounded-lg border border-transparent bg-white/5 p-4 text-accent hover:underline"
+        className="my-4 flex items-center gap-2 break-all rounded-lg border border-transparent bg-night-muted p-4 text-accent hover:underline"
       >
         <ExternalLink size={16} />
         {url}
@@ -60,7 +60,7 @@ export function LinkCard({ url }: { url: string }) {
 
   if (loading) {
     return (
-      <div className="my-4 h-[120px] w-full animate-pulse rounded-xl border border-transparent bg-white/5" />
+      <div className="my-4 h-[120px] w-full animate-pulse rounded-xl border border-transparent bg-night-muted" />
     );
   }
 
@@ -77,7 +77,7 @@ export function LinkCard({ url }: { url: string }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="not-prose group my-6 flex w-full flex-col overflow-hidden rounded-xl border border-white/10 bg-night-soft/70 text-left no-underline shadow-[0_14px_36px_rgba(2,8,20,0.18)] transition hover:border-accent/50 hover:bg-night-soft md:min-h-[136px] md:flex-row"
+      className="not-prose group my-6 flex w-full flex-col overflow-hidden rounded-xl border border-white/10 bg-night-soft text-left no-underline transition hover:border-accent/50 hover:bg-night-soft md:min-h-[136px] md:flex-row"
     >
       <div className="flex min-w-0 flex-1 flex-col justify-between gap-4 p-4 sm:p-5">
         <div className="min-w-0 space-y-2">
@@ -103,7 +103,7 @@ export function LinkCard({ url }: { url: string }) {
           <span className="line-clamp-1 min-w-0 break-all">{data.siteName || hostname}</span>
         </div>
       </div>
-      <div className="flex aspect-[16/9] w-full shrink-0 items-center justify-center overflow-hidden border-t border-white/10 bg-white/[0.04] md:aspect-auto md:w-[220px] md:border-l md:border-t-0">
+      <div className="flex aspect-[16/9] w-full shrink-0 items-center justify-center overflow-hidden border-t border-white/10 md:aspect-auto md:w-[220px] md:border-l md:border-t-0">
         {previewSrc ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -124,7 +124,7 @@ export function LinkCard({ url }: { url: string }) {
             }}
           />
         ) : (
-          <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-2xl font-semibold text-white/70">
+          <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-white/10 bg-night-muted text-2xl font-semibold text-white/70">
             {fallbackInitial || <ExternalLink className="h-7 w-7" aria-hidden="true" />}
           </div>
         )}

@@ -174,14 +174,14 @@ export function ResourceList() {
                 </div>
 
                 <div className="flex flex-wrap gap-2 text-xs">
-                  <span className="rounded-md bg-white/5 px-2 py-1 text-gray-300">
+                  <span className="rounded-md bg-night-muted px-2 py-1 text-gray-300">
                     {resource.source === "github" ? "GitHub PDF" : "手動追加"}
                   </span>
                   <span
                     className={`rounded-md px-2 py-1 ${
                       resource.has_metadata
                         ? "bg-accent/10 text-accent"
-                        : "bg-white/5 text-gray-400"
+                        : "bg-night-muted text-gray-400"
                     }`}
                   >
                     {resource.has_metadata ? "補足あり" : "補足なし"}
@@ -258,14 +258,14 @@ export function ResourceList() {
                   <td className="px-4 py-3">
                     <div className="font-medium text-white">{resource.title}</div>
                     <div className="mt-1 flex flex-wrap gap-2 text-xs">
-                      <span className="rounded-md bg-white/5 px-2 py-1 text-gray-300">
+                      <span className="rounded-md bg-night-muted px-2 py-1 text-gray-300">
                         {resource.source === "github" ? "GitHub PDF" : "手動追加"}
                       </span>
                       <span
                         className={`rounded-md px-2 py-1 ${
                           resource.has_metadata
                             ? "bg-accent/10 text-accent"
-                            : "bg-white/5 text-gray-400"
+                            : "bg-night-muted text-gray-400"
                         }`}
                       >
                         {resource.has_metadata ? "補足あり" : "補足なし"}

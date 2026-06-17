@@ -106,7 +106,7 @@ export default async function DiaryDetailPage({ params }: PageProps) {
             {entry.tags?.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2 text-xs text-white/60">
                 {entry.tags.map((tag) => (
-                  <span key={tag} className="tag-chip !border-0 bg-white/5">
+                  <span key={tag} className="tag-chip !border-0 bg-night-muted">
                     #{tag}
                   </span>
                 ))}

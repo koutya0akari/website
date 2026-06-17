@@ -73,7 +73,7 @@ export function SiteFooter() {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-transparent bg-white/5 text-white/50 transition hover:border-accent/50 hover:bg-accent/10 hover:text-accent"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-transparent bg-night-muted text-white/50 transition hover:border-accent/50 hover:bg-accent/10 hover:text-accent"
                     aria-label={link.label}
                   >
                     <Icon className="h-5 w-5" />

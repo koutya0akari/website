@@ -29,7 +29,7 @@ export function MonthlyDiarySection({ entries }: MonthlyDiarySectionProps) {
 
       <div className="relative mt-4 grid gap-5 lg:grid-cols-2">
         {entries.length === 0 ? (
-          <div className="rounded-[18px] border border-highlight/20 bg-black/15 p-6 text-sm text-white/62">
+          <div className="rounded-[18px] border border-highlight/20 bg-night p-6 text-sm text-white/62">
             日記を準備中です。
           </div>
         ) : (

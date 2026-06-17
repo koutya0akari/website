@@ -24,7 +24,7 @@ export function PopularDiaries({ entries }: PopularDiariesProps) {
 
   return (
     <aside>
-      <div className="glass-panel rounded-[20px] p-5 shadow-[var(--card-shadow)]">
+      <div className="glass-panel rounded-[20px] p-5">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="space-y-1">
             <p className="text-[11px] uppercase tracking-[0.28em] text-white/50">Popular</p>
@@ -39,10 +39,10 @@ export function PopularDiaries({ entries }: PopularDiariesProps) {
               <Link
                 key={entry.id}
                 href={`/diary/${entry.slug}`}
-                className="group block border border-highlight/20 bg-black/20 px-4 py-3 transition duration-150 hover:-translate-y-0.5 hover:border-accent/40"
+                className="group block border border-highlight/20 bg-night px-4 py-3 transition duration-150 hover:-translate-y-0.5 hover:border-accent/40"
               >
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center border border-highlight/25 bg-accent/85 text-sm font-semibold text-night shadow-[0_10px_24px_rgba(2,9,7,0.22)]">
+                  <div className="flex h-10 w-10 items-center justify-center border border-highlight/25 bg-accent/85 text-sm font-semibold text-night">
                     #{index + 1}
                   </div>
                   <div className="flex-1 space-y-1">
@@ -94,7 +94,7 @@ export function PopularDiariesGrid({ entries }: PopularDiariesProps) {
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 {/* ランキングバッジ */}
-                <div className="flex h-8 w-8 items-center justify-center border border-highlight/25 bg-accent/85 text-xs font-bold text-night shadow-[0_10px_24px_rgba(2,9,7,0.22)]">
+                <div className="flex h-8 w-8 items-center justify-center border border-highlight/25 bg-accent/85 text-xs font-bold text-night">
                   #{index + 1}
                 </div>
                 <span className="text-xs uppercase tracking-[0.2em] text-white/60">
@@ -123,7 +123,7 @@ export function PopularDiariesGrid({ entries }: PopularDiariesProps) {
               {entry.tags && entry.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 text-xs text-white/60">
                   {entry.tags.slice(0, 3).map((tag) => (
-                    <span key={tag} className="tag-chip !border-0 bg-white/5">
+                    <span key={tag} className="tag-chip !border-0 bg-night-muted">
                       #{tag}
                     </span>
                   ))}

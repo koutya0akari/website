@@ -55,7 +55,7 @@ export async function ActivitySection() {
   const mergedActivities = mergeActivities(manualActivities, githubActivity);
 
   return (
-    <section className="relative overflow-hidden rounded-[22px] border border-transparent bg-night-soft/80 p-5 sm:rounded-[32px] sm:p-8">
+    <section className="relative overflow-hidden rounded-[22px] border border-transparent bg-night-soft p-5 sm:rounded-[32px] sm:p-8">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-3 rounded-[22px] border border-transparent sm:rounded-[28px]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(100,210,255,0.08),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(247,181,0,0.06),transparent_35%)] sm:bg-[radial-gradient(circle_at_20%_20%,rgba(100,210,255,0.12),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(247,181,0,0.08),transparent_35%)]" />
@@ -93,7 +93,7 @@ export async function ActivitySection() {
                         rel="noopener noreferrer"
                         className="text-white/80 underline-offset-2 hover:text-white hover:underline"
                       >
-                        <code className="rounded bg-white/5 px-1 py-0.5 font-mono text-xs">
+                        <code className="rounded bg-night-muted px-1 py-0.5 font-mono text-xs">
                           {commit.sha.slice(0, 7)}
                         </code>{" "}
                         {commit.message.length > 50

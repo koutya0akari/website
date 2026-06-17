@@ -107,7 +107,7 @@ export default async function MonthlyDiaryDetailPage({ params }: PageProps) {
             {entry.tags.length > 0 && (
               <div className="mt-5 flex flex-wrap gap-2 text-xs text-white/60">
                 {entry.tags.map((tag) => (
-                  <span key={tag} className="tag-chip !border-0 bg-white/5">
+                  <span key={tag} className="tag-chip !border-0 bg-night-muted">
                     #{tag}
                   </span>
                 ))}
@@ -115,7 +115,7 @@ export default async function MonthlyDiaryDetailPage({ params }: PageProps) {
             )}
           </JournalSection>
 
-          <section className="min-w-0 rounded-[22px] bg-night-soft/75 p-4 shadow-[0_18px_48px_rgba(2,8,20,0.18)] sm:rounded-[32px] sm:p-8">
+          <section className="min-w-0 rounded-[22px] bg-night-soft p-4 sm:rounded-[32px] sm:p-8">
             <DiaryBody html={entry.body} />
           </section>
           <Comments />

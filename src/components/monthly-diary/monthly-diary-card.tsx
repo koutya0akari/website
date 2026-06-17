@@ -45,7 +45,7 @@ export function MonthlyDiaryCard({ entry, compact = false }: MonthlyDiaryCardPro
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap gap-2 text-[11px] text-white/55 sm:text-xs">
               {visibleTags.map((tag) => (
-                <span key={tag} className="tag-chip border-highlight/20 bg-black/15">
+                <span key={tag} className="tag-chip border-highlight/20 bg-night">
                   #{tag}
                 </span>
               ))}

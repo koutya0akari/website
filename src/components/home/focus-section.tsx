@@ -25,7 +25,7 @@ export function FocusSection({ focuses }: FocusSectionProps) {
           {focuses.map((focus, index) => (
             <article
               key={focus.id}
-              className="group relative overflow-hidden rounded-lg border border-white/10 bg-white/5 p-4 transition-colors hover:border-accent/60 sm:p-5"
+              className="group relative overflow-hidden rounded-lg border border-white/10 bg-night-muted p-4 transition-colors hover:border-accent/60 sm:p-5"
             >
               <span className="absolute right-4 top-3 font-display text-4xl text-white/[0.05]">
                 {(index + 1).toString().padStart(2, "0")}

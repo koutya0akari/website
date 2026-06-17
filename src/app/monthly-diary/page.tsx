@@ -27,7 +27,7 @@ export default async function MonthlyDiaryPage() {
       </JournalSection>
 
       {entries.length === 0 ? (
-        <div className="glass-panel rounded-[20px] p-5 text-white/62 shadow-[var(--card-shadow)] sm:p-8">
+        <div className="glass-panel rounded-[20px] p-5 text-white/62 sm:p-8">
           日記を準備中です。
         </div>
       ) : (

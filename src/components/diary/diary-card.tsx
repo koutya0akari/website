@@ -53,7 +53,7 @@ export function DiaryCard({
       {!compact && entry.tags?.length > 0 && (
         <div className="flex flex-wrap gap-2 text-[11px] text-white/60 sm:text-xs">
           {entry.tags.map((tag) => (
-            <span key={tag} className="tag-chip border-highlight/20 bg-black/15">
+            <span key={tag} className="tag-chip border-highlight/20 bg-night">
               #{tag}
             </span>
           ))}

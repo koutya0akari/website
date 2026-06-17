@@ -13,7 +13,7 @@ type ResourceSectionProps = {
 
 export function ResourceSection({ resources }: ResourceSectionProps) {
   return (
-    <section className="relative overflow-hidden rounded-[22px] border border-transparent bg-white/5 p-5 sm:rounded-[32px] sm:p-8">
+    <section className="relative overflow-hidden rounded-[22px] border border-transparent bg-night-muted p-5 sm:rounded-[32px] sm:p-8">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-3 rounded-[22px] border border-transparent sm:rounded-[28px]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(100,210,255,0.08),transparent_40%),radial-gradient(circle_at_85%_10%,rgba(247,181,0,0.08),transparent_35%)] sm:bg-[radial-gradient(circle_at_20%_20%,rgba(100,210,255,0.12),transparent_40%),radial-gradient(circle_at_85%_10%,rgba(247,181,0,0.12),transparent_35%)]" />

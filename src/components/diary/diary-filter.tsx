@@ -58,7 +58,7 @@ export function DiaryFilter({
             <button
               type="button"
               onClick={() => setFolder(null)}
-              className={`rounded-full px-3 py-1.5 sm:px-4 sm:py-1 ${!folder ? "bg-accent text-black" : "bg-white/10 text-white/70"}`}
+              className={`rounded-full px-3 py-1.5 sm:px-4 sm:py-1 ${!folder ? "bg-accent text-black" : "bg-night-muted text-white/70"}`}
             >
               All folders
             </button>
@@ -67,7 +67,7 @@ export function DiaryFilter({
                 key={name}
                 type="button"
                 onClick={() => setFolder((prev) => (prev === name ? null : name))}
-                className={`rounded-full px-3 py-1.5 sm:px-4 sm:py-1 ${folder === name ? "bg-accent text-black" : "bg-white/10 text-white/70"}`}
+                className={`rounded-full px-3 py-1.5 sm:px-4 sm:py-1 ${folder === name ? "bg-accent text-black" : "bg-night-muted text-white/70"}`}
               >
                 {getDiaryDisplayLabel(name, name)}
               </button>
@@ -79,7 +79,7 @@ export function DiaryFilter({
             <button
               type="button"
               onClick={() => setTag(null)}
-              className={`rounded-full px-2.5 py-1 sm:px-3 ${!tag ? "bg-accent/12 text-accent" : "bg-white/5 text-white/60"}`}
+              className={`rounded-full px-2.5 py-1 sm:px-3 ${!tag ? "bg-accent/12 text-accent" : "bg-night-muted text-white/60"}`}
             >
               All tags
             </button>
@@ -89,7 +89,7 @@ export function DiaryFilter({
                 type="button"
                 onClick={() => setTag((prev) => (prev === item ? null : item))}
                 className={`rounded-full px-2.5 py-1 sm:px-3 ${
-                  tag === item ? "bg-accent/12 text-accent" : "bg-white/5 text-white/60"
+                  tag === item ? "bg-accent/12 text-accent" : "bg-night-muted text-white/60"
                 }`}
               >
                 #{item}

@@ -14,11 +14,11 @@ export function RichTabs({ items }: { items: RichTabItem[] }) {
   if (items.length === 0) return null;
 
   return (
-    <div className="not-prose my-6 overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
+    <div className="not-prose my-6 overflow-hidden rounded-xl border border-white/10">
       <div
         role="tablist"
         aria-label="タブ"
-        className="flex flex-wrap gap-1 border-b border-white/10 bg-white/[0.02] p-1.5"
+        className="flex flex-wrap gap-1 border-b border-white/10 p-1.5"
       >
         {items.map((item, index) => {
           const isActive = index === active;
@@ -34,7 +34,7 @@ export function RichTabs({ items }: { items: RichTabItem[] }) {
               className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
                 isActive
                   ? "bg-accent/20 text-accent"
-                  : "text-gray-400 hover:bg-white/5 hover:text-gray-200"
+                  : "text-gray-400 hover:bg-night-muted hover:text-gray-200"
               }`}
             >
               {item.label}

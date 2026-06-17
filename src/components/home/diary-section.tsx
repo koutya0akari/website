@@ -28,7 +28,7 @@ export function DiarySection({ diaries }: DiarySectionProps) {
       </div>
       <div className="relative mt-4 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {diaries.length === 0 ? (
-          <div className="border border-highlight/20 bg-black/15 p-6 text-sm text-white/62 md:col-span-2 lg:col-span-3">
+          <div className="border border-highlight/20 bg-night p-6 text-sm text-white/62 md:col-span-2 lg:col-span-3">
             数学メモを準備中です。
           </div>
         ) : (

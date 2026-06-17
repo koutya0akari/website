@@ -20,7 +20,7 @@ export function ProjectSection({ projects }: ProjectSectionProps) {
         {projects.map((project) => (
           <SpotlightCard
             key={project.id}
-            className="relative h-full space-y-3 overflow-hidden bg-white/5 p-5 sm:p-6"
+            className="relative h-full space-y-3 overflow-hidden bg-night-muted p-5 sm:p-6"
           >
             <h3 className="text-lg font-semibold text-white">{project.title}</h3>
             <RichText content={project.summary} className="prose-sm text-white/75" />
@@ -32,7 +32,7 @@ export function ProjectSection({ projects }: ProjectSectionProps) {
                     content={item}
                     as="span"
                     inline
-                    className="rounded-2xl bg-black/20 px-2 py-1"
+                    className="rounded-2xl bg-night px-2 py-1"
                     prose={false}
                   />
                 </div>

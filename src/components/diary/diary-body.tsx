@@ -65,7 +65,7 @@ function BareImageLink({ url }: { url: string }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="my-6 block rounded-xl border border-white/10 bg-white/[0.03] p-1 transition hover:border-accent/50"
+      className="my-6 block rounded-xl border border-white/10 p-1 transition hover:border-accent/50"
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -113,7 +113,7 @@ function normalizeYouTubeVideoId(videoId: string | null | undefined): string | n
 
 function YouTubeEmbed({ url, videoId }: { url: string; videoId: string }) {
   return (
-    <div className="not-prose my-6 overflow-hidden rounded-xl border border-white/10 bg-black shadow-[0_14px_36px_rgba(2,8,20,0.22)]">
+    <div className="not-prose my-6 overflow-hidden rounded-xl border border-white/10 bg-black">
       <div className="relative aspect-video w-full">
         <iframe
           src={`https://www.youtube.com/embed/${videoId}`}
