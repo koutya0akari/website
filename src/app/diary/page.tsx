@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import { PopularDiariesGrid } from "@/components/diary/popular-diaries";
 import { DiaryFilter } from "@/components/diary/diary-filter";
@@ -22,9 +21,6 @@ export default async function DiaryPage() {
       <JournalSection variant="listing">
         <p className="text-xs uppercase tracking-[0.4em] text-white/60">{MATH_DIARY_OVERLINE}</p>
         <h1 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">{MATH_DIARY_LABEL}</h1>
-        <Link href="/resources" className="mt-5 inline-flex text-sm text-accent underline underline-offset-4">
-          公開資料を見る
-        </Link>
       </JournalSection>
 
       {/* よく読まれている記事 - 最上部に横並びで表示 */}

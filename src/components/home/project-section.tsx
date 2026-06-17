@@ -12,9 +12,8 @@ export function ProjectSection({ projects }: ProjectSectionProps) {
     <section id="projects" className="relative overflow-hidden rounded-2xl border border-white/10 bg-night-soft p-5 sm:p-8">
       <div className="relative flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.35em] text-white/55">Projects</p>
-          <h2 className="text-2xl font-semibold text-white sm:text-3xl">進行中のプロジェクト</h2>
-          <p className="text-sm text-white/70">資料づくり、ウェブ制作、数理系コミュニティの試みなど。</p>
+          <p className="text-[11px] uppercase tracking-[0.35em] text-white/55">Activities</p>
+          <h2 className="text-2xl font-semibold text-white sm:text-3xl">活動</h2>
         </div>
       </div>
       <div className="relative mt-4 grid gap-6 md:grid-cols-2 xl:grid-cols-3">

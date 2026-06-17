@@ -3,10 +3,8 @@ import type { Metadata } from "next";
 import { DiarySection } from "@/components/home/diary-section";
 import { FocusSection } from "@/components/home/focus-section";
 import { HeroSection } from "@/components/home/hero-section";
-import { LearningSection } from "@/components/home/learning-section";
 import { MonthlyDiarySection } from "@/components/home/monthly-diary-section";
 import { ProjectSection } from "@/components/home/project-section";
-import { SeminarSection } from "@/components/home/seminar-section";
 import { FadeIn } from "@/components/motion/fade-in";
 import { directContacts, personalIntro as defaultPersonalIntro } from "@/data/home";
 import { getSiteContent } from "@/lib/content";
@@ -65,12 +63,6 @@ export default async function HomePage() {
           </FadeIn>
           <FadeIn delay={0.1}>
             <FocusSection focuses={site.focuses} />
-          </FadeIn>
-          <FadeIn delay={0.1}>
-            <LearningSection learningThemes={site.learningThemes} />
-          </FadeIn>
-          <FadeIn delay={0.1}>
-            <SeminarSection seminars={site.seminars} />
           </FadeIn>
           <FadeIn delay={0.1}>
             <ProjectSection projects={site.projects} />

@@ -12,20 +12,22 @@ type MonthlyDiarySectionProps = {
 export function MonthlyDiarySection({ entries }: MonthlyDiarySectionProps) {
   return (
     <JournalSection variant="home">
-      <div className="relative flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-        <div className="max-w-2xl">
+      <div className="relative flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
           <p className="text-[11px] uppercase tracking-[0.32em] text-white/60">{MONTHLY_DIARY_OVERLINE}</p>
-          <h2 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">{MONTHLY_DIARY_LABEL}</h2>
+          <h2 className="text-2xl font-semibold text-white sm:text-3xl">{MONTHLY_DIARY_LABEL}</h2>
         </div>
-        <Link
-          href="/monthly-diary"
-          className="inline-flex w-full justify-center rounded-md border border-accent/20 bg-accent/10 px-4 py-2 text-sm text-white/85 transition-colors hover:bg-accent/15 hover:text-accent sm:w-fit"
-        >
-          日記一覧へ
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/monthly-diary"
+            className="w-full rounded-full bg-accent/10 px-4 py-2 text-center text-sm text-white/85 transition-colors hover:bg-accent/15 hover:text-accent sm:w-auto"
+          >
+            すべて見る
+          </Link>
+        </div>
       </div>
 
-      <div className="relative mt-6 grid gap-5 lg:grid-cols-2">
+      <div className="relative mt-4 grid gap-5 lg:grid-cols-2">
         {entries.length === 0 ? (
           <div className="rounded-[18px] border border-highlight/20 bg-black/15 p-6 text-sm text-white/62">
             日記を準備中です。
