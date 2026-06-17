@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus, Pencil, Trash2, ExternalLink, FileText, Search, Filter } from "lucide-react";
+import { Plus, Pencil, Trash2, ExternalLink, FileText, Search, Filter, Eye, EyeOff, ArrowUp, ArrowDown } from "lucide-react";
 
 interface Resource {
   id: string;
@@ -13,6 +13,8 @@ interface Resource {
   category: string;
   file_url: string | null;
   external_url: string | null;
+  hidden: boolean;
+  sort_order: number;
   created_at: string | null;
   updated_at: string | null;
   has_metadata: boolean;
@@ -21,6 +23,7 @@ interface Resource {
 export function ResourceList() {
   const [resources, setResources] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
@@ -58,6 +61,56 @@ export function ResourceList() {
     } catch (error) {
       console.error("Failed to delete resource:", error);
     }
+  };
+
+  const persistArrangement = async (ordered: Resource[]) => {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/admin/resources/arrange", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: ordered.map((r) => ({
+            metadataId: r.metadata_id,
+            fileUrl: r.file_url,
+            title: r.title,
+            category: r.category,
+            externalUrl: r.external_url,
+            hidden: r.hidden,
+          })),
+        }),
+      });
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+        alert(payload?.detail || payload?.error || "保存に失敗しました（resources テーブルに hidden / sort_order 列が必要です）");
+      }
+    } catch (error) {
+      console.error("Failed to save resource arrangement:", error);
+      alert("保存に失敗しました");
+    } finally {
+      setSaving(false);
+      // サーバーの確定状態（新規作成された metadata_id / 並び順）へ同期する。
+      await fetchResources();
+    }
+  };
+
+  const toggleHidden = async (resource: Resource) => {
+    if (saving) return;
+    const next = resources.map((r) =>
+      r.id === resource.id ? { ...r, hidden: !r.hidden } : r,
+    );
+    setResources(next);
+    await persistArrangement(next);
+  };
+
+  const moveResource = async (index: number, direction: -1 | 1) => {
+    if (saving) return;
+    const target = index + direction;
+    if (target < 0 || target >= resources.length) return;
+    const next = [...resources];
+    [next[index], next[target]] = [next[target], next[index]];
+    setResources(next);
+    await persistArrangement(next);
   };
 
   const buildCreateHref = (resource: Resource) => {
@@ -98,6 +151,9 @@ export function ResourceList() {
     return matchesSearch && matchesCategory;
   });
 
+  // 並べ替えは全体の順序を入れ替えるため、検索/絞り込み中は無効化して混乱を防ぐ。
+  const reorderDisabled = Boolean(searchTerm || categoryFilter);
+
   if (loading) {
     return <div className="text-center text-gray-400">読み込み中...</div>;
   }
@@ -108,7 +164,8 @@ export function ResourceList() {
         <div className="min-w-0 space-y-1">
           <h1 className="text-2xl font-bold text-white">Resources</h1>
           <p className="text-sm text-gray-400">
-            GitHub の PDF は自動で並びます。ここでは説明やカテゴリを追加できます。
+            GitHub の PDF も含め、表示/非表示の切り替えと掲載順の変更ができます。説明やカテゴリの追加も可能です。
+            {reorderDisabled && <span className="text-amber-400">（検索/絞り込み中は並べ替えできません）</span>}
           </p>
         </div>
         <Link
@@ -163,8 +220,10 @@ export function ResourceList() {
       ) : (
         <>
         <div className="space-y-3 md:hidden">
-          {filteredResources.map((resource) => (
-            <div key={resource.id} className="rounded-lg border border-night-muted bg-night-soft p-4">
+          {filteredResources.map((resource) => {
+            const fullIndex = resources.findIndex((r) => r.id === resource.id);
+            return (
+            <div key={resource.id} className={`rounded-lg border border-night-muted bg-night-soft p-4 ${resource.hidden ? "opacity-50" : ""}`}>
               <div className="flex flex-col gap-3">
                 <div className="min-w-0">
                   <div className="break-words font-medium text-white">{resource.title}</div>
@@ -186,6 +245,9 @@ export function ResourceList() {
                   >
                     {resource.has_metadata ? "補足あり" : "補足なし"}
                   </span>
+                  {resource.hidden && (
+                    <span className="rounded-md bg-night-muted px-2 py-1 text-gray-400">非表示</span>
+                  )}
                   {resource.category ? (
                     <span className="rounded-md bg-accent/10 px-2 py-1 text-accent">
                       {resource.category}
@@ -208,7 +270,29 @@ export function ResourceList() {
                   )}
                 </div>
 
-                <div className="flex flex-wrap justify-end gap-2 border-t border-night-muted pt-3">
+                <div className="flex flex-wrap items-center justify-end gap-2 border-t border-night-muted pt-3">
+                  <button
+                    onClick={() => moveResource(fullIndex, -1)}
+                    disabled={saving || reorderDisabled || fullIndex <= 0}
+                    className="inline-flex items-center gap-1 rounded-md border border-night-muted px-3 py-2 text-sm text-gray-300 hover:bg-night-muted hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+                  >
+                    <ArrowUp className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => moveResource(fullIndex, 1)}
+                    disabled={saving || reorderDisabled || fullIndex >= resources.length - 1}
+                    className="inline-flex items-center gap-1 rounded-md border border-night-muted px-3 py-2 text-sm text-gray-300 hover:bg-night-muted hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+                  >
+                    <ArrowDown className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => toggleHidden(resource)}
+                    disabled={saving}
+                    className="inline-flex items-center gap-2 rounded-md border border-night-muted px-3 py-2 text-sm text-gray-300 hover:bg-night-muted hover:text-white disabled:opacity-50"
+                  >
+                    {resource.hidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {resource.hidden ? "表示" : "非表示"}
+                  </button>
                   {resource.metadata_id ? (
                     <>
                       <Link
@@ -238,7 +322,8 @@ export function ResourceList() {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="hidden overflow-hidden rounded-lg border border-night-muted md:block">
@@ -253,8 +338,10 @@ export function ResourceList() {
               </tr>
             </thead>
             <tbody className="divide-y divide-night-muted">
-              {filteredResources.map((resource) => (
-                <tr key={resource.id} className="hover:bg-night-soft/50">
+              {filteredResources.map((resource) => {
+                const fullIndex = resources.findIndex((r) => r.id === resource.id);
+                return (
+                <tr key={resource.id} className={`hover:bg-night-soft/50 ${resource.hidden ? "opacity-50" : ""}`}>
                   <td className="px-4 py-3">
                     <div className="font-medium text-white">{resource.title}</div>
                     <div className="mt-1 flex flex-wrap gap-2 text-xs">
@@ -270,6 +357,9 @@ export function ResourceList() {
                       >
                         {resource.has_metadata ? "補足あり" : "補足なし"}
                       </span>
+                      {resource.hidden && (
+                        <span className="rounded-md bg-night-muted px-2 py-1 text-gray-400">非表示</span>
+                      )}
                     </div>
                     {resource.description && (
                       <div className="mt-1 text-sm text-gray-400 line-clamp-1">{resource.description}</div>
@@ -301,7 +391,31 @@ export function ResourceList() {
                     {formatDate(resource.updated_at) ?? formatDate(resource.created_at) ?? "-"}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-center justify-end gap-1">
+                      <button
+                        onClick={() => moveResource(fullIndex, -1)}
+                        disabled={saving || reorderDisabled || fullIndex <= 0}
+                        className="rounded p-1.5 text-gray-400 hover:bg-night-muted hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+                        title="上へ"
+                      >
+                        <ArrowUp className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => moveResource(fullIndex, 1)}
+                        disabled={saving || reorderDisabled || fullIndex >= resources.length - 1}
+                        className="rounded p-1.5 text-gray-400 hover:bg-night-muted hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+                        title="下へ"
+                      >
+                        <ArrowDown className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => toggleHidden(resource)}
+                        disabled={saving}
+                        className="rounded p-1.5 text-gray-400 hover:bg-night-muted hover:text-white disabled:opacity-50"
+                        title={resource.hidden ? "表示にする" : "非表示にする"}
+                      >
+                        {resource.hidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
                       {resource.metadata_id ? (
                         <>
                           <Link
@@ -322,16 +436,17 @@ export function ResourceList() {
                       ) : (
                         <Link
                           href={buildCreateHref(resource)}
-                          className="inline-flex items-center gap-2 rounded-md border border-night-muted px-3 py-1.5 text-sm text-gray-300 hover:border-accent hover:text-accent"
+                          className="inline-flex items-center gap-2 rounded-md border border-night-muted px-2 py-1.5 text-xs text-gray-300 hover:border-accent hover:text-accent"
+                          title="説明を追加"
                         >
                           <Plus className="h-4 w-4" />
-                          説明を追加
                         </Link>
                       )}
                     </div>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>

@@ -14,6 +14,8 @@ export type ResourceRow = {
   category: string | null;
   file_url: string | null;
   external_url: string | null;
+  hidden?: boolean | null;
+  sort_order?: number | null;
   created_at?: string | null;
   updated_at?: string | null;
 };
@@ -44,10 +46,27 @@ export type AdminResourceItem = {
   category: string;
   file_url: string | null;
   external_url: string | null;
+  hidden: boolean;
+  sort_order: number;
   created_at: string | null;
   updated_at: string | null;
   has_metadata: boolean;
 };
+
+/** メタデータ行が無い項目は sort_order=0（既定）として扱う。 */
+function resolveSortOrder(row: ResourceRow | undefined | null): number {
+  const value = row?.sort_order;
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
+}
+
+function isHidden(row: ResourceRow | undefined | null): boolean {
+  return row?.hidden === true;
+}
+
+/** sort_order 昇順、同値は元の並び（GitHub→DB）を保つ安定ソート。 */
+function bySortOrder<T extends { _order: number; _index: number }>(a: T, b: T): number {
+  return a._order - b._order || a._index - b._index;
+}
 
 function encodeGitHubPath(path: string): string {
   return path
@@ -184,35 +203,35 @@ export function mergeResourceItems(databaseRows: ResourceRow[], githubItems: Git
   const mergedGitHubItems = githubItems.map((item) => {
     const metadata = metadataMap.get(item.fileUrl);
 
-    if (!metadata) {
-      return {
-        id: `lecture-note-${item.path}`,
-        title: item.title,
-        description: resolvePublicDescription({
+    const resourceItem: ResourceItem = metadata
+      ? {
+          id: metadata.id,
+          title: metadata.title || item.title,
+          description: resolvePublicDescription({
+            title: metadata.title || item.title,
+            description: metadata.description ?? item.description,
+            category: metadata.category || item.category,
+            fileUrl: item.fileUrl,
+            externalUrl: metadata.external_url,
+          }),
+          category: metadata.category || item.category,
+          fileUrl: item.fileUrl,
+        }
+      : {
+          id: `lecture-note-${item.path}`,
           title: item.title,
-          description: item.description,
+          description: resolvePublicDescription({
+            title: item.title,
+            description: item.description,
+            category: item.category,
+            fileUrl: item.fileUrl,
+            externalUrl: null,
+          }),
           category: item.category,
           fileUrl: item.fileUrl,
-          externalUrl: null,
-        }),
-        category: item.category,
-        fileUrl: item.fileUrl,
-      };
-    }
+        };
 
-    return {
-      id: metadata.id,
-      title: metadata.title || item.title,
-      description: resolvePublicDescription({
-        title: metadata.title || item.title,
-        description: metadata.description ?? item.description,
-        category: metadata.category || item.category,
-        fileUrl: item.fileUrl,
-        externalUrl: metadata.external_url,
-      }),
-      category: metadata.category || item.category,
-      fileUrl: item.fileUrl,
-    };
+    return { resourceItem, hidden: isHidden(metadata), order: resolveSortOrder(metadata) };
   });
 
   const standaloneDatabaseItems = databaseRows
@@ -220,16 +239,21 @@ export function mergeResourceItems(databaseRows: ResourceRow[], githubItems: Git
       const key = getFileKey(row.file_url);
       return !key || !githubKeys.has(key);
     })
-    .map(mapDatabaseRow);
+    .map((row) => ({ resourceItem: mapDatabaseRow(row), hidden: isHidden(row), order: resolveSortOrder(row) }));
 
-  return [...mergedGitHubItems, ...standaloneDatabaseItems].slice(0, limit);
+  return [...mergedGitHubItems, ...standaloneDatabaseItems]
+    .map((entry, index) => ({ ...entry, _order: entry.order, _index: index }))
+    .filter((entry) => !entry.hidden)
+    .sort(bySortOrder)
+    .map((entry) => entry.resourceItem)
+    .slice(0, limit);
 }
 
 export function buildAdminResourceItems(databaseRows: ResourceRow[], githubItems: GitHubResourceItem[]): AdminResourceItem[] {
   const metadataMap = createMetadataMap(databaseRows);
   const githubKeys = new Set(githubItems.map((item) => item.fileUrl));
 
-  const githubResourceItems = githubItems.map((item) => {
+  const githubResourceItems: AdminResourceItem[] = githubItems.map((item) => {
     const metadata = metadataMap.get(item.fileUrl);
 
     return {
@@ -241,13 +265,15 @@ export function buildAdminResourceItems(databaseRows: ResourceRow[], githubItems
       category: metadata?.category || item.category,
       file_url: item.fileUrl,
       external_url: metadata?.external_url ?? null,
+      hidden: isHidden(metadata),
+      sort_order: resolveSortOrder(metadata),
       created_at: metadata?.created_at ?? null,
       updated_at: metadata?.updated_at ?? null,
       has_metadata: Boolean(metadata),
     };
   });
 
-  const standaloneDatabaseItems = databaseRows
+  const standaloneDatabaseItems: AdminResourceItem[] = databaseRows
     .filter((row) => {
       const key = getFileKey(row.file_url);
       return !key || !githubKeys.has(key);
@@ -261,12 +287,17 @@ export function buildAdminResourceItems(databaseRows: ResourceRow[], githubItems
       category: row.category ?? "",
       file_url: row.file_url,
       external_url: row.external_url,
+      hidden: isHidden(row),
+      sort_order: resolveSortOrder(row),
       created_at: row.created_at ?? null,
       updated_at: row.updated_at ?? null,
       has_metadata: true,
     }));
 
-  return [...githubResourceItems, ...standaloneDatabaseItems];
+  return [...githubResourceItems, ...standaloneDatabaseItems]
+    .map((item, index) => ({ item, _order: item.sort_order, _index: index }))
+    .sort(bySortOrder)
+    .map((entry) => entry.item);
 }
 
 export function isLectureNoteFileUrl(fileUrl: string | null | undefined): boolean {
