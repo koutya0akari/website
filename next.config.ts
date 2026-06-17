@@ -28,7 +28,7 @@ function buildCsp({ allowEval }: { allowEval: boolean }): string {
   base-uri 'self';
   form-action 'self';
   frame-ancestors 'none';
-  frame-src 'self' https://giscus.app https://platform.twitter.com https://www.youtube.com;
+  frame-src 'self' https://giscus.app https://platform.twitter.com https://www.youtube.com https://www.google.com https://maps.google.com;
   manifest-src 'self';
   upgrade-insecure-requests;
 `;
