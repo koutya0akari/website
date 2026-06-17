@@ -25,7 +25,9 @@ type Schema = typeof defaultSchema;
  */
 export const articleSanitizeSchema: Schema = {
   ...defaultSchema,
-  tagNames: [...(defaultSchema.tagNames ?? []), "details", "summary"],
+  // `iframe` は許可ホスト限定で通す（markdown-renderer の restrictIframes が
+  // src のホスト名と https を二重チェックして許可外を除去する）。
+  tagNames: [...(defaultSchema.tagNames ?? []), "details", "summary", "iframe"],
   attributes: {
     ...defaultSchema.attributes,
     "*": [
@@ -34,6 +36,17 @@ export const articleSanitizeSchema: Schema = {
       "tabIndex",
       "dataTabLabel",
       "dataMdTabs",
+    ],
+    iframe: [
+      "src",
+      "width",
+      "height",
+      "title",
+      "allow",
+      "allowFullScreen",
+      "loading",
+      "referrerPolicy",
+      "frameBorder",
     ],
   },
 };

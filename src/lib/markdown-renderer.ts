@@ -14,11 +14,53 @@ import { articleSanitizeSchema } from "@/lib/sanitize-schema";
 
 type RehypeNode = {
   type: string;
+  tagName?: string;
   properties?: {
     id?: unknown;
+    src?: unknown;
   };
   children?: RehypeNode[];
 };
+
+// 本文に埋め込める <iframe> は Google マップの HTTPS embed に限定する。
+// サニタイズで iframe を通した上で、ここで src のホスト名・パス・https を二重チェックし、
+// 許可外の iframe は除去する（任意 iframe の埋め込みによる悪用を防ぐ）。
+const ALLOWED_GOOGLE_MAPS_IFRAME_HOSTS = new Set(["www.google.com", "maps.google.com"]);
+
+function isAllowedIframeSrc(src: unknown): boolean {
+  if (typeof src !== "string") {
+    return false;
+  }
+  try {
+    const url = new URL(src);
+    return (
+      url.protocol === "https:" &&
+      ALLOWED_GOOGLE_MAPS_IFRAME_HOSTS.has(url.hostname) &&
+      url.pathname.startsWith("/maps/")
+    );
+  } catch {
+    return false;
+  }
+}
+
+function restrictIframes() {
+  return (tree: RehypeNode) => {
+    const visit = (node: RehypeNode) => {
+      if (!node.children) {
+        return;
+      }
+      node.children = node.children.filter(
+        (child) =>
+          !(child.type === "element" && child.tagName === "iframe" && !isAllowedIframeSrc(child.properties?.src)),
+      );
+      for (const child of node.children) {
+        visit(child);
+      }
+    };
+
+    visit(tree);
+  };
+}
 
 const sanitizerClobberPrefix = articleSanitizeSchema.clobberPrefix ?? "user-content-";
 
@@ -68,6 +110,7 @@ const markdownProcessor = unified()
   .use(rehypeRaw)
   // Sanitize raw/author HTML before trusted transforms add their own markup.
   .use(rehypeSanitize, articleSanitizeSchema)
+  .use(restrictIframes)
   .use(restoreFragmentAnchorIds)
   .use(rehypeSlug)
   .use(rehypeKatex)
