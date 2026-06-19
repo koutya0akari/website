@@ -24,6 +24,7 @@ export default function NewDiaryPage() {
           summary: data.summary,
           folder: data.folder,
           tags: data.tags,
+          linkOnly: data.linkOnly,
           status: data.status,
           publishedAt: data.publishedAt,
           shareImageUrl: data.shareImageUrl,
@@ -57,7 +58,7 @@ export default function NewDiaryPage() {
       </div>
 
       <div className="rounded-lg border border-night-muted bg-night-soft p-4 sm:p-6">
-        <DiaryForm onSubmit={handleSubmit} isNew={true} />
+        <DiaryForm onSubmit={handleSubmit} isNew={true} enableLinkOnly />
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getPublicTags, isLinkOnlyContent } from "@/lib/content-visibility";
 import type { DiaryEntry } from "@/lib/types";
 import { getSortCandidateLimit, sortByPopularityDesc, sortByPublishedDesc } from "@/lib/diary-order";
 import { normalizeRichTextToHtml } from "@/lib/markdown";
@@ -37,7 +38,8 @@ function normalizeDiary(row: SupabaseDiaryRow): DiaryEntry {
     summary: summaryHtml || fallbackSummaryHtml,
     body: bodyHtml,
     folder: row.folder || undefined,
-    tags: row.tags || [],
+    tags: getPublicTags(row.tags),
+    linkOnly: isLinkOnlyContent(row.tags),
     shareImage: row.hero_image_url
       ? {
           url: row.hero_image_url,
@@ -68,7 +70,8 @@ function normalizeDiaryListItem(row: SupabaseDiaryRow): DiaryEntry {
     summary: summaryHtml || fallbackSummaryHtml,
     body: plainBody,
     folder: row.folder || undefined,
-    tags: row.tags || [],
+    tags: getPublicTags(row.tags),
+    linkOnly: isLinkOnlyContent(row.tags),
     shareImage: row.hero_image_url
       ? {
           url: row.hero_image_url,
@@ -101,7 +104,11 @@ export async function getDiaryEntries(limit = 50): Promise<DiaryEntry[]> {
     return [];
   }
 
-  return sortByPublishedDesc((data || []).map(normalizeDiaryListItem)).slice(0, limit);
+  return sortByPublishedDesc(
+    (data || [])
+      .filter((entry) => !isLinkOnlyContent(entry.tags))
+      .map(normalizeDiaryListItem),
+  ).slice(0, limit);
 }
 
 export async function getPopularDiaryEntries(
@@ -130,7 +137,11 @@ export async function getPopularDiaryEntries(
     return [];
   }
 
-  return sortByPopularityDesc((data || []).map(normalizeDiaryListItem)).slice(0, limit);
+  return sortByPopularityDesc(
+    (data || [])
+      .filter((entry) => !isLinkOnlyContent(entry.tags))
+      .map(normalizeDiaryListItem),
+  ).slice(0, limit);
 }
 
 export async function getDiaryBySlug(slug: string): Promise<DiaryEntry | undefined> {
@@ -198,7 +209,7 @@ export async function getActivityByYear(): Promise<ActivityYear[]> {
 
   // Math Diary のエントリを除外
   const filteredData = (data || []).filter(
-    (row) => row.folder !== MATH_DIARY_FOLDER
+    (row) => row.folder !== MATH_DIARY_FOLDER && !isLinkOnlyContent(row.tags),
   );
 
   // 年別にグループ化

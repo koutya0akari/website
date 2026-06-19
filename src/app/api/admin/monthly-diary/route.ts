@@ -1,8 +1,22 @@
 import { revalidatePath } from "next/cache";
 
+import { getPublicTags, getStoredTags, isLinkOnlyContent } from "@/lib/content-visibility";
 import { createClient } from "@/lib/supabase/server";
 import { MONTHLY_DIARY_FOLDER, MONTHLY_DIARY_FOLDERS } from "@/lib/monthly-diary-config";
 import { NextRequest, NextResponse } from "next/server";
+
+type MonthlyDiaryAdminRow = {
+  tags: string[] | null;
+  [key: string]: unknown;
+};
+
+function normalizeMonthlyDiaryAdminRow<T extends MonthlyDiaryAdminRow>(row: T) {
+  return {
+    ...row,
+    tags: getPublicTags(row.tags),
+    link_only: isLinkOnlyContent(row.tags),
+  };
+}
 
 // GET /api/admin/monthly-diary - List all monthly diary entries
 export async function GET(request: NextRequest) {
@@ -41,7 +55,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Failed to fetch entries" }, { status: 500 });
     }
 
-    return NextResponse.json({ data });
+    return NextResponse.json({ data: (data ?? []).map(normalizeMonthlyDiaryAdminRow) });
   } catch (error) {
     console.error("[API] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -67,6 +81,7 @@ export async function POST(request: NextRequest) {
       body: content,
       summary,
       tags,
+      linkOnly,
       status,
       publishedAt,
       shareImageUrl,
@@ -84,6 +99,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Slug already exists" }, { status: 400 });
     }
 
+    const storedTags = getStoredTags(Array.isArray(tags) ? tags : [], Boolean(linkOnly));
+
     const { data, error } = await supabase
       .from("diary")
       .insert({
@@ -92,7 +109,7 @@ export async function POST(request: NextRequest) {
         body: content || null,
         summary: summary || null,
         folder: MONTHLY_DIARY_FOLDER,
-        tags: tags || null,
+        tags: storedTags.length > 0 ? storedTags : null,
         status: status || "draft",
         published_at: publishedAt || null,
         hero_image_url: ogImageUrl || null,
@@ -109,7 +126,7 @@ export async function POST(request: NextRequest) {
     revalidatePath("/monthly-diary");
     if (data?.slug) revalidatePath(`/monthly-diary/${data.slug}`);
 
-    return NextResponse.json({ data }, { status: 201 });
+    return NextResponse.json({ data: normalizeMonthlyDiaryAdminRow(data) }, { status: 201 });
   } catch (error) {
     console.error("[API] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
