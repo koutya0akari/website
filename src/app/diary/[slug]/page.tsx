@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const ogImage = `/api/og?title=${encodeURIComponent(entry.title)}&summary=${encodeURIComponent(description)}&tags=${encodeURIComponent(tags.join(" "))}&author=akari0koutya`;
   const shareImage = entry.shareImage?.url ?? entry.heroImage?.url ?? ogImage;
 
-  return {
+  const metadata: Metadata = {
     title: entry.title,
     description: withTags,
     openGraph: {
@@ -66,6 +66,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       images: [shareImage],
     },
   };
+
+  if (entry.linkOnly) {
+    metadata.robots = {
+      index: false,
+      follow: false,
+      googleBot: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  return metadata;
 }
 
 export default async function DiaryDetailPage({ params }: PageProps) {

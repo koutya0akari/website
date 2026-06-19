@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getPublicTags, isLinkOnlyContent } from "@/lib/content-visibility";
 import type { DiaryEntry } from "@/lib/types";
 import { getSortCandidateLimit, sortByPublishedDesc } from "@/lib/diary-order";
 import { normalizeRichTextToHtml } from "@/lib/markdown";
@@ -35,7 +36,8 @@ function normalizeMonthlyDiary(row: SupabaseMonthlyDiaryRow): DiaryEntry {
     summary: summaryHtml || fallbackSummaryHtml,
     body: bodyHtml,
     folder: MONTHLY_DIARY_FOLDER,
-    tags: row.tags || [],
+    tags: getPublicTags(row.tags),
+    linkOnly: isLinkOnlyContent(row.tags),
     shareImage: row.hero_image_url
       ? {
           url: row.hero_image_url,
@@ -65,7 +67,8 @@ function normalizeMonthlyDiaryListItem(row: SupabaseMonthlyDiaryRow): DiaryEntry
     summary: summaryHtml || fallbackSummaryHtml,
     body: plainBody,
     folder: MONTHLY_DIARY_FOLDER,
-    tags: row.tags || [],
+    tags: getPublicTags(row.tags),
+    linkOnly: isLinkOnlyContent(row.tags),
     shareImage: row.hero_image_url
       ? {
           url: row.hero_image_url,
@@ -98,7 +101,11 @@ export async function getMonthlyDiaryEntries(limit = 50): Promise<DiaryEntry[]> 
     return [];
   }
 
-  return sortByPublishedDesc((data || []).map(normalizeMonthlyDiaryListItem)).slice(0, limit);
+  return sortByPublishedDesc(
+    (data || [])
+      .filter((entry) => !isLinkOnlyContent(entry.tags))
+      .map(normalizeMonthlyDiaryListItem),
+  ).slice(0, limit);
 }
 
 export async function getMonthlyDiaryBySlug(slug: string): Promise<DiaryEntry | undefined> {

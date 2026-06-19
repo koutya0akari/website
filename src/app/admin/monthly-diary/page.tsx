@@ -14,6 +14,7 @@ interface MonthlyDiaryItem {
   status: "draft" | "published";
   folder?: string;
   tags: string[];
+  link_only?: boolean;
   view_count: number;
   created_at: string;
   published_at?: string;

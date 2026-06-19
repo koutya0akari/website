@@ -41,6 +41,7 @@ export default function EditMonthlyDiaryPage() {
         summary: data.summary || "",
         folder: "日記",
         tags: data.tags || [],
+        linkOnly: Boolean(data.link_only),
         status: data.status,
         publishedAt: data.published_at
           ? new Date(data.published_at).toISOString().slice(0, 16)
@@ -69,6 +70,7 @@ export default function EditMonthlyDiaryPage() {
           body: data.body,
           summary: data.summary,
           tags: data.tags,
+          linkOnly: data.linkOnly,
           status: data.status,
           publishedAt: data.publishedAt,
           shareImageUrl: data.shareImageUrl,
@@ -161,6 +163,7 @@ export default function EditMonthlyDiaryPage() {
           previewBasePath="/monthly-diary"
           formKey="monthly-diary"
           folderDisabled
+          enableLinkOnly
         />
       </div>
     </div>

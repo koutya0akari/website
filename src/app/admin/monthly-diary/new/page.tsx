@@ -36,6 +36,7 @@ export default function NewMonthlyDiaryPage() {
           body: data.body,
           summary: data.summary,
           tags: data.tags,
+          linkOnly: data.linkOnly,
           status: data.status,
           publishedAt: data.publishedAt,
           shareImageUrl: data.shareImageUrl,
@@ -81,6 +82,7 @@ export default function NewMonthlyDiaryPage() {
           previewBasePath="/monthly-diary"
           formKey="monthly-diary"
           folderDisabled
+          enableLinkOnly
         />
       </div>
     </div>

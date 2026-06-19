@@ -40,6 +40,7 @@ export default function EditDiaryPage() {
         summary: data.summary || "",
         folder: data.folder || "",
         tags: data.tags || [],
+        linkOnly: Boolean(data.link_only),
         status: data.status,
         publishedAt: data.published_at
           ? new Date(data.published_at).toISOString().slice(0, 16)
@@ -69,6 +70,7 @@ export default function EditDiaryPage() {
           summary: data.summary,
           folder: data.folder,
           tags: data.tags,
+          linkOnly: data.linkOnly,
           status: data.status,
           publishedAt: data.publishedAt,
           shareImageUrl: data.shareImageUrl,
@@ -153,6 +155,7 @@ export default function EditDiaryPage() {
           onSubmit={handleSubmit}
           onDelete={handleDelete}
           isNew={false}
+          enableLinkOnly
         />
       </div>
     </div>
