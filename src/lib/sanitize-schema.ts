@@ -26,7 +26,7 @@ type Schema = typeof defaultSchema;
 export const articleSanitizeSchema: Schema = {
   ...defaultSchema,
   // `iframe` は許可ホスト限定で通す（markdown-renderer の restrictIframes が
-  // src のホスト名と https を二重チェックして許可外を除去する）。
+  // src のホスト名・パス・https を二重チェックして許可外を除去する）。
   tagNames: [...(defaultSchema.tagNames ?? []), "details", "summary", "iframe"],
   attributes: {
     ...defaultSchema.attributes,

@@ -104,6 +104,33 @@ describe("renderMarkdownToHtml", () => {
     expect(html).toContain('width="640"');
   });
 
+  it("allows YouTube video iframes from allowed hosts", () => {
+    const html = renderMarkdownToHtml(
+      '<iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+    );
+
+    expect(html).toContain("<iframe");
+    expect(html).toContain('src="https://www.youtube.com/embed/dQw4w9WgXcQ"');
+    expect(html).toContain('title="YouTube video player"');
+    expect(html).toContain(
+      'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"',
+    );
+    expect(html).toContain("allowfullscreen");
+  });
+
+  it("allows YouTube playlist iframes from allowed hosts", () => {
+    const html = renderMarkdownToHtml(
+      '<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=mLm4s8ASlP07uS-z&list=PLx5f8IelFRgGmu6gmL-Kf_Rl_6Mm7juZO" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>',
+    );
+
+    expect(html).toContain("<iframe");
+    expect(html).toContain(
+      'src="https://www.youtube.com/embed/videoseries?si=mLm4s8ASlP07uS-z&#x26;list=PLx5f8IelFRgGmu6gmL-Kf_Rl_6Mm7juZO"',
+    );
+    expect(html).toContain('width="560"');
+    expect(html).toContain("allowfullscreen");
+  });
+
   it("strips iframes from disallowed hosts", () => {
     const html = renderMarkdownToHtml('<iframe src="https://evil.example.com/x"></iframe>\n\nhello');
     expect(html).not.toContain("<iframe");
@@ -112,6 +139,12 @@ describe("renderMarkdownToHtml", () => {
 
   it("strips non-map iframes from otherwise allowed hosts", () => {
     const html = renderMarkdownToHtml('<iframe src="https://www.google.com/search?q=maps"></iframe>\n\nhello');
+    expect(html).not.toContain("<iframe");
+    expect(html).toContain("hello");
+  });
+
+  it("strips non-embed YouTube iframes from otherwise allowed hosts", () => {
+    const html = renderMarkdownToHtml('<iframe src="https://www.youtube.com/watch?v=dQw4w9WgXcQ"></iframe>\n\nhello');
     expect(html).not.toContain("<iframe");
     expect(html).toContain("hello");
   });
