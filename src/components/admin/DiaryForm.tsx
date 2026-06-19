@@ -12,6 +12,7 @@ export interface DiaryFormData {
   summary: string;
   folder: string;
   tags: string[];
+  linkOnly?: boolean;
   status: "draft" | "published";
   publishedAt: string;
   shareImageUrl: string;
@@ -30,6 +31,7 @@ interface DiaryFormProps {
   previewBasePath?: string;
   formKey?: string;
   folderDisabled?: boolean;
+  enableLinkOnly?: boolean;
 }
 
 type AutoSaveStatus = "saved" | "dirty" | "saving" | "error" | "waiting";
@@ -44,6 +46,7 @@ function createInitialFormData(initialData?: Partial<DiaryFormData>): DiaryFormD
     summary: initialData?.summary || "",
     folder: initialData?.folder || "",
     tags: initialData?.tags || [],
+    linkOnly: initialData?.linkOnly || false,
     status: initialData?.status || "draft",
     publishedAt:
       initialData?.publishedAt ||
@@ -64,6 +67,7 @@ export function DiaryForm({
   previewBasePath = "/diary",
   formKey = "diary",
   folderDisabled = false,
+  enableLinkOnly = false,
 }: DiaryFormProps) {
   const [formData, setFormData] = useState<DiaryFormData>(() => createInitialFormData(initialData));
   const [tagInput, setTagInput] = useState("");
@@ -464,6 +468,22 @@ export function DiaryForm({
               <span className="text-gray-300">Published</span>
             </label>
           </div>
+          {enableLinkOnly && (
+            <label className="mt-4 flex items-start gap-3 rounded-md border border-night-muted bg-night px-3 py-3">
+              <input
+                type="checkbox"
+                checked={Boolean(formData.linkOnly)}
+                onChange={(e) => setFormData({ ...formData, linkOnly: e.target.checked })}
+                className="mt-0.5 text-accent focus:ring-accent"
+              />
+              <span className="min-w-0">
+                <span className="block text-sm font-medium text-gray-300">直リンクのみ</span>
+                <span className="mt-1 block text-xs leading-5 text-gray-500">
+                  一覧と sitemap.xml には載せず、詳細ページに noindex を付けます。
+                </span>
+              </span>
+            </label>
+          )}
         </div>
 
         <div>

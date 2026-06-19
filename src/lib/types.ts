@@ -95,6 +95,7 @@ export type DiaryEntry = {
   body: string;
   folder?: string;
   tags: string[];
+  linkOnly?: boolean;
   shareImage?: CMSImage;
   heroImage?: CMSImage;
   publishedAt: string;

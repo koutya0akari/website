@@ -12,6 +12,7 @@ interface DiaryListItem {
   status: "draft" | "published";
   folder?: string;
   tags?: string[] | null;
+  link_only?: boolean;
   view_count: number;
   created_at: string;
   published_at?: string;
@@ -129,6 +130,11 @@ export function DiaryList({
                       >
                         {item.status}
                       </span>
+                      {item.link_only && (
+                        <span className="rounded-full bg-sky-500/10 px-2 py-0.5 text-xs font-medium text-sky-300">
+                          link-only
+                        </span>
+                      )}
                     </div>
 
                     <div className="mt-1 break-words text-sm text-gray-400">
