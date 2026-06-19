@@ -22,10 +22,21 @@ type RehypeNode = {
   children?: RehypeNode[];
 };
 
-// 本文に埋め込める <iframe> は Google マップの HTTPS embed に限定する。
+// 本文に埋め込める <iframe> は Google マップと YouTube の HTTPS embed に限定する。
 // サニタイズで iframe を通した上で、ここで src のホスト名・パス・https を二重チェックし、
 // 許可外の iframe は除去する（任意 iframe の埋め込みによる悪用を防ぐ）。
 const ALLOWED_GOOGLE_MAPS_IFRAME_HOSTS = new Set(["www.google.com", "maps.google.com"]);
+const ALLOWED_YOUTUBE_IFRAME_HOSTS = new Set(["www.youtube.com", "youtube.com"]);
+
+function isAllowedYouTubeIframePath(pathname: string): boolean {
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments[0] !== "embed") {
+    return false;
+  }
+
+  // 通常動画: /embed/:videoId、再生リスト: /embed/videoseries?list=...
+  return segments.length === 2 && (segments[1] === "videoseries" || /^[A-Za-z0-9_-]{6,}$/.test(segments[1]));
+}
 
 function isAllowedIframeSrc(src: unknown): boolean {
   if (typeof src !== "string") {
@@ -33,11 +44,19 @@ function isAllowedIframeSrc(src: unknown): boolean {
   }
   try {
     const url = new URL(src);
-    return (
-      url.protocol === "https:" &&
-      ALLOWED_GOOGLE_MAPS_IFRAME_HOSTS.has(url.hostname) &&
-      url.pathname.startsWith("/maps/")
-    );
+    if (url.protocol !== "https:") {
+      return false;
+    }
+
+    if (ALLOWED_GOOGLE_MAPS_IFRAME_HOSTS.has(url.hostname)) {
+      return url.pathname.startsWith("/maps/");
+    }
+
+    if (ALLOWED_YOUTUBE_IFRAME_HOSTS.has(url.hostname)) {
+      return isAllowedYouTubeIframePath(url.pathname);
+    }
+
+    return false;
   } catch {
     return false;
   }
