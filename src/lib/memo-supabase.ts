@@ -3,6 +3,7 @@ import "server-only";
 import type { DiaryEntry } from "@/lib/types";
 import { getSortCandidateLimit, sortByPublishedDesc } from "@/lib/diary-order";
 import { normalizeRichTextToHtml } from "@/lib/markdown";
+import { getPublicMemoTags, isLinkOnlyMemo } from "@/lib/memo-visibility";
 import { MEMO_FOLDER } from "@/lib/monthly-diary-config";
 import { createPublicClient } from "@/lib/supabase/server";
 import { createExcerpt, escapeHtml, markdownToPlainText } from "@/lib/utils";
@@ -35,7 +36,8 @@ function normalizeMemo(row: SupabaseMemoRow): DiaryEntry {
     summary: summaryHtml || fallbackSummaryHtml,
     body: bodyHtml,
     folder: MEMO_FOLDER,
-    tags: row.tags || [],
+    tags: getPublicMemoTags(row.tags),
+    linkOnly: isLinkOnlyMemo(row.tags),
     shareImage: row.hero_image_url
       ? {
           url: row.hero_image_url,
@@ -65,7 +67,8 @@ function normalizeMemoListItem(row: SupabaseMemoRow): DiaryEntry {
     summary: summaryHtml || fallbackSummaryHtml,
     body: plainBody,
     folder: MEMO_FOLDER,
-    tags: row.tags || [],
+    tags: getPublicMemoTags(row.tags),
+    linkOnly: isLinkOnlyMemo(row.tags),
     shareImage: row.hero_image_url
       ? {
           url: row.hero_image_url,
@@ -98,7 +101,11 @@ export async function getMemoEntries(limit = 50): Promise<DiaryEntry[]> {
     return [];
   }
 
-  return sortByPublishedDesc((data || []).map(normalizeMemoListItem)).slice(0, limit);
+  return sortByPublishedDesc(
+    (data || [])
+      .filter((entry) => !isLinkOnlyMemo(entry.tags))
+      .map(normalizeMemoListItem),
+  ).slice(0, limit);
 }
 
 export async function getMemoBySlug(slug: string): Promise<DiaryEntry | undefined> {

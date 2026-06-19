@@ -25,6 +25,7 @@ export default function NewMemoPage() {
           body: data.body,
           summary: data.summary,
           tags: data.tags,
+          linkOnly: data.linkOnly,
           status: data.status,
           publishedAt: data.publishedAt,
           shareImageUrl: data.shareImageUrl,
@@ -65,6 +66,7 @@ export default function NewMemoPage() {
           previewBasePath="/memo"
           formKey="memo"
           folderDisabled
+          enableLinkOnly
         />
       </div>
     </div>

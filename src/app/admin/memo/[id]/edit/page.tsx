@@ -42,6 +42,7 @@ export default function EditMemoPage() {
         summary: data.summary || "",
         folder: MEMO_FOLDER,
         tags: data.tags || [],
+        linkOnly: Boolean(data.link_only),
         status: data.status,
         publishedAt: data.published_at
           ? new Date(data.published_at).toISOString().slice(0, 16)
@@ -70,6 +71,7 @@ export default function EditMemoPage() {
           body: data.body,
           summary: data.summary,
           tags: data.tags,
+          linkOnly: data.linkOnly,
           status: data.status,
           publishedAt: data.publishedAt,
           shareImageUrl: data.shareImageUrl,
@@ -157,6 +159,7 @@ export default function EditMemoPage() {
           previewBasePath="/memo"
           formKey="memo"
           folderDisabled
+          enableLinkOnly
         />
       </div>
     </div>

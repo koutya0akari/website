@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { LINK_ONLY_MEMO_TAG } from "@/lib/memo-visibility";
 import { createClient } from "@/lib/supabase/server";
 
 // GET /api/admin/tags - 既存記事で使われたタグの一覧（重複排除）を返す。
@@ -34,7 +35,7 @@ export async function GET(request: NextRequest) {
     for (const row of (data as { tags: string[] | null }[]) ?? []) {
       for (const tag of row.tags ?? []) {
         const trimmed = typeof tag === "string" ? tag.trim() : "";
-        if (trimmed) tagSet.add(trimmed);
+        if (trimmed && trimmed !== LINK_ONLY_MEMO_TAG) tagSet.add(trimmed);
       }
     }
 
