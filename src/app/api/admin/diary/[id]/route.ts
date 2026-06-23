@@ -193,9 +193,15 @@ export async function DELETE(
       return NextResponse.json({ error: "Failed to delete entry" }, { status: 500 });
     }
 
+    // No row was deleted: either the entry does not exist, or RLS prevented the
+    // delete. Surface it instead of reporting a phantom success.
+    if (!deleted) {
+      return NextResponse.json({ error: "Entry not found or not deletable" }, { status: 404 });
+    }
+
     revalidatePath("/");
     revalidatePath("/diary");
-    if (deleted?.slug) revalidatePath(`/diary/${deleted.slug}`);
+    if (deleted.slug) revalidatePath(`/diary/${deleted.slug}`);
 
     return NextResponse.json({ success: true });
   } catch (error) {
