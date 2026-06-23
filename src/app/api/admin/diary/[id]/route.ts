@@ -128,6 +128,27 @@ export async function PUT(
 
     const storedTags = getStoredTags(Array.isArray(tags) ? tags : [], Boolean(linkOnly));
 
+    // Confirm the target is a regular diary entry (not a reserved folder) before
+    // updating. `.or()` cannot be used on the UPDATE itself: PostgREST emits
+    // invalid SQL ("column diary.folder does not exist") for `.or()` on
+    // UPDATE/DELETE under RLS, so the folder scope is enforced via a SELECT and
+    // the update is keyed by id only.
+    const { data: target, error: lookupError } = await supabase
+      .from("diary")
+      .select("id")
+      .eq("id", id)
+      .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
+      .maybeSingle();
+
+    if (lookupError) {
+      console.error("[API] Failed to look up diary entry:", lookupError);
+      return NextResponse.json({ error: "Failed to update entry" }, { status: 500 });
+    }
+
+    if (!target) {
+      return NextResponse.json({ error: "Entry not found" }, { status: 404 });
+    }
+
     const { data, error } = await supabase
       .from("diary")
       .update({
@@ -143,7 +164,6 @@ export async function PUT(
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)
-      .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
       .select()
       .single();
 
@@ -180,28 +200,37 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data: deleted, error } = await supabase
+    // Scope the delete to regular diary entries (excluding reserved folders) via
+    // a SELECT, then delete by id only. PostgREST generates invalid SQL ("column
+    // diary.folder does not exist") for `.or()` on UPDATE/DELETE once RLS is
+    // active, so the folder filter cannot live on the delete itself.
+    const { data: target, error: lookupError } = await supabase
       .from("diary")
-      .delete()
+      .select("slug")
       .eq("id", id)
       .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
-      .select("slug")
       .maybeSingle();
+
+    if (lookupError) {
+      console.error("[API] Failed to look up diary entry:", lookupError);
+      return NextResponse.json({ error: "Failed to delete entry" }, { status: 500 });
+    }
+
+    // Not found, or it belongs to a reserved folder (managed by another admin).
+    if (!target) {
+      return NextResponse.json({ error: "Entry not found or not deletable" }, { status: 404 });
+    }
+
+    const { error } = await supabase.from("diary").delete().eq("id", id);
 
     if (error) {
       console.error("[API] Failed to delete diary entry:", error);
       return NextResponse.json({ error: "Failed to delete entry" }, { status: 500 });
     }
 
-    // No row was deleted: either the entry does not exist, or RLS prevented the
-    // delete. Surface it instead of reporting a phantom success.
-    if (!deleted) {
-      return NextResponse.json({ error: "Entry not found or not deletable" }, { status: 404 });
-    }
-
     revalidatePath("/");
     revalidatePath("/diary");
-    if (deleted.slug) revalidatePath(`/diary/${deleted.slug}`);
+    if (target.slug) revalidatePath(`/diary/${target.slug}`);
 
     return NextResponse.json({ success: true });
   } catch (error) {

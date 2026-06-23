@@ -298,26 +298,19 @@ pnpm dev
 - `public/ace-builds/` にファイルがあるか確認
 - ブラウザの開発者ツールで CSP エラーを確認
 
-### 管理画面から diary / monthly-diary / memo を削除できない
+### 数学メモ（/admin/diary）の編集・削除が 500 で失敗する
 
-これらはすべて `diary` テーブルを使用します。一覧表示・編集はできるのに削除だけ
-失敗する場合、`diary` の RLS ポリシーが認証ユーザーの `DELETE` を許可していない
-（`SELECT`/`INSERT`/`UPDATE` だけ個別に許可され、`DELETE` が漏れている）のが原因です。
-以下の SQL で、認証ユーザーにフルアクセス（DELETE を含む）を付与し直してください：
+`diary` 管理 API は「予約フォルダ（`Monthly Diary`/`Weekly Diary`/`Memo`）以外の
+通常エントリだけを対象にする」ため、`RESERVED_DIARY_FOLDER_EXCLUSION_FILTER` を
+PostgREST の `.or()` で渡していました。この `.or()` フィルタを **UPDATE / DELETE に
+直接付けると、RLS が有効なロール（authenticated）では PostgREST が不正な SQL を生成し
+`column diary.folder does not exist`（Postgres 42703）で失敗します**（SELECT では発生せず、
+RLS をバイパスする `service_role` でも発生しないため気づきにくい）。
 
-```sql
-DROP POLICY IF EXISTS "Authenticated users full access" ON diary;
-CREATE POLICY "Authenticated users full access" ON diary
-  FOR ALL
-  USING (auth.role() = 'authenticated')
-  WITH CHECK (auth.role() = 'authenticated');
-```
-
-適用後、`pg_policies` で `cmd` が `ALL`（または `DELETE` を含む）になっていることを確認できます：
-
-```sql
-SELECT policyname, cmd, qual FROM pg_policies WHERE tablename = 'diary';
-```
+対処は DB ではなくコード側で実施済みです（`src/app/api/admin/diary/[id]/route.ts`）：
+フォルダによる絞り込みは **SELECT で認可確認**し、UPDATE/DELETE は **id 指定のみ**で
+実行する2段構えにしています。`monthly-diary`/`memo` は `.in()`/`.eq()` を使っており
+この問題は起きません。
 
 ### Site/About 設定の保存でエラー
 
