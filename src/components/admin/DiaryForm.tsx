@@ -217,7 +217,8 @@ export function DiaryForm({
 
   const handleDelete = async () => {
     if (!onDelete) return;
-    if (!confirm("Are you sure you want to delete this post?")) return;
+    const label = formData.title.trim() ? `「${formData.title}」` : "この項目";
+    if (!confirm(`${label}を削除します。\nこの操作は取り消せません。本当に削除しますか？`)) return;
 
     setDeleting(true);
     try {

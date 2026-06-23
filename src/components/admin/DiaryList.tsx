@@ -62,7 +62,8 @@ export function DiaryList({
     });
 
   const handleDelete = async (id: string, title: string) => {
-    if (confirm(`Are you sure you want to delete "${title}"?`)) {
+    const label = title.trim() ? `「${title}」` : "この項目";
+    if (confirm(`${label}を削除します。\nこの操作は取り消せません。本当に削除しますか？`)) {
       await onDelete(id);
     }
   };
