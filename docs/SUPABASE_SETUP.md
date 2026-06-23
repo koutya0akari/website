@@ -298,6 +298,27 @@ pnpm dev
 - `public/ace-builds/` にファイルがあるか確認
 - ブラウザの開発者ツールで CSP エラーを確認
 
+### 管理画面から diary / monthly-diary / memo を削除できない
+
+これらはすべて `diary` テーブルを使用します。一覧表示・編集はできるのに削除だけ
+失敗する場合、`diary` の RLS ポリシーが認証ユーザーの `DELETE` を許可していない
+（`SELECT`/`INSERT`/`UPDATE` だけ個別に許可され、`DELETE` が漏れている）のが原因です。
+以下の SQL で、認証ユーザーにフルアクセス（DELETE を含む）を付与し直してください：
+
+```sql
+DROP POLICY IF EXISTS "Authenticated users full access" ON diary;
+CREATE POLICY "Authenticated users full access" ON diary
+  FOR ALL
+  USING (auth.role() = 'authenticated')
+  WITH CHECK (auth.role() = 'authenticated');
+```
+
+適用後、`pg_policies` で `cmd` が `ALL`（または `DELETE` を含む）になっていることを確認できます：
+
+```sql
+SELECT policyname, cmd, qual FROM pg_policies WHERE tablename = 'diary';
+```
+
 ### Site/About 設定の保存でエラー
 
 RLS ポリシーに `WITH CHECK` 句が不足している可能性があります：
