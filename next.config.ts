@@ -58,6 +58,15 @@ const nextConfig: NextConfig = {
     ],
   },
   typedRoutes: true,
+  async redirects() {
+    return [
+      {
+        source: "/diary/ziz_4vfmu",
+        destination: "/diary/tokyo-2025-d-module",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
