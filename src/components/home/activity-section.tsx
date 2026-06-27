@@ -58,7 +58,6 @@ export async function ActivitySection() {
     <section className="relative overflow-hidden rounded-[22px] border border-transparent bg-night-soft p-5 sm:rounded-[32px] sm:p-8">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-3 rounded-[22px] border border-transparent sm:rounded-[28px]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(100,210,255,0.08),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(247,181,0,0.06),transparent_35%)] sm:bg-[radial-gradient(circle_at_20%_20%,rgba(100,210,255,0.12),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(247,181,0,0.08),transparent_35%)]" />
         <div className="absolute left-1/2 top-16 hidden h-[calc(100%-4rem)] w-px -translate-x-1/2 bg-gradient-to-b from-accent/60 via-white/25 to-transparent lg:block" />
       </div>
       <div className="relative space-y-6">

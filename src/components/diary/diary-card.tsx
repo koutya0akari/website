@@ -28,7 +28,7 @@ export function DiaryCard({
       : null;
 
   return (
-    <JournalCard className="flex flex-col gap-4 p-5 hover:-translate-y-0.5 sm:p-6">
+    <JournalCard className="flex flex-col gap-4 p-5 sm:p-6">
       <div className="flex flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
         <span className="text-xs uppercase tracking-[0.2em] text-white/60">
           {getDiaryDisplayLabel(entry.folder, MATH_DIARY_LABEL)}
