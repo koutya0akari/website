@@ -39,7 +39,7 @@ export function PopularDiaries({ entries }: PopularDiariesProps) {
               <Link
                 key={entry.id}
                 href={`/diary/${entry.slug}`}
-                className="group block border border-highlight/20 bg-night px-4 py-3 transition duration-150 hover:-translate-y-0.5 hover:border-accent/40"
+                className="group block border border-highlight/20 bg-night px-4 py-3 transition duration-150 hover:border-accent/40"
               >
                 <div className="flex items-start gap-3">
                   <div className="flex h-10 w-10 items-center justify-center border border-highlight/25 bg-accent/85 text-sm font-semibold text-night">
@@ -90,7 +90,7 @@ export function PopularDiariesGrid({ entries }: PopularDiariesProps) {
           return (
             <JournalCard
               key={entry.id}
-              className="relative flex flex-col gap-4 p-5 hover:-translate-y-0.5 sm:p-6"
+              className="relative flex flex-col gap-4 p-5 sm:p-6"
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 {/* ランキングバッジ */}

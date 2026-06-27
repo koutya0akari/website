@@ -19,7 +19,7 @@ export function MonthlyDiaryCard({ entry, compact = false }: MonthlyDiaryCardPro
   const detailHref = `/monthly-diary/${entry.slug}` as Route;
 
   return (
-    <JournalCard className="h-full hover:-translate-y-0.5">
+    <JournalCard className="h-full">
       <div className="flex h-full flex-col gap-4 p-5 sm:gap-5 sm:p-7">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
