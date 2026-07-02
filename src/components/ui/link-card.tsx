@@ -108,7 +108,7 @@ export function LinkCard({ url }: { url: string }) {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={previewSrc}
-            alt={data.title || "Link preview"}
+            alt={data.title || "リンクプレビュー"}
             loading="lazy"
             decoding="async"
             className={`m-0 h-full w-full transition duration-500 group-hover:scale-105 ${

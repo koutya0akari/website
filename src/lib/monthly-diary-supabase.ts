@@ -1,132 +1,14 @@
 import "server-only";
 
-import { getPublicTags, isLinkOnlyContent } from "@/lib/content-visibility";
-import type { DiaryEntry } from "@/lib/types";
-import { getSortCandidateLimit, sortByPublishedDesc } from "@/lib/diary-order";
-import { normalizeRichTextToHtml } from "@/lib/markdown";
+import { createContentEntriesModule } from "@/lib/content-entries";
 import { MONTHLY_DIARY_FOLDER, MONTHLY_DIARY_FOLDERS } from "@/lib/monthly-diary-config";
-import { createPublicClient } from "@/lib/supabase/server";
-import { createExcerpt, escapeHtml, markdownToPlainText } from "@/lib/utils";
 
-type SupabaseMonthlyDiaryRow = {
-  id: string;
-  title: string;
-  slug: string;
-  body: string | null;
-  summary: string | null;
-  folder: string | null;
-  tags: string[] | null;
-  status: "draft" | "published";
-  hero_image_url: string | null;
-  view_count: number;
-  published_at: string | null;
-  created_at: string;
-  updated_at: string;
-};
+const monthlyDiaryModule = createContentEntriesModule({
+  label: "monthly diary",
+  applyScope: (query) => query.in("folder", [...MONTHLY_DIARY_FOLDERS]),
+  // 旧 Weekly Diary フォルダの行も Monthly Diary として扱う
+  resolveFolder: () => MONTHLY_DIARY_FOLDER,
+});
 
-function normalizeMonthlyDiary(row: SupabaseMonthlyDiaryRow): DiaryEntry {
-  const bodyHtml = normalizeRichTextToHtml(row.body || "");
-  const summaryHtml = normalizeRichTextToHtml(row.summary || "");
-  const fallbackSummaryHtml = `<p>${escapeHtml(createExcerpt(bodyHtml))}</p>`;
-
-  return {
-    id: row.id,
-    title: row.title,
-    slug: row.slug,
-    summary: summaryHtml || fallbackSummaryHtml,
-    body: bodyHtml,
-    folder: MONTHLY_DIARY_FOLDER,
-    tags: getPublicTags(row.tags),
-    linkOnly: isLinkOnlyContent(row.tags),
-    shareImage: row.hero_image_url
-      ? {
-          url: row.hero_image_url,
-        }
-      : undefined,
-    heroImage: row.hero_image_url
-      ? {
-          url: row.hero_image_url,
-        }
-      : undefined,
-    publishedAt: row.published_at || row.created_at,
-    updatedAt: row.updated_at,
-    viewCount: row.view_count > 0 ? row.view_count : undefined,
-  };
-}
-
-// 一覧向けの軽量版（重い Markdown→HTML 変換を避ける）。詳細表示は normalizeMonthlyDiary を使う。
-function normalizeMonthlyDiaryListItem(row: SupabaseMonthlyDiaryRow): DiaryEntry {
-  const plainBody = markdownToPlainText(row.body || "");
-  const summaryHtml = normalizeRichTextToHtml(row.summary || "");
-  const fallbackSummaryHtml = `<p>${escapeHtml(createExcerpt(plainBody))}</p>`;
-
-  return {
-    id: row.id,
-    title: row.title,
-    slug: row.slug,
-    summary: summaryHtml || fallbackSummaryHtml,
-    body: plainBody,
-    folder: MONTHLY_DIARY_FOLDER,
-    tags: getPublicTags(row.tags),
-    linkOnly: isLinkOnlyContent(row.tags),
-    shareImage: row.hero_image_url
-      ? {
-          url: row.hero_image_url,
-        }
-      : undefined,
-    heroImage: row.hero_image_url
-      ? {
-          url: row.hero_image_url,
-        }
-      : undefined,
-    publishedAt: row.published_at || row.created_at,
-    updatedAt: row.updated_at,
-    viewCount: row.view_count > 0 ? row.view_count : undefined,
-  };
-}
-
-export async function getMonthlyDiaryEntries(limit = 50): Promise<DiaryEntry[]> {
-  const supabase = createPublicClient();
-
-  const { data, error } = await supabase
-    .from("diary")
-    .select("*")
-    .eq("status", "published")
-    .in("folder", [...MONTHLY_DIARY_FOLDERS])
-    .order("created_at", { ascending: false })
-    .limit(getSortCandidateLimit(limit));
-
-  if (error) {
-    console.error("[Supabase] Failed to fetch monthly diary entries:", error);
-    return [];
-  }
-
-  return sortByPublishedDesc(
-    (data || [])
-      .filter((entry) => !isLinkOnlyContent(entry.tags))
-      .map(normalizeMonthlyDiaryListItem),
-  ).slice(0, limit);
-}
-
-export async function getMonthlyDiaryBySlug(slug: string): Promise<DiaryEntry | undefined> {
-  const supabase = createPublicClient();
-
-  const { data, error } = await supabase
-    .from("diary")
-    .select("*")
-    .eq("slug", slug)
-    .eq("status", "published")
-    .in("folder", [...MONTHLY_DIARY_FOLDERS])
-    .maybeSingle();
-
-  if (error) {
-    console.error("[Supabase] Failed to fetch monthly diary by slug:", error);
-    return undefined;
-  }
-
-  if (!data) {
-    return undefined;
-  }
-
-  return normalizeMonthlyDiary(data as SupabaseMonthlyDiaryRow);
-}
+export const getMonthlyDiaryEntries = monthlyDiaryModule.getEntries;
+export const getMonthlyDiaryBySlug = monthlyDiaryModule.getBySlug;

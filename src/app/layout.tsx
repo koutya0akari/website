@@ -44,10 +44,10 @@ export const metadata: Metadata = {
     template: "%s | Akari Math Lab",
   },
   description:
-    " Akari のリサーチ・日記・資料をまとめるポートフォリオ。Vercel + microCMS で運用します。",
+    "代数幾何・圏論を軸にした数学ノート・日記・発表資料をまとめる Akari のポートフォリオ。",
   openGraph: {
     title: "Akari Math Lab",
-    description: "数学の勉強フォーカスと発表資料をまとめたポートフォリオ。Vercel と microCMS で管理。",
+    description: "代数幾何・圏論を軸にした数学ノート・日記・発表資料をまとめたポートフォリオ。",
     url: "https://www.akari0koutya.com",
     siteName: "Akari Math Lab",
     type: "website",

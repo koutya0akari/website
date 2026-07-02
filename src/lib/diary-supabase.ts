@@ -1,115 +1,25 @@
 import "server-only";
 
-import { getPublicTags, isLinkOnlyContent } from "@/lib/content-visibility";
+import { createContentEntriesModule } from "@/lib/content-entries";
+import { normalizeContentEntryListItem, type SupabaseContentRow } from "@/lib/content-entries-core";
+import { isLinkOnlyContent } from "@/lib/content-visibility";
 import type { DiaryEntry } from "@/lib/types";
-import { getSortCandidateLimit, sortByPopularityDesc, sortByPublishedDesc } from "@/lib/diary-order";
-import { normalizeRichTextToHtml } from "@/lib/markdown";
+import { getSortCandidateLimit, sortByPopularityDesc } from "@/lib/diary-order";
 import { RESERVED_DIARY_FOLDER_EXCLUSION_FILTER } from "@/lib/monthly-diary-config";
 import { createAdminClient, createPublicClient } from "@/lib/supabase/server";
-import { createExcerpt, escapeHtml, markdownToPlainText } from "@/lib/utils";
 
 const MATH_DIARY_FOLDER = "Math Diary";
 
-type SupabaseDiaryRow = {
-  id: string;
-  title: string;
-  slug: string;
-  body: string | null;
-  summary: string | null;
-  folder: string | null;
-  tags: string[] | null;
-  status: "draft" | "published";
-  hero_image_url: string | null;
-  view_count: number;
-  published_at: string | null;
-  created_at: string;
-  updated_at: string;
-};
+const resolveDiaryFolder = (row: SupabaseContentRow) => row.folder || undefined;
 
-function normalizeDiary(row: SupabaseDiaryRow): DiaryEntry {
-  const bodyHtml = normalizeRichTextToHtml(row.body || "");
-  const summaryHtml = normalizeRichTextToHtml(row.summary || "");
-  const fallbackSummaryHtml = `<p>${escapeHtml(createExcerpt(bodyHtml))}</p>`;
+const diaryModule = createContentEntriesModule({
+  label: "diary",
+  applyScope: (query) => query.or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER),
+  resolveFolder: resolveDiaryFolder,
+});
 
-  return {
-    id: row.id,
-    title: row.title,
-    slug: row.slug,
-    summary: summaryHtml || fallbackSummaryHtml,
-    body: bodyHtml,
-    folder: row.folder || undefined,
-    tags: getPublicTags(row.tags),
-    linkOnly: isLinkOnlyContent(row.tags),
-    shareImage: row.hero_image_url
-      ? {
-          url: row.hero_image_url,
-        }
-      : undefined,
-    heroImage: row.hero_image_url
-      ? {
-          url: row.hero_image_url,
-        }
-      : undefined,
-    publishedAt: row.published_at || row.created_at,
-    updatedAt: row.updated_at,
-    viewCount: row.view_count > 0 ? row.view_count : undefined,
-  };
-}
-
-// 一覧向けの軽量版。body は検索/抜粋でしか使われず常に stripHtml されるため、
-// 重い Markdown→HTML 変換を避けてプレーンテキストとして保持する。
-function normalizeDiaryListItem(row: SupabaseDiaryRow): DiaryEntry {
-  const plainBody = markdownToPlainText(row.body || "");
-  const summaryHtml = normalizeRichTextToHtml(row.summary || "");
-  const fallbackSummaryHtml = `<p>${escapeHtml(createExcerpt(plainBody))}</p>`;
-
-  return {
-    id: row.id,
-    title: row.title,
-    slug: row.slug,
-    summary: summaryHtml || fallbackSummaryHtml,
-    body: plainBody,
-    folder: row.folder || undefined,
-    tags: getPublicTags(row.tags),
-    linkOnly: isLinkOnlyContent(row.tags),
-    shareImage: row.hero_image_url
-      ? {
-          url: row.hero_image_url,
-        }
-      : undefined,
-    heroImage: row.hero_image_url
-      ? {
-          url: row.hero_image_url,
-        }
-      : undefined,
-    publishedAt: row.published_at || row.created_at,
-    updatedAt: row.updated_at,
-    viewCount: row.view_count > 0 ? row.view_count : undefined,
-  };
-}
-
-export async function getDiaryEntries(limit = 50): Promise<DiaryEntry[]> {
-  const supabase = createPublicClient();
-
-  const { data, error } = await supabase
-    .from("diary")
-    .select("*")
-    .eq("status", "published")
-    .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
-    .order("created_at", { ascending: false })
-    .limit(getSortCandidateLimit(limit));
-
-  if (error) {
-    console.error("[Supabase] Failed to fetch diary entries:", error);
-    return [];
-  }
-
-  return sortByPublishedDesc(
-    (data || [])
-      .filter((entry) => !isLinkOnlyContent(entry.tags))
-      .map(normalizeDiaryListItem),
-  ).slice(0, limit);
-}
+export const getDiaryEntries = diaryModule.getEntries;
+export const getDiaryBySlug = diaryModule.getBySlug;
 
 export async function getPopularDiaryEntries(
   limit = 5,
@@ -138,33 +48,10 @@ export async function getPopularDiaryEntries(
   }
 
   return sortByPopularityDesc(
-    (data || [])
+    ((data || []) as SupabaseContentRow[])
       .filter((entry) => !isLinkOnlyContent(entry.tags))
-      .map(normalizeDiaryListItem),
+      .map((row) => normalizeContentEntryListItem(row, resolveDiaryFolder)),
   ).slice(0, limit);
-}
-
-export async function getDiaryBySlug(slug: string): Promise<DiaryEntry | undefined> {
-  const supabase = createPublicClient();
-
-  const { data, error } = await supabase
-    .from("diary")
-    .select("*")
-    .eq("slug", slug)
-    .eq("status", "published")
-    .or(RESERVED_DIARY_FOLDER_EXCLUSION_FILTER)
-    .maybeSingle();
-
-  if (error) {
-    console.error("[Supabase] Failed to fetch diary by slug:", error);
-    return undefined;
-  }
-
-  if (!data) {
-    return undefined;
-  }
-
-  return normalizeDiary(data);
 }
 
 export async function incrementDiaryView(slug: string): Promise<number | undefined> {

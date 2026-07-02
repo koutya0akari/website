@@ -139,7 +139,7 @@ export function TableOfContents({ html }: TableOfContentsProps) {
 
               {/* Progress indicator */}
               <div className="border-t border-transparent px-4 py-2">
-                <div className="flex items-center justify-between text-xs text-white/40">
+                <div className="flex items-center justify-between text-xs text-white/60">
                   <span>
                     {items.findIndex((item) => item.id === activeId) + 1} / {items.length}
                   </span>

@@ -66,7 +66,9 @@ export function SiteHeader() {
         <button
           className="text-white/80 transition hover:text-white md:hidden"
           onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle menu"
+          aria-label={isOpen ? "メニューを閉じる" : "メニューを開く"}
+          aria-expanded={isOpen}
+          aria-controls="mobile-nav"
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -74,7 +76,7 @@ export function SiteHeader() {
 
       {/* Mobile Nav Overlay */}
       {isOpen && (
-        <div className="border-b border-white/10 bg-night md:hidden">
+        <div id="mobile-nav" className="border-b border-white/10 bg-night md:hidden">
           <nav className="flex flex-col gap-3 p-4 sm:gap-4 sm:p-6">
             {NAV_ITEMS.map((item) => (
               <SmartLink
