@@ -21,9 +21,22 @@ interface SearchResult {
   title: string;
   description?: string;
   href: string;
-  type: "page" | "diary" | "resource" | "tag";
+  type: "page" | "diary" | "memo" | "monthly-diary" | "resource" | "tag";
   icon: React.ReactNode;
 }
+
+const CONTENT_TYPE_ICONS: Record<string, React.ReactNode> = {
+  diary: <BookOpen className="h-4 w-4" />,
+  memo: <FileText className="h-4 w-4" />,
+  "monthly-diary": <CalendarDays className="h-4 w-4" />,
+};
+
+const GROUP_LABELS: Record<string, string> = {
+  page: "ページ",
+  diary: "数学メモ",
+  memo: "メモ",
+  "monthly-diary": "日記",
+};
 
 const STATIC_PAGES: SearchResult[] = [
   { id: "home", title: "ホーム", description: "トップページへ", href: "/", type: "page", icon: <Home className="h-4 w-4" /> },
@@ -84,7 +97,11 @@ export function CommandPalette() {
   }, [isOpen]);
 
   // Search function
+  const abortRef = useRef<AbortController | null>(null);
+
   const search = useCallback(async (searchQuery: string) => {
+    abortRef.current?.abort();
+
     if (!searchQuery.trim()) {
       setResults(STATIC_PAGES);
       return;
@@ -99,36 +116,38 @@ export function CommandPalette() {
         page.description?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     try {
-      // Search diary entries
-      const res = await fetch(`/api/admin/diary?limit=10`);
+      const res = await fetch(`/api/search?q=${encodeURIComponent(searchQuery)}`, {
+        signal: controller.signal,
+      });
       if (res.ok) {
         const { data } = await res.json();
-        const diaryResults: SearchResult[] = (data || [])
-          .filter(
-            (entry: { title: string; body: string; tags: string[] }) =>
-              entry.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              entry.body?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              entry.tags?.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-          )
-          .slice(0, 5)
-          .map((entry: { id: string; title: string; summary: string; slug: string }) => ({
-            id: entry.id,
-            title: entry.title,
-            description: entry.summary?.slice(0, 60) + "...",
-            href: `/diary/${entry.slug}`,
-            type: "diary" as const,
-            icon: <FileText className="h-4 w-4" />,
-          }));
+        const contentResults: SearchResult[] = (data || []).map(
+          (hit: { id: string; title: string; description: string; href: string; type: string }) => ({
+            id: hit.id,
+            title: hit.title,
+            description: hit.description,
+            href: hit.href,
+            type: hit.type as SearchResult["type"],
+            icon: CONTENT_TYPE_ICONS[hit.type] ?? <FileText className="h-4 w-4" />,
+          })
+        );
 
-        setResults([...filteredPages, ...diaryResults]);
+        setResults([...filteredPages, ...contentResults]);
       } else {
         setResults(filteredPages);
       }
-    } catch {
+    } catch (error) {
+      // 中断された検索は古いクエリなので結果を触らない
+      if (error instanceof DOMException && error.name === "AbortError") return;
       setResults(filteredPages);
     } finally {
-      setLoading(false);
+      if (abortRef.current === controller) {
+        setLoading(false);
+      }
     }
   }, []);
 
@@ -169,7 +188,7 @@ export function CommandPalette() {
 
   const groupedResults = results.reduce(
     (acc, result) => {
-      const group = result.type === "page" ? "ページ" : result.type === "diary" ? "数学メモ" : "その他";
+      const group = GROUP_LABELS[result.type] ?? "その他";
       if (!acc[group]) acc[group] = [];
       acc[group].push(result);
       return acc;
