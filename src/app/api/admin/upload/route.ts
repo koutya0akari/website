@@ -1,34 +1,29 @@
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/admin-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { apiError } from "@/lib/api-response";
 
-const ALLOWED_MIME_TYPES = [
+// SVG は公開 URL で開くと埋め込みスクリプトが実行され得る（stored XSS）ため許可しない。
+// 保存する拡張子もこのマップから引き、クライアントのファイル名は信用しない。
+const MIME_EXTENSIONS: Record<string, string> = {
   // Images
-  "image/jpeg",
-  "image/png",
-  "image/gif",
-  "image/webp",
-  "image/svg+xml",
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/gif": "gif",
+  "image/webp": "webp",
   // Documents
-  "application/pdf",
+  "application/pdf": "pdf",
   // Archives
-  "application/zip",
-];
+  "application/zip": "zip",
+};
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 // POST /api/admin/upload - Upload a file to Supabase Storage
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    // Check authentication
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
 
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
@@ -39,7 +34,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file type
-    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+    const extension = MIME_EXTENSIONS[file.type];
+    if (!extension) {
       return NextResponse.json(
         { error: `File type not allowed: ${file.type}` },
         { status: 400 }
@@ -57,7 +53,6 @@ export async function POST(request: NextRequest) {
     // Generate unique filename
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 8);
-    const extension = file.name.split(".").pop() || "";
     const safeFileName = file.name
       .replace(/\.[^/.]+$/, "") // Remove extension
       .replace(/[^a-zA-Z0-9-_]/g, "-") // Replace special chars
@@ -102,15 +97,9 @@ export async function POST(request: NextRequest) {
 // GET /api/admin/upload - List uploaded files
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    // Check authentication
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
 
     const { searchParams } = new URL(request.url);
     const folder = searchParams.get("folder") || "";
@@ -154,15 +143,9 @@ export async function GET(request: NextRequest) {
 // DELETE /api/admin/upload - Delete a file
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    // Check authentication
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
 
     const { path } = await request.json();
 

@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/admin-auth";
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,15 +13,10 @@ function normalizeText(value: unknown) {
 // GET /api/admin/resources/[id] - Get single resource
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const supabase = await createClient();
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
     const { id } = await params;
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     const { data, error } = await supabase.from("resources").select("*").eq("id", id).maybeSingle();
 
@@ -44,15 +39,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 // PUT /api/admin/resources/[id] - Update resource
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
-    const supabase = await createClient();
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
     const { id } = await params;
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     const body = await request.json();
     const title = normalizeText(body.title);
@@ -97,15 +87,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 // DELETE /api/admin/resources/[id] - Delete resource
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
-    const supabase = await createClient();
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
     const { id } = await params;
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     const { error } = await supabase.from("resources").delete().eq("id", id);
 

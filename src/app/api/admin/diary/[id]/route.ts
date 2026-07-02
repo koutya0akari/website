@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
 
 import { getPublicTags, getStoredTags, isLinkOnlyContent } from "@/lib/content-visibility";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/admin-auth";
 import {
   MEMO_FOLDER,
   MONTHLY_DIARY_FOLDER,
@@ -29,16 +29,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient();
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
     const { id } = await params;
-
-    // Check authentication
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     const { data, error } = await supabase
       .from("diary")
@@ -68,16 +62,10 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient();
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
     const { id } = await params;
-
-    // Check authentication
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     const body = await request.json();
     const {
@@ -189,16 +177,10 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createClient();
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
     const { id } = await params;
-
-    // Check authentication
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     // Scope the delete to regular diary entries (excluding reserved folders) via
     // a SELECT, then delete by id only. PostgREST generates invalid SQL ("column

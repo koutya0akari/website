@@ -1,47 +1,69 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as cheerio from "cheerio";
 
-function parsePublicHttpUrl(value: string): URL | null {
-  try {
-    const parsed = new URL(value);
-    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
-    if (isBlockedHostname(parsed.hostname)) return null;
+import { parsePublicHttpUrl } from "@/lib/url-guard";
 
-    return parsed;
-  } catch {
-    return null;
+const FETCH_TIMEOUT_MS = 5_000;
+const MAX_REDIRECTS = 3;
+const MAX_BODY_BYTES = 512 * 1024;
+
+// redirect: "manual" で 1 ホップずつ辿り、リダイレクト先も毎回 SSRF ガードを通す。
+// fetch を自動追従させると Location が私設 IP でも検証なしで到達してしまう。
+async function fetchPublicHtml(initialUrl: URL, signal: AbortSignal): Promise<Response | null> {
+  let currentUrl = initialUrl;
+
+  for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
+    const response = await fetch(currentUrl, {
+      headers: {
+        "User-Agent": "akari0koutya-link-preview/1.0",
+      },
+      redirect: "manual",
+      signal,
+      next: { revalidate: 3600 },
+    });
+
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get("location");
+      if (!location) return null;
+
+      const nextUrl = parsePublicHttpUrl(new URL(location, currentUrl).toString());
+      if (!nextUrl) return null;
+
+      currentUrl = nextUrl;
+      continue;
+    }
+
+    return response;
   }
+
+  return null;
 }
 
-function isBlockedHostname(hostname: string): boolean {
-  const normalized = hostname.toLowerCase().replace(/^\[|\]$/g, "");
+async function readBodyCapped(response: Response, maxBytes: number): Promise<string> {
+  const reader = response.body?.getReader();
+  if (!reader) return "";
 
-  if (
-    normalized === "localhost" ||
-    normalized === "0.0.0.0" ||
-    normalized === "::" ||
-    normalized === "::1" ||
-    normalized.endsWith(".local") ||
-    normalized.endsWith(".localhost")
-  ) {
-    return true;
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+
+  while (total < maxBytes) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    total += value.byteLength;
+  }
+  await reader.cancel().catch(() => {});
+
+  const merged = new Uint8Array(Math.min(total, maxBytes));
+  let offset = 0;
+  for (const chunk of chunks) {
+    const slice = chunk.subarray(0, Math.min(chunk.byteLength, merged.byteLength - offset));
+    merged.set(slice, offset);
+    offset += slice.byteLength;
+    if (offset >= merged.byteLength) break;
   }
 
-  if (/^127\./.test(normalized) || /^10\./.test(normalized) || /^169\.254\./.test(normalized)) {
-    return true;
-  }
-
-  if (/^192\.168\./.test(normalized)) {
-    return true;
-  }
-
-  const private172Match = normalized.match(/^172\.(\d{1,3})\./);
-  if (private172Match) {
-    const secondOctet = Number(private172Match[1]);
-    if (secondOctet >= 16 && secondOctet <= 31) return true;
-  }
-
-  return normalized.startsWith("fc") || normalized.startsWith("fd") || normalized.startsWith("fe80:");
+  return new TextDecoder().decode(merged);
 }
 
 function absolutizeUrl(value: string | undefined, baseUrl: URL): string | undefined {
@@ -70,18 +92,25 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const response = await fetch(targetUrl, {
-      headers: {
-        "User-Agent": "akari0koutya-link-preview/1.0",
-      },
-      next: { revalidate: 3600 },
-    });
+    const response = await fetchPublicHtml(
+      targetUrl,
+      AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    );
+
+    if (!response) {
+      return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
+    }
 
     if (!response.ok) {
       return NextResponse.json({ error: "Failed to fetch URL" }, { status: response.status });
     }
 
-    const html = await response.text();
+    const contentType = response.headers.get("content-type") ?? "";
+    if (!contentType.includes("text/html")) {
+      return NextResponse.json({ error: "Unsupported content type" }, { status: 400 });
+    }
+
+    const html = await readBodyCapped(response, MAX_BODY_BYTES);
     const $ = cheerio.load(html);
 
     const title =
@@ -115,6 +144,9 @@ export async function GET(request: NextRequest) {
       url: targetUrl.toString(),
     });
   } catch (error) {
+    if (error instanceof DOMException && error.name === "TimeoutError") {
+      return NextResponse.json({ error: "Fetch timed out" }, { status: 504 });
+    }
     console.error("OGP Fetch Error:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }

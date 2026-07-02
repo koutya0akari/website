@@ -22,7 +22,7 @@ interface ChangelogProps {
   repo?: string;
 }
 
-export function Changelog({ username = "Mori-Yusei", repo = "website" }: ChangelogProps) {
+export function Changelog({ username = "koutya0akari", repo = "website" }: ChangelogProps) {
   const [commits, setCommits] = useState<CommitData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

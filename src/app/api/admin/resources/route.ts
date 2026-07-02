@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/admin-auth";
 import { buildAdminResourceItems, getLectureNoteItems, type ResourceRow } from "@/lib/resource-items";
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
@@ -16,14 +16,9 @@ function createMicrocmsId(fileUrl: string, externalUrl: string, title: string) {
 // GET /api/admin/resources - List all resources
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
 
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
@@ -55,14 +50,9 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/resources - Create new resource
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
 
     const body = await request.json();
     const title = normalizeText(body.title);

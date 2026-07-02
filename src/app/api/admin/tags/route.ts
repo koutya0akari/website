@@ -1,20 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { LINK_ONLY_TAG } from "@/lib/content-visibility";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/admin-auth";
 
 // GET /api/admin/tags - 既存記事で使われたタグの一覧（重複排除）を返す。
 // `?folder=` を指定するとそのフォルダ（メモ / 日記 など）に絞り込む。
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
 
     const { searchParams } = new URL(request.url);
     const folder = searchParams.get("folder");
