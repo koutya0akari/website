@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
+import { KATEX_PRERENDERED_CLASS } from "@/lib/katex";
+
 const delimiters = [
   { left: "$$", right: "$$", display: true },
   { left: "\\[", right: "\\]", display: true },
@@ -22,6 +24,7 @@ export function KaTeXProvider() {
       renderMathInElement(document.body, {
         delimiters,
         throwOnError: false,
+        ignoredClasses: [KATEX_PRERENDERED_CLASS],
       });
     }
 

@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { List, ChevronRight } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface TocItem {
   id: string;
@@ -90,24 +89,16 @@ export function TableOfContents({ html }: TableOfContentsProps) {
             <List className="h-4 w-4 text-accent" />
             目次
           </div>
-          <motion.div
-            animate={{ rotate: isExpanded ? 90 : 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <ChevronRight className="h-4 w-4 text-white/50" />
-          </motion.div>
+          <ChevronRight
+            className={`h-4 w-4 text-white/50 transition-transform duration-200 ${
+              isExpanded ? "rotate-90" : ""
+            }`}
+          />
         </button>
 
         {/* Content */}
-        <AnimatePresence initial={false}>
-          {isExpanded && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="overflow-hidden"
-            >
+        {isExpanded && (
+            <div>
               <nav className="border-t border-transparent p-4 pt-2">
                 <ul className="space-y-1">
                   {items.map((item) => {
@@ -127,11 +118,7 @@ export function TableOfContents({ html }: TableOfContentsProps) {
                         >
                           {/* Active indicator */}
                           {isActive && (
-                            <motion.div
-                              layoutId="toc-indicator"
-                              className="absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-full bg-accent"
-                              transition={{ type: "spring", damping: 20, stiffness: 300 }}
-                            />
+                            <div className="absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-full bg-accent" />
                           )}
 
                           {/* Level indicator dot */}
@@ -159,19 +146,16 @@ export function TableOfContents({ html }: TableOfContentsProps) {
                   <span>セクション</span>
                 </div>
                 <div className="mt-1 h-1 overflow-hidden rounded-full bg-white/10">
-                  <motion.div
-                    className="h-full bg-gradient-to-r from-accent to-highlight"
-                    initial={{ width: 0 }}
-                    animate={{
+                  <div
+                    className="h-full bg-gradient-to-r from-accent to-highlight transition-[width] duration-300"
+                    style={{
                       width: `${((items.findIndex((item) => item.id === activeId) + 1) / items.length) * 100}%`,
                     }}
-                    transition={{ duration: 0.3 }}
                   />
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
       </div>
     </div>
   );

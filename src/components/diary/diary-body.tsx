@@ -8,6 +8,7 @@ import "katex/dist/katex.min.css";
 import { LinkCard } from "@/components/ui/link-card";
 import { RichTabs, type RichTabItem } from "@/components/diary/rich-tabs";
 import { hasInlineLink, tokenizeInlineLinks } from "@/lib/inline-links";
+import { KATEX_PRERENDERED_CLASS } from "@/lib/katex";
 
 type DiaryBodyProps = {
   html: string;
@@ -282,7 +283,9 @@ const parseOptions: HTMLReactParserOptions = { replace: replaceNode };
 
 export function DiaryBody({ html }: DiaryBodyProps) {
   return (
-    <div className="prose prose-invert prose-preserve-whitespace max-w-none prose-headings:font-semibold prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl">
+    <div
+      className={`${KATEX_PRERENDERED_CLASS} prose prose-invert prose-preserve-whitespace max-w-none prose-headings:font-semibold prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl`}
+    >
       {parse(html, parseOptions)}
     </div>
   );
