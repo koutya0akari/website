@@ -20,6 +20,44 @@ function splitTags(tags: string): string[] {
     .slice(0, 6);
 }
 
+// Satori の既定フォントはラテン文字のみで日本語が豆腐になるため、
+// Google Fonts の動的サブセット（&text=）で描画文字だけの Noto Sans JP を取得する。
+// 古い UA を名乗るのは woff2 でなく Satori が読める TTF を返させるため。
+const fontCache = new Map<string, ArrayBuffer>();
+const FONT_CACHE_MAX = 50;
+
+async function loadNotoSansJp(text: string): Promise<ArrayBuffer | null> {
+  const subset = Array.from(new Set(Array.from(text))).sort().join("");
+  const cached = fontCache.get(subset);
+  if (cached) return cached;
+
+  try {
+    const cssUrl = `https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700&text=${encodeURIComponent(subset)}`;
+    const cssRes = await fetch(cssUrl, {
+      headers: { "User-Agent": "Mozilla/5.0 (Windows NT 6.1)" },
+      cache: "force-cache",
+    });
+    if (!cssRes.ok) return null;
+
+    const css = await cssRes.text();
+    const fontUrl = css.match(/src:\s*url\(([^)]+)\)/)?.[1];
+    if (!fontUrl) return null;
+
+    const fontRes = await fetch(fontUrl, { cache: "force-cache" });
+    if (!fontRes.ok) return null;
+
+    const data = await fontRes.arrayBuffer();
+    if (fontCache.size >= FONT_CACHE_MAX) {
+      const oldestKey = fontCache.keys().next().value;
+      if (oldestKey !== undefined) fontCache.delete(oldestKey);
+    }
+    fontCache.set(subset, data);
+    return data;
+  } catch {
+    return null;
+  }
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
@@ -29,6 +67,16 @@ export async function GET(request: NextRequest) {
   const author = clampText(searchParams.get("author") ?? "akari0koutya", 40);
 
   const subtitle = tags.length > 0 ? tags.join(" ") : "";
+
+  const renderedText = [
+    title || "Post",
+    summary,
+    subtitle,
+    `@${author}`,
+    "Akari Math Lab",
+    "www.akari0koutya.com",
+  ].join("");
+  const fontData = await loadNotoSansJp(renderedText);
 
   return new ImageResponse(
     (
@@ -41,6 +89,7 @@ export async function GET(request: NextRequest) {
           justifyContent: "space-between",
           padding: "56px",
           color: "white",
+          fontFamily: fontData ? '"Noto Sans JP"' : undefined,
           background:
             "radial-gradient(circle at 18% 20%, rgba(100,210,255,0.28), transparent 45%), radial-gradient(circle at 82% 0%, rgba(247,181,0,0.22), transparent 42%), linear-gradient(135deg, #030817 0%, #0b1528 55%, #132642 100%)",
         }}
@@ -96,6 +145,19 @@ export async function GET(request: NextRequest) {
     {
       width: 1200,
       height: 630,
+      // フォント取得失敗時は指定なしで生成を続ける（豆腐化しても画像自体は返す）
+      ...(fontData
+        ? {
+            fonts: [
+              {
+                name: "Noto Sans JP",
+                data: fontData,
+                weight: 700 as const,
+                style: "normal" as const,
+              },
+            ],
+          }
+        : {}),
     },
   );
 }
