@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { GitCommit, ExternalLink, Calendar, ChevronDown, ChevronUp } from "lucide-react";
 
 interface CommitData {
@@ -168,12 +167,9 @@ export function Changelog({ username = "koutya0akari", repo = "website" }: Chang
         <div className="absolute left-[5px] top-2 bottom-2 w-px bg-gradient-to-b from-accent/50 via-white/20 to-transparent" />
 
         <div className="space-y-6">
-          {displayedGroups.map((group, groupIndex) => (
-            <motion.div
+          {displayedGroups.map((group) => (
+            <div
               key={group.date}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: groupIndex * 0.05 }}
               className="relative pl-8"
             >
               {/* Date marker */}
@@ -189,17 +185,14 @@ export function Changelog({ username = "koutya0akari", repo = "website" }: Chang
 
               {/* Commits for this date */}
               <div className="space-y-2">
-                {group.commits.map((commit, commitIndex) => {
+                {group.commits.map((commit) => {
                   const category = getCommitCategory(commit.message);
                   return (
-                    <motion.a
+                    <a
                       key={commit.sha}
                       href={commit.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: groupIndex * 0.05 + commitIndex * 0.02 }}
                       className="group flex items-start gap-3 rounded-lg border border-transparent p-3 transition-all hover:border-transparent hover:bg-night-muted"
                     >
                       <GitCommit className="mt-0.5 h-4 w-4 flex-shrink-0 text-white/30 group-hover:text-accent" />
@@ -217,11 +210,11 @@ export function Changelog({ username = "koutya0akari", repo = "website" }: Chang
                         </p>
                       </div>
                       <ExternalLink className="h-3 w-3 flex-shrink-0 text-white/20 opacity-0 transition-opacity group-hover:opacity-100" />
-                    </motion.a>
+                    </a>
                   );
                 })}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

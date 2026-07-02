@@ -17,11 +17,14 @@ const inter = Inter({
   display: "swap",
 });
 
+// CJK フォントは preload 可能な subset を持たない（`subsets: ["latin"]` だと
+// 日本語グリフが system フォントに落ちる）。`preload: false` で unicode-range
+// 分割された全スライスを self-host し、日本語も Noto で描画されるようにする。
 const noto = Noto_Sans_JP({
-  subsets: ["latin"],
   weight: ["400", "500", "700"],
   variable: "--font-noto",
   display: "swap",
+  preload: false,
 });
 
 const signika = Signika_Negative({

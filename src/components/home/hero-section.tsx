@@ -12,6 +12,9 @@ export function HeroSection({ site }: HeroSectionProps) {
       <div className="relative z-10">
         <div className="max-w-3xl space-y-5 sm:space-y-7">
           <div className="space-y-3">
+            <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+              {site.heroTitle || "Akari Math Lab"}
+            </h1>
             <RichText
               content={
                 site.heroLead ||

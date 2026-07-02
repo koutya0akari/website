@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { GitCommit, GitFork, Star, Book, ExternalLink } from "lucide-react";
 
 interface GitHubRepo {
@@ -222,46 +221,34 @@ export function GitHubStats({ username }: GitHubStatsProps) {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <motion.div
+        <div
           className="rounded-xl border border-transparent bg-night-muted p-4 text-center"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
         >
           <Book className="mx-auto h-5 w-5 text-blue-400" />
           <div className="mt-2 text-2xl font-bold text-white">{user?.public_repos || 0}</div>
           <div className="text-xs text-white/50">リポジトリ</div>
-        </motion.div>
-        <motion.div
+        </div>
+        <div
           className="rounded-xl border border-transparent bg-night-muted p-4 text-center"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
         >
           <Star className="mx-auto h-5 w-5 text-yellow-400" />
           <div className="mt-2 text-2xl font-bold text-white">{totalStars}</div>
           <div className="text-xs text-white/50">スター</div>
-        </motion.div>
-        <motion.div
+        </div>
+        <div
           className="rounded-xl border border-transparent bg-night-muted p-4 text-center"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
         >
           <GitFork className="mx-auto h-5 w-5 text-purple-400" />
           <div className="mt-2 text-2xl font-bold text-white">{totalForks}</div>
           <div className="text-xs text-white/50">フォーク</div>
-        </motion.div>
-        <motion.div
+        </div>
+        <div
           className="rounded-xl border border-transparent bg-night-muted p-4 text-center"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
         >
           <GitCommit className="mx-auto h-5 w-5 text-green-400" />
           <div className="mt-2 text-2xl font-bold text-white">{pushEvents}</div>
           <div className="text-xs text-white/50">直近のPush</div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Contribution Heatmap */}
@@ -305,15 +292,9 @@ export function GitHubStats({ username }: GitHubStatsProps) {
                   });
 
                   return (
-                    <motion.div
+                    <div
                       key={`${weekIndex}-${dayIndex}`}
                       className={`group relative h-3 w-3 cursor-pointer rounded-sm border ${intensityColors[intensity]} transition-transform hover:scale-125`}
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{
-                        delay: (weekIndex * 7 + dayIndex) * 0.001,
-                        duration: 0.15,
-                      }}
                     >
                       {/* Tooltip */}
                       <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 -translate-x-1/2 opacity-0 transition-opacity group-hover:opacity-100">
@@ -323,7 +304,7 @@ export function GitHubStats({ username }: GitHubStatsProps) {
                         </div>
                         <div className="absolute left-1/2 -translate-x-1/2 border-4 border-transparent border-t-night" />
                       </div>
-                    </motion.div>
+                    </div>
                   );
                 })}
               </div>
@@ -343,11 +324,8 @@ export function GitHubStats({ username }: GitHubStatsProps) {
 
       {/* Language Distribution */}
       {topLanguages.length > 0 && (
-        <motion.div
+        <div
           className="rounded-xl border border-transparent bg-night-muted p-4"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
         >
           <h4 className="mb-4 text-sm font-medium text-white/70">使用言語</h4>
           <div className="mb-3 flex h-3 overflow-hidden rounded-full">
@@ -376,16 +354,13 @@ export function GitHubStats({ username }: GitHubStatsProps) {
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Top Repositories */}
       {topRepos.length > 0 && (
-        <motion.div
+        <div
           className="space-y-3"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
         >
           <h4 className="text-sm font-medium text-white/70">人気リポジトリ</h4>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -426,7 +401,7 @@ export function GitHubStats({ username }: GitHubStatsProps) {
               </a>
             ))}
           </div>
-        </motion.div>
+        </div>
       )}
     </div>
   );

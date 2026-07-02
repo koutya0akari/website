@@ -7,7 +7,7 @@ const isDev = process.env.NODE_ENV !== "production";
 // Ace editor (admin only). We therefore allow it everywhere in development, but
 // in production only on the authenticated /admin & /login routes — public pages
 // get a stricter policy. KaTeX renders without eval (server-side + client
-// `katex.renderToString`), and framer-motion does not need it either.
+// `katex.renderToString`).
 // `'unsafe-inline'` is kept for script-src/style-src: Next injects inline
 // bootstrap scripts and KaTeX emits inline styles; removing it requires a nonce
 // (tracked as a follow-up).
