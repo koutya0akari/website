@@ -1,20 +1,15 @@
 import { revalidatePath } from "next/cache";
 
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/admin-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { apiError } from "@/lib/api-response";
 
 // GET /api/admin/about - Get about settings
 export async function GET() {
   try {
-    const supabase = await createClient();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
 
     const { data, error } = await supabase
       .from("about")
@@ -58,14 +53,9 @@ export async function GET() {
 // PUT /api/admin/about - Update about settings
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
 
     const body = await request.json();
     const { intro, mission, sections, skills, quote } = body;

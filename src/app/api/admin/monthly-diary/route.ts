@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
 
 import { getPublicTags, getStoredTags, isLinkOnlyContent } from "@/lib/content-visibility";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/admin-auth";
 import { MONTHLY_DIARY_FOLDER, MONTHLY_DIARY_FOLDERS } from "@/lib/monthly-diary-config";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -21,14 +21,9 @@ function normalizeMonthlyDiaryAdminRow<T extends MonthlyDiaryAdminRow>(row: T) {
 // GET /api/admin/monthly-diary - List all monthly diary entries
 export async function GET(request: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
@@ -65,14 +60,9 @@ export async function GET(request: NextRequest) {
 // POST /api/admin/monthly-diary - Create new monthly diary entry
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
 
     const body = await request.json();
     const {

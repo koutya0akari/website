@@ -65,6 +65,11 @@ function buildCommitActivity(events: GitHubEvent[]): {
   };
 }
 
+// サイトオーナーのアカウント以外は取得不可。
+// GITHUB_TOKEN 付きの認証プロキシなので、任意の username を許すと
+// 第三者にトークンのレート制限を消費される（オープンプロキシ化する）。
+const ALLOWED_USERNAME = process.env.GITHUB_USERNAME || "koutya0akari";
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const username = searchParams.get("username");
@@ -72,6 +77,13 @@ export async function GET(request: NextRequest) {
   if (!username) {
     return NextResponse.json(
       { error: "Username is required" },
+      { status: 400 }
+    );
+  }
+
+  if (username !== ALLOWED_USERNAME) {
+    return NextResponse.json(
+      { error: "Username not allowed" },
       { status: 400 }
     );
   }
@@ -91,15 +103,15 @@ export async function GET(request: NextRequest) {
     // Fetch user data, repos, and events in parallel
     const eventsPath = githubToken ? "events" : "events/public";
     const [userRes, reposRes, eventsRes] = await Promise.all([
-      fetch(`https://api.github.com/users/${username}`, {
+      fetch(`https://api.github.com/users/${encodeURIComponent(username)}`, {
         headers,
         next: { revalidate: 3600 }, // 1時間キャッシュ
       }),
-      fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`, {
+      fetch(`https://api.github.com/users/${encodeURIComponent(username)}/repos?sort=updated&per_page=100`, {
         headers,
         next: { revalidate: 3600 },
       }),
-      fetch(`https://api.github.com/users/${username}/${eventsPath}?per_page=100`, {
+      fetch(`https://api.github.com/users/${encodeURIComponent(username)}/${eventsPath}?per_page=100`, {
         headers,
         next: { revalidate: 3600 },
       }),

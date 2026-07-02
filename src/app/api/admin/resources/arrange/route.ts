@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/admin-auth";
 import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -29,14 +29,9 @@ function createMicrocmsId(fileUrl: string, externalUrl: string, title: string) {
 // POST /api/admin/resources/arrange
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if (auth instanceof NextResponse) return auth;
+    const { supabase } = auth;
 
     const body = await request.json();
     const items = body?.items;

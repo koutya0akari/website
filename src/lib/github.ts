@@ -1,6 +1,6 @@
 import "server-only";
 
-const GITHUB_USERNAME = "Mori-Yusei";
+const GITHUB_USERNAME = "koutya0akari";
 const GITHUB_REPO = "website";
 
 export type GitHubCommit = {
