@@ -54,6 +54,8 @@ export function CommandPalette() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
 
   // Open/Close handlers
@@ -67,6 +69,31 @@ export function CommandPalette() {
   const close = useCallback(() => {
     setIsOpen(false);
     setQuery("");
+    // フォーカスをダイアログを開いたトリガーへ戻す
+    triggerRef.current?.focus();
+  }, []);
+
+  // Tab フォーカスをダイアログ内に閉じ込める
+  const trapFocus = useCallback((e: React.KeyboardEvent) => {
+    if (e.key !== "Tab") return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const focusables = dialog.querySelectorAll<HTMLElement>(
+      'button, input, [href], [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusables.length === 0) return;
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
   }, []);
 
   // Keyboard shortcut to open (Cmd+K or Ctrl+K)
@@ -200,6 +227,7 @@ export function CommandPalette() {
     <>
       {/* Trigger Button */}
       <button
+        ref={triggerRef}
         onClick={open}
         className="hidden items-center gap-2 rounded-full border border-transparent bg-night-muted px-3 py-1.5 text-xs text-white/60 transition hover:border-transparent hover:bg-night-muted hover:text-white/80 md:flex"
         aria-label="検索を開く"
@@ -218,10 +246,17 @@ export function CommandPalette() {
           <div
             className="fixed inset-0 z-50 bg-black/70"
             onClick={close}
+            aria-hidden="true"
           />
 
           {/* Dialog */}
-          <div className="fixed left-1/2 top-[15%] z-50 w-full max-w-xl -translate-x-1/2 overflow-hidden rounded-2xl border border-white/10 bg-night-soft">
+          <div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="サイト内検索"
+            onKeyDown={trapFocus}
+            className="fixed left-1/2 top-[15%] z-50 w-full max-w-xl -translate-x-1/2 overflow-hidden rounded-2xl border border-white/10 bg-night-soft">
               {/* Search Input */}
               <div className="flex items-center gap-3 border-b border-transparent px-4 py-3">
                 <Search className="h-5 w-5 text-white/40" />
@@ -256,7 +291,7 @@ export function CommandPalette() {
 
                 {Object.entries(groupedResults).map(([group, items]) => (
                   <Fragment key={group}>
-                    <div className="px-3 py-2 text-xs font-medium uppercase tracking-wider text-white/40">
+                    <div className="px-3 py-2 text-xs font-medium uppercase tracking-wider text-white/60">
                       {group}
                     </div>
                     {items.map((result) => {
@@ -294,7 +329,7 @@ export function CommandPalette() {
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-between border-t border-transparent px-4 py-2 text-xs text-white/40">
+              <div className="flex items-center justify-between border-t border-transparent px-4 py-2 text-xs text-white/60">
                 <div className="flex items-center gap-4">
                   <span className="flex items-center gap-1">
                     <kbd className="rounded border border-transparent bg-night-muted px-1.5 py-0.5">↑</kbd>

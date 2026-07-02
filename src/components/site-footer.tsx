@@ -36,7 +36,7 @@ export function SiteFooter() {
 
           {/* Navigation */}
           <div className="space-y-4">
-            <h3 className="text-sm font-medium uppercase tracking-wider text-white/70">Navigation</h3>
+            <h3 className="text-sm font-medium uppercase tracking-wider text-white/70">ナビゲーション</h3>
             <nav className="flex flex-col gap-2">
               {NAV_LINKS.map((link) => {
                 const Icon = link.icon;
@@ -63,7 +63,7 @@ export function SiteFooter() {
 
           {/* Social */}
           <div className="space-y-4">
-            <h3 className="text-sm font-medium uppercase tracking-wider text-white/70">Connect</h3>
+            <h3 className="text-sm font-medium uppercase tracking-wider text-white/70">リンク</h3>
             <div className="flex gap-3">
               {SOCIAL_LINKS.map((link) => {
                 const Icon = link.icon;
@@ -85,7 +85,7 @@ export function SiteFooter() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-white/40 sm:flex-row">
+        <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-white/60 sm:flex-row">
           <p>© {currentYear} Akari Math Lab. All rights reserved.</p>
           <p className="flex items-center gap-1">
             Built with <Heart className="h-3 w-3 text-red-400" /> using Next.js + Supabase

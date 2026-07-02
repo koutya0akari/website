@@ -33,7 +33,7 @@ export function ScrollToTop() {
     <button
       onClick={scrollToTop}
       className="fixed bottom-8 right-8 z-50 rounded-full bg-accent p-3 text-black transition hover:bg-accent/80 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
-      aria-label="Scroll to top"
+      aria-label="ページ上部へ戻る"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

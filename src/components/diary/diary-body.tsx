@@ -48,15 +48,15 @@ function isEmbeddableImageUrl(url: string): boolean {
 
 function getImageAlt(url: string): string {
   const parsed = getImageUrl(url);
-  if (!parsed) return "Embedded image";
+  if (!parsed) return "埋め込み画像";
 
   const fileName = parsed.pathname.split("/").pop();
-  if (!fileName) return "Embedded image";
+  if (!fileName) return "埋め込み画像";
 
   try {
-    return decodeURIComponent(fileName.replace(/\.[^.]+$/, "")) || "Embedded image";
+    return decodeURIComponent(fileName.replace(/\.[^.]+$/, "")) || "埋め込み画像";
   } catch {
-    return fileName.replace(/\.[^.]+$/, "") || "Embedded image";
+    return fileName.replace(/\.[^.]+$/, "") || "埋め込み画像";
   }
 }
 
@@ -131,7 +131,7 @@ function YouTubeEmbed({ url, videoId }: { url: string; videoId: string }) {
         rel="noopener noreferrer"
         className="sr-only"
       >
-        Open video on YouTube
+        YouTube で動画を開く
       </a>
     </div>
   );
